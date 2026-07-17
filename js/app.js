@@ -3,6 +3,7 @@ import { registerRoute, startRouter, navigate, renderRoute } from "./core/router
 import { getLanguage, setLanguage, toggleLanguage, translateStaticText } from "./core/i18n.js";
 import { applyTheme, setTheme, cycleTheme } from "./core/theme.js";
 import { storage } from "./core/storage.js";
+import { setSelectedMemberId, searchMembers } from "./core/member-store.js";
 import { initPWA } from "./core/pwa.js";
 import { openSheet, closeSheet, showToast } from "./core/ui.js";
 
@@ -15,6 +16,10 @@ import { morePage } from "./pages/more.js";
 import { settingsPage } from "./pages/settings.js";
 import { leaderPage } from "./pages/leader.js";
 import { emergencyPage } from "./pages/emergency.js";
+import { membersPage } from "./pages/members.js";
+import { roomsPage } from "./pages/rooms.js";
+import { seatsPage } from "./pages/seats.js";
+import { memberSummaryCard } from "./components/member-card.js";
 
 function registerRoutes() {
   registerRoute("home", homePage);
@@ -26,6 +31,9 @@ function registerRoutes() {
   registerRoute("settings", settingsPage);
   registerRoute("leader", leaderPage);
   registerRoute("emergency", emergencyPage);
+  registerRoute("members", membersPage);
+  registerRoute("rooms", roomsPage);
+  registerRoute("seats", seatsPage);
 }
 
 function updateChrome() {
@@ -48,9 +56,23 @@ function updateChrome() {
 
 function bindEvents() {
   document.addEventListener("click", (event) => {
+    const selectMemberButton = event.target.closest("[data-select-member]");
+    if (selectMemberButton) {
+      setSelectedMemberId(selectMemberButton.dataset.selectMember);
+      showToast(getLanguage() === "zh-TW" ? "已更新我的資料" : "Đã cập nhật thông tin của tôi");
+      navigate("profile");
+      return;
+    }
+
     const navigateButton = event.target.closest("[data-navigate]");
     if (navigateButton) {
       navigate(navigateButton.dataset.navigate);
+      return;
+    }
+
+    if (event.target.id === "changeMemberButton") {
+      storage.remove("selectedMember");
+      renderRoute();
       return;
     }
 
@@ -64,6 +86,28 @@ function bindEvents() {
   document.addEventListener("change", (event) => {
     if (event.target.id === "languageSelect") setLanguage(event.target.value);
     if (event.target.id === "themeSelect") setTheme(event.target.value);
+    if (event.target.id === "memberSelect" && event.target.value) {
+      setSelectedMemberId(event.target.value);
+      renderRoute();
+    }
+  });
+
+  document.addEventListener("input", (event) => {
+    if (event.target.id !== "memberSearchInput") return;
+
+    const results = searchMembers(event.target.value);
+    const resultNode = document.getElementById("memberSearchResults");
+    const countNode = document.getElementById("memberResultCount");
+
+    if (resultNode) {
+      resultNode.innerHTML = results
+        .map((member) => memberSummaryCard(member, { selectable: true, compact: true }))
+        .join("");
+    }
+
+    if (countNode) {
+      countNode.textContent = `${results.length} ${getLanguage() === "zh-TW" ? "筆資料" : "kết quả"}`;
+    }
   });
 
   document.addEventListener("click", (event) => {

@@ -1,4 +1,4 @@
-const CACHE_NAME = "mtc-v2-m1-complete";
+const CACHE_NAME = "mtc-v2-m2-1-0717";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -20,9 +20,11 @@ const APP_SHELL = [
   "./js/core/utils.js",
   "./js/core/pwa.js",
   "./js/core/ui.js",
+  "./js/core/member-store.js",
   "./js/components/quick-link.js",
   "./js/components/placeholder.js",
   "./js/components/flight-card.js",
+  "./js/components/member-card.js",
   "./js/pages/home.js",
   "./js/pages/itinerary.js",
   "./js/pages/guide.js",
@@ -32,6 +34,9 @@ const APP_SHELL = [
   "./js/pages/settings.js",
   "./js/pages/leader.js",
   "./js/pages/emergency.js",
+  "./js/pages/members.js",
+  "./js/pages/rooms.js",
+  "./js/pages/seats.js",
   "./data/index.js",
   "./data/system/index.js",
   "./data/system/app-config.js",

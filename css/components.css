@@ -78,3 +78,91 @@
   font-size: 12px;
   font-weight: 800;
 }
+
+
+.member-list { display: grid; gap: 10px; margin-top: 12px; }
+.member-card {
+  display: grid;
+  grid-template-columns: 48px minmax(0,1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 15px;
+  border: 1px solid var(--line);
+  border-radius: 19px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+.member-card.compact { padding: 12px; }
+.member-avatar {
+  width: 46px; height: 46px;
+  display: grid; place-items: center;
+  flex: 0 0 46px;
+  border-radius: 16px;
+  color: white;
+  background: linear-gradient(135deg,var(--primary),var(--primary-2));
+  font-size: 19px; font-weight: 900;
+}
+.member-main { min-width: 0; }
+.member-main strong, .member-main small { display: block; }
+.member-main small {
+  margin-top: 2px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  color: var(--muted);
+}
+.member-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+.member-tags span {
+  padding: 4px 7px; border-radius: 999px;
+  color: var(--primary); background: var(--primary-soft);
+  font-size: 11px; font-weight: 800;
+}
+.search-panel { position: sticky; top: 78px; z-index: 12; }
+.search-box {
+  display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 9px;
+  padding: 11px 13px; border: 1px solid var(--line); border-radius: 15px;
+  background: var(--surface-solid);
+}
+.search-box input { width: 100%; border: 0; outline: 0; color: var(--text); background: transparent; }
+.search-panel > small { display: block; margin-top: 8px; color: var(--muted); }
+.full-select { width: 100%; margin-top: 10px; }
+.full-button { width: 100%; }
+.profile-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.room-detail-head { display: flex; gap: 12px; align-items: center; }
+.room-detail-head small, .room-detail-head strong { display: block; }
+.room-detail-head small { color: var(--muted); }
+.room-detail-head strong { margin-top: 3px; font-size: 21px; }
+.room-icon { font-size: 30px; }
+.room-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+.room-detail-grid > div { padding: 12px; border-radius: 15px; background: var(--surface-soft); }
+.room-detail-grid small, .room-detail-grid strong { display: block; }
+.room-detail-grid small { color: var(--muted); }
+.room-detail-grid strong { margin-top: 5px; line-height: 1.45; }
+.room-grid { display: grid; gap: 10px; }
+.room-roster-head, .seat-title { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.room-roster-head > strong { font-size: 22px; }
+.room-member-list { display: grid; gap: 8px; margin-top: 14px; }
+.room-member-list span {
+  padding: 9px 11px; border-radius: 13px; background: var(--surface-soft); font-weight: 800;
+}
+.room-member-list small { display: block; margin-top: 2px; color: var(--muted); font-weight: 400; }
+.seat-section + .seat-section { margin-top: 14px; }
+.seat-title small { display: block; margin-top: 3px; color: var(--muted); }
+.seat-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; margin-top: 15px; }
+.seat-card { padding: 10px 8px; border-radius: 14px; text-align: center; background: var(--surface-soft); }
+.seat-card strong { display: block; color: var(--primary); font-size: 20px; }
+.seat-card span, .seat-card small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.seat-card span { margin-top: 5px; font-weight: 800; }
+.seat-card small { margin-top: 2px; color: var(--muted); font-size: 10px; }
+.privacy-note { padding: 12px 14px; color: var(--muted); font-size: 12px; line-height: 1.55; }
+.home-member-card { cursor: pointer; }
+.home-member-name { display: grid; grid-template-columns: 46px 1fr auto; gap: 11px; align-items: center; }
+.home-member-name small, .select-profile-cta small { display: block; margin-top: 3px; color: var(--muted); }
+.home-member-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 7px; margin-top: 15px; }
+.home-member-grid span { padding: 9px 5px; border-radius: 13px; text-align: center; background: var(--surface-soft); }
+.home-member-grid small, .home-member-grid strong { display: block; }
+.home-member-grid small { color: var(--muted); font-size: 10px; }
+.home-member-grid strong { margin-top: 3px; }
+.select-profile-cta {
+  width: 100%; display: grid; grid-template-columns: 46px 1fr auto;
+  gap: 11px; align-items: center; color: var(--text); text-align: left; cursor: pointer;
+}
+.leader-stats .mini-card { text-align: center; }

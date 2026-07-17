@@ -3,6 +3,7 @@ import {
 } from "../../data/index.js";
 import { t, getLanguage } from "../core/i18n.js";
 import { quickLink } from "../components/quick-link.js";
+import { getSelectedMember, getRoomById } from "../core/member-store.js";
 import { flightCard } from "../components/flight-card.js";
 
 const zh = () => getLanguage() === "zh-TW";
@@ -34,6 +35,9 @@ function tripState() {
 export function homePage() {
   const state = tripState();
   const notice = ANNOUNCEMENTS[0];
+  const selectedMember = getSelectedMember();
+  const lexisRoom = selectedMember ? getRoomById(selectedMember.roomAssignments?.lexis) : null;
+  const sunwayRoom = selectedMember ? getRoomById(selectedMember.roomAssignments?.sunway) : null;
 
   return `
     <section class="hero">
@@ -48,7 +52,30 @@ export function homePage() {
       </div>
     </section>
 
-    <div class="section-title"><h2>${label("今日重點","Thông tin hôm nay")}</h2><span>Milestone 1</span></div>
+    <div class="section-title"><h2>${label("我的旅程資料","Thông tin chuyến đi của tôi")}</h2><span>Milestone 2-1</span></div>
+    ${selectedMember ? `
+      <section class="card home-member-card" data-navigate="profile">
+        <div class="home-member-name">
+          <div class="member-avatar">${selectedMember.nameZh.slice(0,1)}</div>
+          <div><strong>${selectedMember.nameZh}</strong><small>${selectedMember.nameEn}</small></div>
+          <span>›</span>
+        </div>
+        <div class="home-member-grid">
+          <span><small>${label("去程","Chiều đi")}</small><strong>${selectedMember.seatOutbound || "—"}</strong></span>
+          <span><small>${label("回程","Chiều về")}</small><strong>${selectedMember.seatReturn || "—"}</strong></span>
+          <span><small>${label("大紅花","Lexis")}</small><strong>${lexisRoom?.assignmentCode || "—"}</strong></span>
+          <span><small>${label("雙威","Sunway")}</small><strong>${sunwayRoom?.assignmentCode || "—"}</strong></span>
+        </div>
+      </section>
+    ` : `
+      <button class="card select-profile-cta" data-navigate="profile" type="button">
+        <span class="member-avatar">＋</span>
+        <span><strong>${label("選擇我的姓名","Chọn tên của tôi")}</strong><small>${label("查看個人房間、機位與餐食資訊","Xem phòng, ghế và thông tin bữa ăn")}</small></span>
+        <span>›</span>
+      </button>
+    `}
+
+    <div class="section-title"><h2>${label("今日重點","Thông tin hôm nay")}</h2><span>Milestone 2-1</span></div>
 
     <section class="grid-2">
       <article class="mini-card">
