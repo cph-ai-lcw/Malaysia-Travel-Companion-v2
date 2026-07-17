@@ -1,7 +1,9 @@
 export const ITINERARY = Object.freeze([
  {day:1,date:'2026-09-20',titleZh:'桃園出發・入住大紅花渡假村',titleVi:'Khởi hành từ Đào Viên・Nhận phòng Lexis Hibiscus',hotel:'Lexis Hibiscus Port Dickson',items:[
-  {time:'06:00',zh:'桃園機場集合，辦理登機與行李託運',vi:'Tập trung tại sân bay Đào Viên, làm thủ tục chuyến bay'},
-  {time:'JX725',zh:'桃園飛往吉隆坡',vi:'Bay từ Đào Viên đến Kuala Lumpur'},
+  {time:'07:00',zh:'鶯歌大湖路324號集合（送機）',vi:'Tập trung tại số 324 đường Dahu, Yingge'},
+  {time:'07:20',zh:'準時發車前往桃園機場第二航廈',vi:'Khởi hành đến Nhà ga 2 sân bay Đào Viên'},
+  {time:'08:00',zh:'桃園機場星宇航空3號櫃台前集合，辦理登機與行李託運',vi:'Tập trung trước quầy số 3 STARLUX, làm thủ tục và ký gửi hành lý'},
+  {time:'11:15',zh:'搭乘 JX725 桃園飛往吉隆坡（16:10 抵達）',vi:'Chuyến JX725 từ Đào Viên đến Kuala Lumpur, đến lúc 16:10'},
   {time:'抵達後',zh:'前往波德申，享用奶油螃蟹晚餐',vi:'Đến Port Dickson, dùng bữa tối cua sốt bơ'},
   {time:'晚間',zh:'入住大紅花 Premium Pool Villa',vi:'Nhận phòng Premium Pool Villa'},
   {time:'晚間',zh:'大紅花 SKY BAR：每人一杯無酒精飲料',vi:'SKY BAR: mỗi người một ly nước không cồn',included:true}
@@ -33,6 +35,8 @@ export const ITINERARY = Object.freeze([
   {time:'上午',zh:'布城、粉紅清真寺、布城湖、首相署與首相府',vi:'Putrajaya, thánh đường Hồng, hồ Putrajaya và Phủ Thủ tướng'},
   {time:'中午',zh:'中式合菜',vi:'Bữa trưa món Hoa',included:true},
   {time:'下午',zh:'三井 Outlet 自由購物',vi:'Tự do mua sắm tại Mitsui Outlet'},
-  {time:'JX726',zh:'吉隆坡返回桃園',vi:'Bay từ Kuala Lumpur về Đào Viên'}
+  {time:'17:20',zh:'搭乘 JX726 吉隆坡返回桃園（22:15 抵達）',vi:'Chuyến JX726 từ Kuala Lumpur về Đào Viên, đến lúc 22:15'},
+  {time:'23:15',zh:'桃園機場接機集合',vi:'Tập trung lên xe đón tại sân bay Đào Viên'},
+  {time:'23:30',zh:'發車返回鶯歌區中湖里大湖路324號',vi:'Khởi hành về số 324 đường Dahu, khu Zhonghu, Yingge'}
  ],meals:['飯店早餐','中式合菜','機上餐食']}
 ]);
