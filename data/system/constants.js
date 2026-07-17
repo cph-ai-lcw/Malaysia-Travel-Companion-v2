@@ -1,38 +1,12 @@
 export const CONSTANTS = Object.freeze({
-  APP: {
-    id: "malaysia-travel-companion-v2",
-    shortName: "Malaysia Trip",
-    locale: "zh-TW",
-    timezone: "Asia/Kuala_Lumpur"
-  },
-  ROUTES: {
-    home: "home",
-    itinerary: "itinerary",
-    guide: "guide",
-    tools: "tools",
-    profile: "profile",
-    more: "more",
-    settings: "settings",
-    leader: "leader",
-    emergency: "emergency"
-  },
+  APP: { id: "malaysia-travel-companion-v2", timezone: "Asia/Kuala_Lumpur" },
   STORAGE_KEYS: {
     language: "language",
     theme: "theme",
+    selectedMember: "selectedMember",
     favorites: "favorites",
     packing: "packing",
-    expenses: "expenses",
-    selectedMember: "selectedMember",
-    announcementsRead: "announcementsRead"
+    expenses: "expenses"
   },
-  CURRENCY: {
-    code: "MYR",
-    symbol: "RM",
-    taiwanCode: "TWD",
-    taiwanSymbol: "NT$"
-  },
-  AIRLINE: {
-    name: "STARLUX Airlines",
-    nameZh: "星宇航空"
-  }
+  CURRENCY: { code: "MYR", symbol: "RM", targetCode: "TWD", targetSymbol: "NT$" }
 });

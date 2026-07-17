@@ -1,0 +1,15 @@
+@media (max-width: 390px) {
+  .hero { padding: 19px; }
+  .grid-2 { gap: 9px; }
+  .quick-grid { gap: 8px; }
+  .quick-link { min-height: 86px; }
+}
+@media (min-width: 761px) {
+  main { padding-bottom: 124px; }
+  .bottom-nav {
+    bottom: 16px;
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+  }
+}

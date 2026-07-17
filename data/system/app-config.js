@@ -4,13 +4,11 @@ export const APP_CONFIG = Object.freeze({
   subtitle: "2026 國能馬來西亞員工旅遊",
   subtitleVi: "Du lịch nhân viên Malaysia 2026",
   company: "國能國際股份有限公司",
-  version: "2.0.0-alpha.2",
+  version: "2.0.0-alpha.1",
   defaultLanguage: "zh-TW",
   supportedLanguages: ["zh-TW", "vi"],
   defaultTheme: "auto",
-  githubPages: true,
   pwaEnabled: true,
   offlineSupport: true,
-  storagePrefix: "mtc-v2",
-  copyright: "© 2026 國能國際股份有限公司"
+  storagePrefix: "mtc-v2"
 });

@@ -1,0 +1,14 @@
+[data-theme="dark"] {
+  --bg: #10201e;
+  --surface: rgba(25,47,43,.95);
+  --surface-solid: #19302d;
+  --surface-soft: #203b37;
+  --text: #effaf7;
+  --muted: #aac0bb;
+  --line: #2f4b46;
+  --primary: #2dd4bf;
+  --primary-2: #5eead4;
+  --primary-soft: #153f39;
+  --shadow-sm: 0 5px 18px rgba(0,0,0,.18);
+  --shadow: 0 16px 40px rgba(0,0,0,.3);
+}

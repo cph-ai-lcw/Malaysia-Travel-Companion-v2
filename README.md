@@ -2,26 +2,18 @@
 
 2026 國能馬來西亞員工旅遊 PWA 手帳。
 
-## 目前版本
+## Milestone 1 Complete
 
-- Version：2.0.0-alpha.1
-- Milestone：1
-- 狀態：可部署測試
-
-## Milestone 1 功能
-
-- GitHub Pages 相容
-- 單頁式 Hash Router
-- 手機優先響應式介面
 - 首頁 Dashboard
-- 底部導覽
-- 繁體中文／越南文切換
-- 自動／亮色／深色主題
-- LocalStorage 設定保存
-- PWA Manifest
+- SPA Hash Router
+- Bottom Navigation
+- 繁體中文／越南文
+- 自動／亮色／深色模式
+- PWA 安裝
 - Service Worker 離線快取
-- 安裝 App 提示
-- Milestone 2～6 資料檔預留
+- LocalStorage 設定保存
+- GitHub Pages 相對路徑
+- 行程、團員、房間、機位與每日費用資料層預留
 
 ## GitHub Pages
 
@@ -31,6 +23,6 @@ Repository → Settings → Pages：
 - Branch：main
 - Folder：/ (root)
 
-發布網址格式：
+網站網址：
 
 `https://你的帳號.github.io/Malaysia-Travel-Companion-v2/`
