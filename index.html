@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#fffaf3">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>馬來西亞手帳 2026｜Milestone 2-2</title>
+<title>馬來西亞手帳 2026｜Milestone 2-3 Route Fix</title>
 <style>
 :root{--cream:#fffaf3;--paper:#fff;--ink:#283637;--muted:#82908e;--green:#1f8b78;--green2:#dff4eb;--orange:#f39a4a;--yellow:#ffd66b;--blue:#62a9d8;--pink:#ef8fa0;--line:#eee9df;--shadow:0 12px 32px rgba(50,74,68,.10);--r:24px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{margin:0;background:var(--cream);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;padding-bottom:88px}.app{max-width:680px;margin:auto}.top{position:sticky;top:0;z-index:30;height:59px;padding:9px 16px;background:rgba(255,250,243,.92);backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(230,222,210,.75)}.logo{display:flex;align-items:center;gap:9px}.logo-mark{width:38px;height:38px;border-radius:15px;background:linear-gradient(145deg,#ffe48f,#ffb76b);display:grid;place-items:center;font-size:22px;box-shadow:0 7px 15px rgba(235,150,60,.18)}.logo b{font-size:13px;display:block}.logo small{font-size:8px;color:var(--muted);letter-spacing:.1em}.lang{border:0;background:#fff;border-radius:999px;padding:9px 12px;box-shadow:0 5px 15px rgba(60,80,75,.08);color:var(--green);font-weight:900}.page{display:none;padding:14px 14px 25px}.page.active{display:block;animation:show .22s ease}@keyframes show{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
@@ -44,7 +44,7 @@
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="logo"><div class="logo-mark">🌺</div><div><b>馬來西亞手帳</b><small>國能員旅 · TRAVEL DIARY 2026</small></div></div><button id="langBtn" class="lang">VI</button></header>
+<header class="top"><div class="logo"><div class="logo-mark">🌺</div><div><b>馬來西亞手帳</b><small>國能員旅 · MILESTONE 2-3 ROUTE FIX · 2026.07.17</small></div></div><button id="langBtn" class="lang">VI</button></header>
 
 <main id="home" class="page active">
 <section class="hero"><div class="small">MALAYSIA · 5 DAYS</div><h1 data-zh="一起出發，收藏<br>馬來西亞的美好" data-vi="Cùng khởi hành và lưu giữ<br>những kỷ niệm Malaysia">一起出發，收藏<br>馬來西亞的美好</h1><p data-zh="機位、房間與同房團員已依 0717 最終版名單完成整合。" data-vi="Ghế ngồi, phòng và người cùng phòng đã được cập nhật theo danh sách 17/07.">機位、房間與同房團員已依 0717 最終版名單完成整合。</p><div class="date-chip">2026.09.20 SUN — 09.24 THU</div></section>
@@ -97,6 +97,7 @@
 
 <script>
 
+let activeDay=0;
 const itinerary=[
 {
  cls:"",icon:"✈️",day:"DAY 1 · 09/20 SUN",title:"桃園國際機場 → 吉隆坡 → 大紅花渡假村",desc:"搭乘星宇航空抵達吉隆坡，前往波德申入住海上泳池別墅。",
@@ -177,14 +178,34 @@ function renderDay(index){
  const spots=d.spots.map(s=>`<div class="spot"><i>${s[0]}</i><b>${s[1]}</b><span>${s[2]}</span></div>`).join('');
  document.getElementById('dayDetail').innerHTML=`<div class="day-cover ${d.cls}" data-icon="${d.icon}"><div class="day-no">${d.day}</div><h2>${d.title}</h2><p>${d.desc}</p></div>${flight}<div class="schedule">${events}</div><div class="meal-card">${meals}</div><div class="hotel-card"><b>🏨 今日住宿</b><span>${d.hotel}</span></div><div class="spot-grid">${spots}</div>`;
 }
-document.querySelectorAll('.day-tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.day-tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderDay(Number(b.dataset.day))});
+document.querySelectorAll('.day-tab').forEach(b=>b.onclick=()=>{activeDay=Number(b.dataset.day);document.querySelectorAll('.day-tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderDay(activeDay)});
 
 const people=[{"id": 1, "name": "沈時儀", "en": "SHEN, SHIH-YI", "out": "22J", "back": "22J", "note": "自行前往機場", "lexis": "大紅花房 01", "lexisType": "雙人房", "sunway": "雙威房 01", "sunwayType": "雙人房"}, {"id": 2, "name": "徐采均", "en": "HSU, TSAI-CHUN", "out": "22K", "back": "22K", "note": "自行前往機場", "lexis": "大紅花房 01", "lexisType": "雙人房", "sunway": "雙威房 01", "sunwayType": "雙人房"}, {"id": 3, "name": "陳沛嫻", "en": "CHEN, PEI-HSIEN", "out": "33C", "back": "33C", "note": "自行前往機場", "lexis": "大紅花房 02", "lexisType": "雙人房", "sunway": "雙威房 02", "sunwayType": "雙人房"}, {"id": 4, "name": "連家緯", "en": "LIEN, CHIA-WEI", "out": "33B", "back": "33B", "note": "自行前往機場", "lexis": "大紅花房 02", "lexisType": "雙人房", "sunway": "雙威房 02", "sunwayType": "雙人房"}, {"id": 5, "name": "洪圻涵", "en": "HUNG, CHI-HAN", "out": "22A", "back": "22A", "note": "自行前往機場", "lexis": "大紅花房 03", "lexisType": "雙人房", "sunway": "雙威房 03", "sunwayType": "雙人房"}, {"id": 6, "name": "蔡順傑", "en": "TSAI, SHUN-CHIEH", "out": "22B", "back": "22B", "note": "自行前往機場", "lexis": "大紅花房 03", "lexisType": "雙人房", "sunway": "雙威房 03", "sunwayType": "雙人房"}, {"id": 7, "name": "周明慧", "en": "CHOU, MING-HUI", "out": "32A", "back": "32A", "note": "自行前往機場", "lexis": "大紅花房 04", "lexisType": "雙人房", "sunway": "雙威房 04", "sunwayType": "雙人房"}, {"id": 8, "name": "黃國華", "en": "HUANG, KUO-HUA", "out": "32B", "back": "32B", "note": "自行前往機場", "lexis": "大紅花房 04", "lexisType": "雙人房", "sunway": "雙威房 04", "sunwayType": "雙人房"}, {"id": 9, "name": "詹宏仁", "en": "CHAN, HUNG-JEN", "out": "26B", "back": "26B", "note": "公司搭車前往機場", "lexis": "大紅花房 05", "lexisType": "雙人房", "sunway": "雙威房 05", "sunwayType": "雙人房"}, {"id": 10, "name": "張婕妤", "en": "ZHANG, JIE-YU", "out": "26A", "back": "26A", "note": "公司搭車前往機場", "lexis": "大紅花房 05", "lexisType": "雙人房", "sunway": "雙威房 05", "sunwayType": "雙人房"}, {"id": 11, "name": "莊迦燕", "en": "CHUANG, CHIA-YEN", "out": "32K", "back": "32K", "note": "自行前往機場", "lexis": "大紅花房 06", "lexisType": "雙人房", "sunway": "雙威房 06", "sunwayType": "雙人房"}, {"id": 12, "name": "林永杰", "en": "LIN, YUNG-CHIEH", "out": "32H", "back": "32H", "note": "自行前往機場", "lexis": "大紅花房 06", "lexisType": "雙人房", "sunway": "雙威房 06", "sunwayType": "雙人房"}, {"id": 13, "name": "譚明德", "en": "TAN, MING-TE", "out": "31J", "back": "31J", "note": "自行前往機場", "lexis": "大紅花房 07", "lexisType": "雙人房", "sunway": "雙威房 07", "sunwayType": "雙人房"}, {"id": 14, "name": "譚若妘", "en": "TAN, RUO-YUN", "out": "31K", "back": "31K", "note": "自行前往機場", "lexis": "大紅花房 07", "lexisType": "雙人房", "sunway": "雙威房 07", "sunwayType": "雙人房"}, {"id": 15, "name": "胡中文", "en": "HU, CHUNG-WEN", "out": "30J", "back": "30J", "note": "公司搭車前往機場", "lexis": "大紅花房 08", "lexisType": "雙人房", "sunway": "雙威房 08", "sunwayType": "雙人房"}, {"id": 16, "name": "胡淑貞", "en": "HU, SHU-CHEN", "out": "30K", "back": "30K", "note": "公司搭車前往機場", "lexis": "大紅花房 08", "lexisType": "雙人房", "sunway": "雙威房 08", "sunwayType": "雙人房"}, {"id": 17, "name": "張慧君", "en": "JHANG, HUEI-JUN", "out": "27K", "back": "27K", "note": "公司搭車前往機場", "lexis": "大紅花房 09", "lexisType": "三人房", "sunway": "雙威房 09", "sunwayType": "雙人房"}, {"id": 18, "name": "曾婉鈞", "en": "TSENG, WAN-CHUN", "out": "27H", "back": "27H", "note": "公司搭車前往機場", "lexis": "大紅花房 09", "lexisType": "三人房", "sunway": "雙威房 09", "sunwayType": "雙人房"}, {"id": 19, "name": "宋煥煥", "en": "SONG, HUAN-HUAN", "out": "27J", "back": "27J", "note": "公司搭車前往機場", "lexis": "大紅花房 09", "lexisType": "三人房", "sunway": "雙威房 10", "sunwayType": "雙人房"}, {"id": 20, "name": "黃美桃", "en": "HUYNH MY DAO", "out": "23K", "back": "23K", "note": "公司搭車前往機場", "lexis": "大紅花房 10", "lexisType": "三人房", "sunway": "雙威房 10", "sunwayType": "雙人房"}, {"id": 21, "name": "阮氏玉小", "en": "NGUYEN THI NGOC BE", "out": "23H", "back": "23H", "note": "公司搭車前往機場", "lexis": "大紅花房 10", "lexisType": "三人房", "sunway": "雙威房 11", "sunwayType": "雙人房"}, {"id": 22, "name": "武氏七", "en": "VU THI BAY", "out": "23J", "back": "23J", "note": "公司搭車前往機場", "lexis": "大紅花房 10", "lexisType": "三人房", "sunway": "雙威房 11", "sunwayType": "雙人房"}, {"id": 23, "name": "鐘河坤", "en": "CHUNG, HO-KUN", "out": "27A", "back": "27A", "note": "公司搭車前往機場", "lexis": "大紅花房 11", "lexisType": "三人房", "sunway": "雙威房 12", "sunwayType": "雙人房"}, {"id": 24, "name": "張昌維", "en": "CHANG, CHANG-WEI", "out": "27B", "back": "27B", "note": "公司搭車前往機場", "lexis": "大紅花房 11", "lexisType": "三人房", "sunway": "雙威房 12", "sunwayType": "雙人房"}, {"id": 25, "name": "林柏伸", "en": "LIN, BO-SHEN", "out": "27C", "back": "27C", "note": "公司搭車前往機場", "lexis": "大紅花房 11", "lexisType": "三人房", "sunway": "團員單人房", "sunwayType": "單人房"}, {"id": 26, "name": "斐玲芝", "en": "BUI LINH CHI", "out": "20B", "back": "20B", "note": "公司搭車前往機場", "lexis": "大紅花房 12", "lexisType": "雙人房", "sunway": "雙威房 13", "sunwayType": "雙人房"}, {"id": 27, "name": "阮氏茸", "en": "NGUYEN THI NHUNG", "out": "20C", "back": "20C", "note": "公司搭車前往機場", "lexis": "大紅花房 12", "lexisType": "雙人房", "sunway": "雙威房 13", "sunwayType": "雙人房"}, {"id": 28, "name": "阮氏青賢", "en": "NGUYEN THI THANH HIEN", "out": "21A", "back": "21A", "note": "公司搭車前往機場", "lexis": "大紅花房 13", "lexisType": "雙人房", "sunway": "雙威房 14", "sunwayType": "雙人房"}, {"id": 29, "name": "陳氏貞", "en": "TRAN THI TRINH", "out": "21B", "back": "21B", "note": "公司搭車前往機場", "lexis": "大紅花房 13", "lexisType": "雙人房", "sunway": "雙威房 14", "sunwayType": "雙人房"}, {"id": 30, "name": "丁氏翠銀", "en": "DINH THI THUY NGAN", "out": "20A", "back": "20A", "note": "公司搭車前往機場", "lexis": "大紅花房 14", "lexisType": "雙人房", "sunway": "雙威房 15", "sunwayType": "雙人房"}, {"id": 31, "name": "陳氏玲", "en": "TRAN THI LINH", "out": "21C", "back": "21C", "note": "公司搭車前往機場", "lexis": "大紅花房 14", "lexisType": "雙人房", "sunway": "雙威房 15", "sunwayType": "雙人房"}, {"id": 32, "name": "簡政義", "en": "JIAN ZHENG YI", "out": "12C", "back": "12C", "note": "自行前往機場", "role": "領隊", "lexis": "領隊單人房", "lexisType": "單人房", "sunway": "領隊單人房", "sunwayType": "單人房"}];
 let hotel='lexis',lang='zh';
 const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);
 function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function mates(p,field){return people.filter(x=>x[field]===p[field]).map(x=>x.name)}
-function go(id){$$('.page').forEach(x=>x.classList.remove('active'));$('#'+id).classList.add('active');$$('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===id));window.scrollTo({top:0,behavior:'smooth'});if(id==='rooms')renderRooms()}
+const validPages=['home','itinerary','traveler','rooms'];
+function showPage(id,scroll=true){
+ if(!validPages.includes(id)) id='home';
+ $$('.page').forEach(x=>x.classList.remove('active'));
+ const target=$('#'+id);
+ if(target) target.classList.add('active');
+ $$('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===id));
+ if(id==='rooms') renderRooms();
+ if(id==='itinerary') renderDay(activeDay);
+ if(scroll) window.scrollTo({top:0,behavior:'smooth'});
+}
+function go(id){
+ const hash='#/'+id;
+ if(location.hash===hash) showPage(id);
+ else location.hash=hash;
+}
+function route(){
+ const id=(location.hash.replace(/^#\/?/,'').split('/')[0]||'home').toLowerCase();
+ showPage(id,false);
+}
+window.addEventListener('hashchange',route);
 $$('.nav button').forEach(b=>b.onclick=()=>go(b.dataset.page));
 function card(p){let lm=mates(p,'lexis'),sm=mates(p,'sunway');return `<article class="card person"><div class="person-top"><div class="avatar">${p.role?'⭐':'👤'}</div><div class="person-name"><h3>${esc(p.name)}</h3><div class="en">${esc(p.en)}</div></div><span class="badge ${p.role?'leader':''}">${p.role?'領隊':'團員'}</span></div><div class="seat-row"><div class="seat"><span>去程 JX725</span><b>${esc(p.out)}</b></div><div class="seat"><span>回程 JX726</span><b>${esc(p.back)}</b></div></div><div class="hotel-block"><div class="hotel-line"><strong>🌺 ${esc(p.lexis)}｜${esc(p.lexisType)}</strong><p>同房：${lm.map(esc).join('、')}</p></div><div class="hotel-line"><strong>🏙️ ${esc(p.sunway)}｜${esc(p.sunwayType)}</strong><p>同房：${sm.map(esc).join('、')}</p></div></div><div class="note">🚐 ${esc(p.note)}</div></article>`}
 function renderPeople(){let q=$('#search').value.trim().toLowerCase();let list=people.filter(p=>[p.name,p.en,p.out,p.back,p.note,p.role,p.lexis,p.sunway].join(' ').toLowerCase().includes(q));$('#results').innerHTML=list.length?list.map(card).join(''):`<div class="card empty">找不到符合的團員資料。</div>`}
@@ -193,6 +214,6 @@ function groupRooms(field){let map={};people.forEach(p=>(map[p[field]]??=[]).pus
 function renderRooms(){let arr=groupRooms(hotel);$('#roomList').innerHTML=arr.map(([room,ps])=>`<article class="card room-card"><div class="room-head"><div><h3>${hotel==='lexis'?'🌺':'🏙️'} ${esc(room)}</h3><div class="en">${esc(ps[0][hotel+'Type'])} · ${ps.length} 人</div></div>${ps.some(x=>x.role)?'<span class="badge leader">領隊</span>':''}</div><ul>${ps.map(p=>`<li><span>${esc(p.name)}${p.role?' ⭐':''}</span><span>JX725 ${esc(p.out)}／JX726 ${esc(p.back)}</span></li>`).join('')}</ul></article>`).join('')}
 $$('.room-tab').forEach(b=>b.onclick=()=>{$$('.room-tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');hotel=b.dataset.hotel;renderRooms()});
 $('#langBtn').onclick=()=>{lang=lang==='zh'?'vi':'zh';$('#langBtn').textContent=lang==='zh'?'VI':'中';$$('[data-zh]').forEach(el=>el.innerHTML=el.dataset[lang])};
-renderPeople();renderRooms();renderDay(0);
+renderPeople();renderRooms();renderDay(0);route();
 </script>
 </body></html>
