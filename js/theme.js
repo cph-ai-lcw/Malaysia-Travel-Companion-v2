@@ -5,13 +5,18 @@ const media = window.matchMedia("(prefers-color-scheme: dark)");
 let selectedTheme = storage.get("theme", APP_CONFIG.defaultTheme);
 
 function resolvedTheme() {
-  return selectedTheme === "auto" ? (media.matches ? "dark" : "light") : selectedTheme;
+  if (selectedTheme === "auto") {
+    return media.matches ? "dark" : "light";
+  }
+  return selectedTheme;
 }
 
 export function applyTheme() {
-  document.documentElement.dataset.theme = resolvedTheme();
+  const theme = resolvedTheme();
+  document.documentElement.dataset.theme = theme;
+
   document.querySelector('meta[name="theme-color"]')
-    ?.setAttribute("content", resolvedTheme() === "dark" ? "#10201e" : "#0f766e");
+    ?.setAttribute("content", theme === "dark" ? "#10201e" : "#0f766e");
 }
 
 export function getTheme() {
@@ -19,16 +24,21 @@ export function getTheme() {
 }
 
 export function setTheme(theme) {
-  if (!["light", "dark", "auto"].includes(theme)) return;
+  if (!["auto", "light", "dark"].includes(theme)) return;
+
   selectedTheme = theme;
   storage.set("theme", theme);
   applyTheme();
-  window.dispatchEvent(new CustomEvent("app:themechange", { detail: theme }));
+
+  window.dispatchEvent(
+    new CustomEvent("app:themechange", { detail: theme })
+  );
 }
 
 export function cycleTheme() {
   const order = ["auto", "light", "dark"];
-  setTheme(order[(order.indexOf(selectedTheme) + 1) % order.length]);
+  const index = order.indexOf(selectedTheme);
+  setTheme(order[(index + 1) % order.length]);
 }
 
 media.addEventListener?.("change", () => {

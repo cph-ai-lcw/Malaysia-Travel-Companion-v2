@@ -1,6 +1,7 @@
-import { APP_CONFIG, CONSTANTS } from "../data/system/index.js";
+import { APP_CONFIG } from "../data/system/index.js";
 
-const key = (name) => `${APP_CONFIG.storagePrefix}:${name}`;
+const prefix = APP_CONFIG.storagePrefix || "mtc-v2";
+const key = (name) => `${prefix}:${name}`;
 
 export const storage = {
   get(name, fallback = null) {
@@ -11,13 +12,12 @@ export const storage = {
       return fallback;
     }
   },
+
   set(name, value) {
     localStorage.setItem(key(name), JSON.stringify(value));
   },
+
   remove(name) {
     localStorage.removeItem(key(name));
-  },
-  clearAppData() {
-    Object.values(CONSTANTS.STORAGE_KEYS).forEach((name) => this.remove(name));
   }
 };

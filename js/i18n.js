@@ -9,11 +9,15 @@ export function getLanguage() {
 
 export function setLanguage(code) {
   if (!LANGUAGES[code]) return;
+
   currentLanguage = code;
   storage.set("language", code);
   document.documentElement.lang = LANGUAGES[code].htmlLang;
   translateStaticText();
-  window.dispatchEvent(new CustomEvent("app:languagechange", { detail: code }));
+
+  window.dispatchEvent(
+    new CustomEvent("app:languagechange", { detail: code })
+  );
 }
 
 export function toggleLanguage() {
@@ -21,7 +25,9 @@ export function toggleLanguage() {
 }
 
 export function t(key) {
-  return TEXT[currentLanguage]?.[key] ?? TEXT["zh-TW"]?.[key] ?? key;
+  return TEXT[currentLanguage]?.[key]
+    ?? TEXT["zh-TW"]?.[key]
+    ?? key;
 }
 
 export function translateStaticText() {

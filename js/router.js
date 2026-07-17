@@ -19,7 +19,8 @@ export function navigate(name) {
 }
 
 export function renderRoute() {
-  const name = routes.has(currentRoute()) ? currentRoute() : fallbackRoute;
+  const requested = currentRoute();
+  const name = routes.has(requested) ? requested : fallbackRoute;
   const app = document.getElementById("app");
   const renderer = routes.get(name);
 
@@ -33,11 +34,18 @@ export function renderRoute() {
   });
 
   window.scrollTo({ top: 0, behavior: "instant" });
-  window.dispatchEvent(new CustomEvent("app:routechange", { detail: name }));
+
+  window.dispatchEvent(
+    new CustomEvent("app:routechange", { detail: name })
+  );
 }
 
 export function startRouter() {
   window.addEventListener("hashchange", renderRoute);
-  if (!location.hash) location.replace("#/home");
+
+  if (!location.hash) {
+    location.replace("#/home");
+  }
+
   renderRoute();
 }
