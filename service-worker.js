@@ -1,4 +1,4 @@
-const CACHE_NAME = "mtc-v2-m2-1-0717";
+const CACHE_NAME = "mtc-v2-m2-redesign";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -12,6 +12,7 @@ const APP_SHELL = [
   "./css/theme.css",
   "./css/animation.css",
   "./css/responsive.css",
+  "./css/milestone2.css",
   "./js/app.js",
   "./js/core/storage.js",
   "./js/core/i18n.js",

@@ -153,5 +153,10 @@ export const SEATS = Object.freeze([
     "memberId": "M031",
     "outbound": "21C",
     "return": "21C"
+  },
+  {
+    "memberId": "M032",
+    "outbound": "12C",
+    "return": "12C"
   }
 ]);

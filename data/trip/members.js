@@ -4,9 +4,9 @@ export const MEMBERS = Object.freeze([
     "number": 1,
     "nameZh": "沈時儀",
     "nameEn": "SHEN, SHIH-YI",
-    "bookingCode": "FNBINS",
     "seatOutbound": "22J",
     "seatReturn": "22J",
+    "airportTransport": "自行前往機場",
     "mealAllowances": [
       {
         "date": "2026-09-21",
@@ -31,9 +31,9 @@ export const MEMBERS = Object.freeze([
     "number": 2,
     "nameZh": "徐采均",
     "nameEn": "HSU, TSAI-CHUN",
-    "bookingCode": "FNBINS",
     "seatOutbound": "22K",
     "seatReturn": "22K",
+    "airportTransport": "自行前往機場",
     "mealAllowances": [
       {
         "date": "2026-09-21",
@@ -58,9 +58,9 @@ export const MEMBERS = Object.freeze([
     "number": 3,
     "nameZh": "陳沛嫻",
     "nameEn": "CHEN, PEI-HSIEN",
-    "bookingCode": "FNBINS",
     "seatOutbound": "33C",
     "seatReturn": "33C",
+    "airportTransport": "自行前往機場",
     "mealAllowances": [
       {
         "date": "2026-09-21",
@@ -85,9 +85,9 @@ export const MEMBERS = Object.freeze([
     "number": 4,
     "nameZh": "連家緯",
     "nameEn": "LIEN, CHIA-WEI",
-    "bookingCode": "FNBINS",
     "seatOutbound": "33B",
     "seatReturn": "33B",
+    "airportTransport": "自行前往機場",
     "mealAllowances": [
       {
         "date": "2026-09-21",
@@ -112,9 +112,9 @@ export const MEMBERS = Object.freeze([
     "number": 5,
     "nameZh": "洪圻涵",
     "nameEn": "HUNG, CHI-HAN",
-    "bookingCode": "FNBINS",
     "seatOutbound": "22A",
     "seatReturn": "22A",
+    "airportTransport": "自行前往機場",
     "mealAllowances": [
       {
         "date": "2026-09-21",
@@ -139,9 +139,9 @@ export const MEMBERS = Object.freeze([
     "number": 6,
     "nameZh": "蔡順傑",
     "nameEn": "TSAI, SHUN-CHIEH",
-    "bookingCode": "FNBINS",
     "seatOutbound": "22B",
     "seatReturn": "22B",
+    "airportTransport": "自行前往機場",
     "mealAllowances": [
       {
         "date": "2026-09-21",
@@ -166,9 +166,9 @@ export const MEMBERS = Object.freeze([
     "number": 7,
     "nameZh": "周明慧",
     "nameEn": "CHOU, MING-HUI",
-    "bookingCode": "FNBINS",
     "seatOutbound": "32A",
     "seatReturn": "32A",
+    "airportTransport": "自行前往機場",
     "mealAllowances": [
       {
         "date": "2026-09-21",
@@ -193,9 +193,9 @@ export const MEMBERS = Object.freeze([
     "number": 8,
     "nameZh": "黃國華",
     "nameEn": "HUANG, KUO-HUA",
-    "bookingCode": "FNBINS",
     "seatOutbound": "32B",
     "seatReturn": "32B",
+    "airportTransport": "自行前往機場",
     "mealAllowances": [
       {
         "date": "2026-09-21",
@@ -220,9 +220,9 @@ export const MEMBERS = Object.freeze([
     "number": 9,
     "nameZh": "詹宏仁",
     "nameEn": "CHAN, HUNG-JEN",
-    "bookingCode": "FNBINS",
     "seatOutbound": "26B",
     "seatReturn": "26B",
+    "airportTransport": "公司搭車前往機場",
     "mealAllowances": [
       {
         "date": "2026-09-21",
@@ -247,9 +247,9 @@ export const MEMBERS = Object.freeze([
     "number": 10,
     "nameZh": "張婕妤",
     "nameEn": "ZHANG, JIE-YU",
-    "bookingCode": "FNBINS",
     "seatOutbound": "26A",
     "seatReturn": "26A",
+    "airportTransport": "公司搭車前往機場",
     "mealAllowances": [
       {
         "date": "2026-09-21",
@@ -274,9 +274,9 @@ export const MEMBERS = Object.freeze([
     "number": 11,
     "nameZh": "莊迦燕",
     "nameEn": "CHUANG, CHIA-YEN",
-    "bookingCode": "FNBINS",
     "seatOutbound": "32K",
     "seatReturn": "32K",
+    "airportTransport": "自行前往機場",
     "mealAllowances": [
       {
         "date": "2026-09-21",
@@ -301,9 +301,9 @@ export const MEMBERS = Object.freeze([
     "number": 12,
     "nameZh": "林永杰",
     "nameEn": "LIN, YUNG-CHIEH",
-    "bookingCode": "FNBINS",
     "seatOutbound": "32H",
     "seatReturn": "32H",
+    "airportTransport": "自行前往機場",
     "mealAllowances": [
       {
         "date": "2026-09-21",
@@ -328,9 +328,9 @@ export const MEMBERS = Object.freeze([
     "number": 13,
     "nameZh": "譚明德",
     "nameEn": "TAN, MING-TE",
-    "bookingCode": "FNBINS",
     "seatOutbound": "31J",
     "seatReturn": "31J",
+    "airportTransport": "自行前往機場",
     "mealAllowances": [
       {
         "date": "2026-09-21",
@@ -355,9 +355,9 @@ export const MEMBERS = Object.freeze([
     "number": 14,
     "nameZh": "譚若妘",
     "nameEn": "TAN, RUO-YUN",
-    "bookingCode": "FNBINS",
     "seatOutbound": "31K",
     "seatReturn": "31K",
+    "airportTransport": "自行前往機場",
     "mealAllowances": [
       {
         "date": "2026-09-21",
@@ -382,9 +382,9 @@ export const MEMBERS = Object.freeze([
     "number": 15,
     "nameZh": "胡中文",
     "nameEn": "HU, CHUNG-WEN",
-    "bookingCode": "FNBINS",
     "seatOutbound": "30J",
     "seatReturn": "30J",
+    "airportTransport": "公司搭車前往機場",
     "mealAllowances": [
       {
         "date": "2026-09-21",
@@ -409,9 +409,9 @@ export const MEMBERS = Object.freeze([
     "number": 16,
     "nameZh": "胡淑貞",
     "nameEn": "HU, SHU-CHEN",
-    "bookingCode": "FNBINS",
     "seatOutbound": "30K",
     "seatReturn": "30K",
+    "airportTransport": "公司搭車前往機場",
     "mealAllowances": [
       {
         "date": "2026-09-21",
@@ -436,9 +436,9 @@ export const MEMBERS = Object.freeze([
     "number": 17,
     "nameZh": "張慧君",
     "nameEn": "JHANG, HUEI-JUN",
-    "bookingCode": "FNBINS",
     "seatOutbound": "27K",
     "seatReturn": "27K",
+    "airportTransport": "公司搭車前往機場",
     "mealAllowances": [
       {
         "date": "2026-09-21",
@@ -463,9 +463,9 @@ export const MEMBERS = Object.freeze([
     "number": 18,
     "nameZh": "曾婉鈞",
     "nameEn": "TSENG, WAN-CHUN",
-    "bookingCode": "FNBINS",
     "seatOutbound": "27H",
     "seatReturn": "27H",
+    "airportTransport": "公司搭車前往機場",
     "mealAllowances": [
       {
         "date": "2026-09-21",
@@ -490,9 +490,9 @@ export const MEMBERS = Object.freeze([
     "number": 19,
     "nameZh": "宋煥煥",
     "nameEn": "SONG, HUAN-HUAN",
-    "bookingCode": "FNBINS",
     "seatOutbound": "27J",
     "seatReturn": "27J",
+    "airportTransport": "公司搭車前往機場",
     "mealAllowances": [
       {
         "date": "2026-09-21",
@@ -517,9 +517,9 @@ export const MEMBERS = Object.freeze([
     "number": 20,
     "nameZh": "黃美桃",
     "nameEn": "HUYNH MY DAO",
-    "bookingCode": "FNB2NQ",
     "seatOutbound": "23K",
     "seatReturn": "23K",
+    "airportTransport": "公司搭車前往機場",
     "mealAllowances": [
       {
         "date": "2026-09-21",
@@ -544,9 +544,9 @@ export const MEMBERS = Object.freeze([
     "number": 21,
     "nameZh": "阮氏玉小",
     "nameEn": "NGUYEN THI NGOC BE",
-    "bookingCode": "FNB2NQ",
     "seatOutbound": "23H",
     "seatReturn": "23H",
+    "airportTransport": "公司搭車前往機場",
     "mealAllowances": [
       {
         "date": "2026-09-21",
@@ -571,9 +571,9 @@ export const MEMBERS = Object.freeze([
     "number": 22,
     "nameZh": "武氏七",
     "nameEn": "VU THI BAY",
-    "bookingCode": "FNB2NQ",
     "seatOutbound": "23J",
     "seatReturn": "23J",
+    "airportTransport": "公司搭車前往機場",
     "mealAllowances": [
       {
         "date": "2026-09-21",
@@ -598,9 +598,9 @@ export const MEMBERS = Object.freeze([
     "number": 23,
     "nameZh": "鐘河坤",
     "nameEn": "CHUNG, HO-KUN",
-    "bookingCode": "FNB2NQ",
     "seatOutbound": "27A",
     "seatReturn": "27A",
+    "airportTransport": "公司搭車前往機場",
     "mealAllowances": [
       {
         "date": "2026-09-21",
@@ -625,9 +625,9 @@ export const MEMBERS = Object.freeze([
     "number": 24,
     "nameZh": "張昌維",
     "nameEn": "CHANG, CHANG-WEI",
-    "bookingCode": "FNB2NQ",
     "seatOutbound": "27B",
     "seatReturn": "27B",
+    "airportTransport": "公司搭車前往機場",
     "mealAllowances": [
       {
         "date": "2026-09-21",
@@ -652,9 +652,9 @@ export const MEMBERS = Object.freeze([
     "number": 25,
     "nameZh": "林柏伸",
     "nameEn": "LIN, BO-SHEN",
-    "bookingCode": "FNB2NQ",
     "seatOutbound": "27C",
     "seatReturn": "27C",
+    "airportTransport": "公司搭車前往機場",
     "mealAllowances": [
       {
         "date": "2026-09-21",
@@ -679,9 +679,9 @@ export const MEMBERS = Object.freeze([
     "number": 26,
     "nameZh": "斐玲芝",
     "nameEn": "BUI LINH CHI",
-    "bookingCode": "FNB2NQ",
     "seatOutbound": "20B",
     "seatReturn": "20B",
+    "airportTransport": "公司搭車前往機場",
     "mealAllowances": [
       {
         "date": "2026-09-21",
@@ -706,9 +706,9 @@ export const MEMBERS = Object.freeze([
     "number": 27,
     "nameZh": "阮氏茸",
     "nameEn": "NGUYEN THI NHUNG",
-    "bookingCode": "FNB2NQ",
     "seatOutbound": "20C",
     "seatReturn": "20C",
+    "airportTransport": "公司搭車前往機場",
     "mealAllowances": [
       {
         "date": "2026-09-21",
@@ -733,9 +733,9 @@ export const MEMBERS = Object.freeze([
     "number": 28,
     "nameZh": "阮氏青賢",
     "nameEn": "NGUYEN THI THANH HIEN",
-    "bookingCode": "FNB2NQ",
     "seatOutbound": "21A",
     "seatReturn": "21A",
+    "airportTransport": "公司搭車前往機場",
     "mealAllowances": [
       {
         "date": "2026-09-21",
@@ -760,9 +760,9 @@ export const MEMBERS = Object.freeze([
     "number": 29,
     "nameZh": "陳氏貞",
     "nameEn": "TRAN THI TRINH",
-    "bookingCode": "FNB2NQ",
     "seatOutbound": "21B",
     "seatReturn": "21B",
+    "airportTransport": "公司搭車前往機場",
     "mealAllowances": [
       {
         "date": "2026-09-21",
@@ -787,9 +787,9 @@ export const MEMBERS = Object.freeze([
     "number": 30,
     "nameZh": "丁氏翠銀",
     "nameEn": "DINH THI THUY NGAN",
-    "bookingCode": "FNB2NQ",
     "seatOutbound": "20A",
     "seatReturn": "20A",
+    "airportTransport": "公司搭車前往機場",
     "mealAllowances": [
       {
         "date": "2026-09-21",
@@ -814,9 +814,9 @@ export const MEMBERS = Object.freeze([
     "number": 31,
     "nameZh": "陳氏玲",
     "nameEn": "TRAN THI LINH",
-    "bookingCode": "FNB2NQ",
     "seatOutbound": "21C",
     "seatReturn": "21C",
+    "airportTransport": "公司搭車前往機場",
     "mealAllowances": [
       {
         "date": "2026-09-21",
@@ -834,6 +834,20 @@ export const MEMBERS = Object.freeze([
     "roomAssignments": {
       "lexis": "lexis-14",
       "sunway": "sunway-16"
+    }
+  },
+  {
+    "id": "M032",
+    "number": 32,
+    "nameZh": "簡政義",
+    "nameEn": "JIAN ZHENG YI",
+    "seatOutbound": "12C",
+    "seatReturn": "12C",
+    "airportTransport": "自行前往機場",
+    "mealAllowances": [],
+    "roomAssignments": {
+      "lexis": "lexis-15",
+      "sunway": "sunway-17"
     }
   }
 ]);

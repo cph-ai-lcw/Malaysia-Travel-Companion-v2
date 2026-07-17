@@ -64,6 +64,23 @@ function bindEvents() {
       return;
     }
 
+    const roomTab = event.target.closest("[data-room-tab]");
+    if (roomTab) {
+      document.querySelectorAll("[data-room-tab]").forEach((b) => b.classList.toggle("active", b === roomTab));
+      const l = document.getElementById("roomListLexis"), s = document.getElementById("roomListSunway");
+      const mode = roomTab.dataset.roomTab;
+      if (l) l.hidden = mode === "sunway";
+      if (s) s.hidden = mode === "lexis";
+      return;
+    }
+    const seatTab = event.target.closest("[data-seat-tab]");
+    if (seatTab) {
+      document.querySelectorAll("[data-seat-tab]").forEach((b) => b.classList.toggle("active", b === seatTab));
+      const o = document.getElementById("seatOutboundList"), r = document.getElementById("seatReturnList");
+      if (o) o.hidden = seatTab.dataset.seatTab !== "outbound";
+      if (r) r.hidden = seatTab.dataset.seatTab !== "return";
+      return;
+    }
     const navigateButton = event.target.closest("[data-navigate]");
     if (navigateButton) {
       navigate(navigateButton.dataset.navigate);
@@ -100,9 +117,10 @@ function bindEvents() {
     const countNode = document.getElementById("memberResultCount");
 
     if (resultNode) {
-      resultNode.innerHTML = results
-        .map((member) => memberSummaryCard(member, { selectable: true, compact: true }))
-        .join("");
+      resultNode.innerHTML = results.map((member) => `
+        <article class="m2-member-row"><div class="member-avatar">${member.nameZh.slice(0,1)}</div>
+        <div><strong>${member.nameZh}</strong><small>${member.nameEn}</small></div>
+        <button class="button primary" data-select-member="${member.id}">${getLanguage()==="zh-TW"?"查看":"Xem"}</button></article>`).join("");
     }
 
     if (countNode) {
