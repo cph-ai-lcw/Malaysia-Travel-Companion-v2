@@ -12,3 +12,13 @@
 - 建立安裝 App 流程
 - 建立 GitHub Pages 相對路徑
 - 建立行程與後續功能資料骨架
+
+## 2.3.1 — Milestone 2-3 Final
+- Rebuilt the project root to use the existing modular SPA architecture.
+- Added official Day 1–Day 5 itinerary content.
+- Added bilingual Chinese/Vietnamese itinerary rendering.
+- Added Lexis Hibiscus optional water, land, dining and SPA items with reference prices.
+- Marked Sky Bar mocktail as included in the tour fee.
+- Marked Kafei Dian Hainan tea, kaya toast and soft-boiled egg afternoon tea as included.
+- Added Included / Self-paid / Optional badges.
+- Updated PWA cache version and offline app shell.

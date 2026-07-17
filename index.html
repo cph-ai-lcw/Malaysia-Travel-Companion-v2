@@ -1,247 +1,64 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
-
-<script>
-(function(){
-  const CLEANUP_VERSION = 'm23-20260717-v3';
-  const key = 'amt-pwa-cleanup-version';
-  async function cleanupOldPWA(){
-    if (localStorage.getItem(key) === CLEANUP_VERSION) return;
-    try {
-      if ('serviceWorker' in navigator) {
-        const regs = await navigator.serviceWorker.getRegistrations();
-        await Promise.all(regs.map(reg => reg.unregister()));
-      }
-      if ('caches' in window) {
-        const names = await caches.keys();
-        await Promise.all(names.map(name => caches.delete(name)));
-      }
-      localStorage.setItem(key, CLEANUP_VERSION);
-      const url = new URL(location.href);
-      url.searchParams.set('v', CLEANUP_VERSION);
-      location.replace(url.pathname + url.search + (location.hash || '#/home'));
-    } catch (err) {
-      console.warn('PWA cache cleanup failed:', err);
-    }
-  }
-  window.addEventListener('load', cleanupOldPWA, { once: true });
-})();
-</script>
-
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#fffaf3">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<title>馬來西亞手帳 2026｜Milestone 2-3 Cache Fix V3</title>
-<style>
-:root{--cream:#fffaf3;--paper:#fff;--ink:#283637;--muted:#82908e;--green:#1f8b78;--green2:#dff4eb;--orange:#f39a4a;--yellow:#ffd66b;--blue:#62a9d8;--pink:#ef8fa0;--line:#eee9df;--shadow:0 12px 32px rgba(50,74,68,.10);--r:24px}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{margin:0;background:var(--cream);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;padding-bottom:88px}.app{max-width:680px;margin:auto}.top{position:sticky;top:0;z-index:30;height:59px;padding:9px 16px;background:rgba(255,250,243,.92);backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(230,222,210,.75)}.logo{display:flex;align-items:center;gap:9px}.logo-mark{width:38px;height:38px;border-radius:15px;background:linear-gradient(145deg,#ffe48f,#ffb76b);display:grid;place-items:center;font-size:22px;box-shadow:0 7px 15px rgba(235,150,60,.18)}.logo b{font-size:13px;display:block}.logo small{font-size:8px;color:var(--muted);letter-spacing:.1em}.lang{border:0;background:#fff;border-radius:999px;padding:9px 12px;box-shadow:0 5px 15px rgba(60,80,75,.08);color:var(--green);font-weight:900}.page{display:none;padding:14px 14px 25px}.page.active{display:block;animation:show .22s ease}@keyframes show{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
-.hero{border-radius:29px;padding:21px 19px;color:#fff;background:linear-gradient(135deg,#238c7b,#55b89a);position:relative;overflow:hidden;box-shadow:var(--shadow)}.hero:before{content:"";position:absolute;width:150px;height:150px;border-radius:50%;right:-38px;top:-48px;background:rgba(255,255,255,.14)}.hero:after{content:"🌴";position:absolute;right:16px;bottom:-12px;font-size:74px;opacity:.28}.hero .small{font-size:9px;letter-spacing:.12em;font-weight:850;opacity:.82}.hero h1{font-size:24px;line-height:1.25;margin:7px 0}.hero p{font-size:10px;line-height:1.65;margin:0;max-width:77%;opacity:.88}.date-chip{display:inline-block;margin-top:13px;padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.18);font-size:9px;font-weight:850}
-.section-title{display:flex;align-items:end;justify-content:space-between;margin:23px 2px 10px}.section-title h2{font-size:18px;margin:0}.section-title span{font-size:8px;color:var(--muted)}
-.grid{display:grid;gap:10px}.stats{grid-template-columns:repeat(2,1fr);margin-top:12px}.card{background:var(--paper);border-radius:var(--r);box-shadow:var(--shadow);border:1px solid rgba(236,232,224,.8)}.stat{padding:15px}.stat .icon{font-size:24px}.stat b{font-size:22px;display:block;margin-top:7px}.stat small{font-size:9px;color:var(--muted);line-height:1.5}.stat.green b{color:var(--green)}.stat.orange b{color:var(--orange)}.stat.blue b{color:var(--blue)}.stat.pink b{color:var(--pink)}
-.quick{grid-template-columns:repeat(2,1fr)}.quick button{border:0;text-align:left;padding:15px;background:#fff;border-radius:21px;box-shadow:var(--shadow);color:var(--ink)}.quick i{font-style:normal;font-size:25px;display:block;margin-bottom:8px}.quick b{font-size:12px}.quick small{display:block;color:var(--muted);font-size:8px;margin-top:4px}
-.search-card{padding:14px}.search-wrap{display:flex;gap:8px}.search-wrap input{width:100%;border:1px solid var(--line);background:#fafbf8;border-radius:18px;padding:14px 15px;outline:none;color:var(--ink)}.search-wrap input:focus{border-color:#8bc9ba;box-shadow:0 0 0 3px rgba(31,139,120,.08)}.chips{display:flex;gap:7px;overflow:auto;margin-top:10px}.chip{white-space:nowrap;border:0;border-radius:999px;padding:8px 11px;background:var(--green2);color:var(--green);font-size:9px;font-weight:850}
-.result-list,.room-list{display:grid;gap:10px;margin-top:11px}.person{padding:16px}.person-top{display:flex;justify-content:space-between;gap:10px;align-items:start}.avatar{width:43px;height:43px;border-radius:16px;background:#e8f6f1;display:grid;place-items:center;font-size:19px;flex:0 0 auto}.person-name{flex:1}.person h3{font-size:16px;margin:1px 0 3px}.en{font-size:8px;color:var(--muted)}.badge{font-size:8px;font-weight:900;padding:6px 9px;border-radius:999px;background:#fff1d8;color:#a66a13}.badge.leader{background:#ffe4e7;color:#b14359}.seat-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:13px}.seat{padding:11px 12px;border-radius:17px;background:#f5f8f7}.seat span{display:block;font-size:8px;color:var(--muted)}.seat b{font-size:19px;color:var(--green);display:block;margin-top:3px}.hotel-block{margin-top:9px;border-radius:18px;overflow:hidden;border:1px solid var(--line)}.hotel-line{padding:11px 12px;background:#fff}.hotel-line+ .hotel-line{border-top:1px dashed var(--line)}.hotel-line strong{font-size:10px}.hotel-line p{font-size:9px;color:var(--muted);margin:4px 0 0;line-height:1.55}.note{margin-top:9px;padding:9px 11px;border-radius:14px;background:#fff8e7;color:#89651d;font-size:8px}
-.room-tabs{display:flex;gap:7px;overflow:auto;margin-bottom:10px}.room-tab{border:0;border-radius:999px;padding:9px 12px;background:#fff;color:var(--muted);box-shadow:0 4px 12px rgba(50,74,68,.06);white-space:nowrap;font-size:9px;font-weight:850}.room-tab.active{background:var(--green);color:#fff}.room-card{padding:14px}.room-head{display:flex;justify-content:space-between;align-items:start}.room-card h3{font-size:14px;margin:0 0 3px}.room-card ul{list-style:none;margin:11px 0 0;padding:0}.room-card li{display:flex;justify-content:space-between;gap:8px;padding:9px 0;border-top:1px solid var(--line);font-size:10px}.room-card li span:last-child{font-size:8px;color:var(--muted)}.info{padding:14px;font-size:9px;line-height:1.65;color:#6e766f;background:#fffdf8}.empty{text-align:center;padding:30px 12px;color:var(--muted);font-size:10px;line-height:1.7}
-.timeline{padding:16px}.day{display:flex;gap:12px;padding:11px 0;border-top:1px solid var(--line)}.day:first-child{border-top:0}.day-date{width:45px;height:45px;border-radius:16px;background:#eaf6f2;display:grid;place-items:center;text-align:center;color:var(--green);font-weight:900;font-size:9px;flex:0 0 auto}.day-date b{font-size:15px;display:block}.day h3{font-size:12px;margin:2px 0 4px}.day p{font-size:9px;color:var(--muted);margin:0;line-height:1.55}.bottom{position:fixed;z-index:50;bottom:0;left:0;right:0;background:rgba(255,255,255,.94);backdrop-filter:blur(18px);border-top:1px solid var(--line);padding:7px 7px calc(7px + env(safe-area-inset-bottom))}.nav{max-width:680px;margin:auto;display:grid;grid-template-columns:repeat(4,1fr)}.nav button{border:0;background:transparent;color:#95a19f;padding:3px;font-size:8px;font-weight:850}.nav i{display:block;font-style:normal;font-size:22px;margin-bottom:2px}.nav button.active{color:var(--green)}@media(max-width:380px){.seat-row{grid-template-columns:1fr}.hero h1{font-size:21px}}
-
-.itinerary-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
-.summary-mini{padding:12px;text-align:center}.summary-mini b{display:block;font-size:15px;color:var(--green);margin:4px 0}.summary-mini span{font-size:8px;color:var(--muted)}
-.day-tabs{display:flex;gap:7px;overflow-x:auto;padding:2px 0 11px;scrollbar-width:none}.day-tabs::-webkit-scrollbar{display:none}
-.day-tab{border:0;background:#fff;color:var(--muted);box-shadow:0 5px 14px rgba(50,74,68,.07);border-radius:18px;padding:10px 12px;min-width:70px;text-align:left}
-.day-tab b{display:block;font-size:12px}.day-tab span{font-size:8px}.day-tab.active{background:var(--green);color:#fff}
-.day-detail{overflow:hidden}.day-cover{padding:19px;color:#fff;min-height:155px;position:relative;background:linear-gradient(135deg,#288e7d,#67bda2)}
-.day-cover.orange{background:linear-gradient(135deg,#e9893e,#f7ba67)}.day-cover.blue{background:linear-gradient(135deg,#438ebd,#7abfdf)}
-.day-cover.purple{background:linear-gradient(135deg,#7a69ab,#b38fc5)}.day-cover.pink{background:linear-gradient(135deg,#d96f81,#f1a0a7)}
-.day-cover:after{content:attr(data-icon);position:absolute;right:14px;bottom:-13px;font-size:78px;opacity:.25}
-.day-no{font-size:9px;letter-spacing:.13em;font-weight:900;opacity:.85}.day-cover h2{font-size:20px;margin:7px 0 5px;max-width:80%;line-height:1.3}.day-cover p{font-size:9px;line-height:1.55;margin:0;max-width:78%;opacity:.9}
-.flight-strip{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;padding:13px;background:#f5fbf8;border-bottom:1px solid var(--line)}
-.airport{text-align:center}.airport b{font-size:18px;display:block;color:var(--green)}.airport span{font-size:8px;color:var(--muted)}.plane{text-align:center;font-size:18px}.plane small{display:block;font-size:8px;color:var(--muted)}
-.schedule{padding:5px 15px 14px}.event{display:grid;grid-template-columns:51px 18px 1fr;gap:7px;padding:12px 0;position:relative}
-.event:not(:last-child):after{content:"";position:absolute;left:59px;top:36px;bottom:-6px;border-left:2px dashed #dce9e4}
-.event-time{font-size:9px;font-weight:900;color:var(--green);padding-top:3px}.event-dot{width:14px;height:14px;border-radius:50%;background:var(--yellow);border:3px solid #fff;box-shadow:0 0 0 2px #f2d681;margin-top:1px;z-index:2}
-.event h3{font-size:12px;margin:0 0 4px}.event p{font-size:9px;line-height:1.6;color:var(--muted);margin:0}
-.meal-card{margin:0 14px 12px;padding:13px;background:#fff9e8;border-radius:18px;border:1px solid #f4e4bb}.meal-row{display:flex;gap:9px;padding:6px 0;border-top:1px dashed #ead9aa}.meal-row:first-child{border:0}.meal-row b{width:42px;font-size:9px;color:#9a6d1b}.meal-row span{font-size:9px;line-height:1.5}
-.hotel-card{margin:0 14px 15px;padding:13px;border-radius:18px;background:#eef8f5}.hotel-card b{display:block;font-size:10px;color:var(--green)}.hotel-card span{font-size:9px;color:var(--muted);line-height:1.55}
-.spot-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 14px 15px}.spot{padding:12px;border-radius:18px;background:#fff;border:1px solid var(--line)}.spot i{font-style:normal;font-size:23px}.spot b{display:block;font-size:10px;margin:7px 0 3px}.spot span{font-size:8px;color:var(--muted);line-height:1.45}
-.notice-card{padding:14px;margin-top:12px;background:#fff7e5;border:1px solid #f3dfad;border-radius:20px;font-size:9px;line-height:1.65;color:#795e25}
-@media(max-width:390px){.itinerary-summary{grid-template-columns:1fr 1fr}.spot-grid{grid-template-columns:1fr}}
-
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0f766e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="description" content="2026 國能馬來西亞員工旅遊手帳">
+  <title>馬來西亞旅遊手帳 2026</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/icon-192.png">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <link rel="stylesheet" href="./css/variables.css">
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/layout.css">
+  <link rel="stylesheet" href="./css/components.css">
+  <link rel="stylesheet" href="./css/navigation.css">
+  <link rel="stylesheet" href="./css/dashboard.css">
+  <link rel="stylesheet" href="./css/milestone2.css">
+  <link rel="stylesheet" href="./css/theme.css">
+  <link rel="stylesheet" href="./css/animation.css">
+  <link rel="stylesheet" href="./css/responsive.css">
+  <link rel="stylesheet" href="./css/app.css">
 </head>
 <body>
-<div class="app">
-<header class="top"><div class="logo"><div class="logo-mark">🌺</div><div><b>馬來西亞手帳</b><small>國能員旅 · MILESTONE 2-3 · CACHE FIX V3 · 2026.07.17</small></div></div><button id="langBtn" class="lang">VI</button></header>
+  <div id="appShell">
+    <header class="topbar">
+      <button id="menuButton" class="icon-button" aria-label="Menu">☰</button>
+      <div class="brand"><strong id="brandTitle">馬來西亞旅遊手帳</strong><span id="brandSubtitle">2026 國能馬來西亞員工旅遊</span></div>
+      <div class="topbar-actions">
+        <button id="themeButton" class="icon-button" aria-label="Theme">◐</button>
+        <button id="languageButton" class="pill-button" aria-label="Language">中</button>
+      </div>
+    </header>
 
-<main id="home" class="page active">
-<section class="hero"><div class="small">MALAYSIA · 5 DAYS</div><h1 data-zh="一起出發，收藏<br>馬來西亞的美好" data-vi="Cùng khởi hành và lưu giữ<br>những kỷ niệm Malaysia">一起出發，收藏<br>馬來西亞的美好</h1><p data-zh="機位、房間與同房團員已依 0717 最終版名單完成整合。" data-vi="Ghế ngồi, phòng và người cùng phòng đã được cập nhật theo danh sách 17/07.">機位、房間與同房團員已依 0717 最終版名單完成整合。</p><div class="date-chip">2026.09.20 SUN — 09.24 THU</div></section>
-<div class="grid stats">
-<div class="card stat green"><span class="icon">👥</span><b>32</b><small data-zh="總人數（含領隊）" data-vi="Tổng số người (gồm trưởng đoàn)">總人數（含領隊）</small></div>
-<div class="card stat orange"><span class="icon">🌺</span><b>14 + 1</b><small data-zh="大紅花：14 間團員房＋1 間領隊房" data-vi="Lexis: 14 phòng đoàn + 1 phòng trưởng đoàn">大紅花：14 間團員房＋1 間領隊房</small></div>
-<div class="card stat blue"><span class="icon">🏙️</span><b>15 + 2</b><small data-zh="雙威：15 間雙人房＋2 間單人房" data-vi="Sunway: 15 phòng đôi + 2 phòng đơn">雙威：15 間雙人房＋2 間單人房</small></div>
-<div class="card stat pink"><span class="icon">⭐</span><b>簡政義</b><small data-zh="領隊 · 機位 12C" data-vi="Trưởng đoàn · Ghế 12C">領隊 · 機位 12C</small></div>
-</div>
-<div class="section-title"><h2 data-zh="快速功能" data-vi="Chức năng nhanh">快速功能</h2><span>QUICK ACCESS</span></div>
-<div class="grid quick"><button onclick="go('traveler')"><i>✈️</i><b data-zh="我的機位／房間" data-vi="Ghế / phòng của tôi">我的機位／房間</b><small data-zh="依姓名快速查詢" data-vi="Tra cứu theo tên">依姓名快速查詢</small></button><button onclick="go('rooms')"><i>🛏️</i><b data-zh="完整分房表" data-vi="Danh sách phòng">完整分房表</b><small data-zh="大紅花與雙威" data-vi="Lexis và Sunway">大紅花與雙威</small></button></div>
-<div class="section-title"><h2 data-zh="重要提醒" data-vi="Nhắc nhở quan trọng">重要提醒</h2><span>NOTICE</span></div>
-<div class="card info" data-zh="目前 Excel 尚未提供正式飯店房號，因此本頁以「房間組別」呈現同房安排。實際房號取得後，可直接替換，不會影響團員與同房配對。" data-vi="Excel hiện chưa có số phòng chính thức, vì vậy trang này hiển thị theo nhóm phòng. Có thể thay số phòng sau mà không ảnh hưởng việc ghép phòng.">目前 Excel 尚未提供正式飯店房號，因此本頁以「房間組別」呈現同房安排。實際房號取得後，可直接替換，不會影響團員與同房配對。</div>
-</main>
+    <main id="app" tabindex="-1"></main>
 
+    <nav class="bottom-nav" aria-label="Primary navigation">
+      <a href="#/home" data-route="home"><span class="nav-icon">⌂</span><small data-i18n="home">首頁</small></a>
+      <a href="#/itinerary" data-route="itinerary"><span class="nav-icon">🗓</span><small data-i18n="itinerary">行程</small></a>
+      <a href="#/guide" data-route="guide"><span class="nav-icon">🧭</span><small data-i18n="guide">攻略</small></a>
+      <a href="#/tools" data-route="tools"><span class="nav-icon">✓</span><small data-i18n="tools">工具</small></a>
+      <a href="#/profile" data-route="profile"><span class="nav-icon">👤</span><small data-i18n="profile">我的</small></a>
+      <a href="#/more" data-route="more"><span class="nav-icon">•••</span><small data-i18n="more">更多</small></a>
+    </nav>
 
-<main id="itinerary" class="page">
-<div class="section-title" style="margin-top:8px"><h2 data-zh="五日完整行程" data-vi="Lịch trình đầy đủ 5 ngày">五日完整行程</h2><span>MILESTONE 2-3</span></div>
-<div class="itinerary-summary">
-<div class="card summary-mini"><span data-zh="去程航班" data-vi="Chuyến đi">去程航班</span><b>JX725</b><span>11:15 → 16:10</span></div>
-<div class="card summary-mini"><span data-zh="回程航班" data-vi="Chuyến về">回程航班</span><b>JX726</b><span>17:20 → 22:15</span></div>
-<div class="card summary-mini"><span data-zh="住宿" data-vi="Khách sạn">住宿</span><b>2 + 2</b><span data-zh="大紅花／雙威" data-vi="Lexis / Sunway">大紅花／雙威</span></div>
-</div>
-<div class="day-tabs" id="dayTabs">
-<button class="day-tab active" data-day="0"><b>DAY 1</b><span>09/20 SUN</span></button>
-<button class="day-tab" data-day="1"><b>DAY 2</b><span>09/21 MON</span></button>
-<button class="day-tab" data-day="2"><b>DAY 3</b><span>09/22 TUE</span></button>
-<button class="day-tab" data-day="3"><b>DAY 4</b><span>09/23 WED</span></button>
-<button class="day-tab" data-day="4"><b>DAY 5</b><span>09/24 THU</span></button>
-</div>
-<section id="dayDetail" class="card day-detail"></section>
-<div class="notice-card" data-zh="行程時間為手機手帳閱讀用的建議節點；實際集合與出發時間仍以領隊簡政義當日公告為準。" data-vi="Thời gian trong sổ tay là mốc tham khảo; giờ tập trung thực tế theo thông báo của trưởng đoàn Giản Chính Nghĩa.">行程時間為手機手帳閱讀用的建議節點；實際集合與出發時間仍以領隊簡政義當日公告為準。</div>
-</main>
-
-
-<main id="traveler" class="page">
-<div class="section-title" style="margin-top:8px"><h2 data-zh="團員／機位查詢" data-vi="Tra cứu thành viên / ghế">團員／機位查詢</h2><span>32 PEOPLE</span></div>
-<section class="card search-card"><div class="search-wrap"><input id="search" placeholder="輸入姓名、英文姓名或機位"></div><div class="chips"><button class="chip" data-q="">全部</button><button class="chip" data-q="簡政義">領隊</button><button class="chip" data-q="自行前往">自行前往</button><button class="chip" data-q="公司搭車">公司搭車</button></div></section>
-<div id="results" class="result-list"></div>
-</main>
-
-<main id="rooms" class="page">
-<div class="section-title" style="margin-top:8px"><h2 data-zh="房間分配" data-vi="Phân phòng">房間分配</h2><span>0717 FINAL</span></div>
-<div class="room-tabs"><button class="room-tab active" data-hotel="lexis">🌺 大紅花 14+1</button><button class="room-tab" data-hotel="sunway">🏙️ 雙威 15+2</button></div>
-<div id="roomList" class="room-list"></div>
-</main>
-</div>
-
-<nav class="bottom"><div class="nav"><button class="active" data-page="home"><i>🏠</i><span data-zh="首頁" data-vi="Trang chủ">首頁</span></button><button data-page="itinerary"><i>🗓️</i><span data-zh="行程" data-vi="Lịch trình">行程</span></button><button data-page="traveler"><i>👤</i><span data-zh="團員" data-vi="Thành viên">團員</span></button><button data-page="rooms"><i>🛏️</i><span data-zh="房間" data-vi="Phòng">房間</span></button></div></nav>
-
-<script>
-
-let activeDay=0;
-const itinerary=[
-{
- cls:"",icon:"✈️",day:"DAY 1 · 09/20 SUN",title:"桃園國際機場 → 吉隆坡 → 大紅花渡假村",desc:"搭乘星宇航空抵達吉隆坡，前往波德申入住海上泳池別墅。",
- flight:{from:"TPE",fromName:"桃園 11:15",to:"KUL",toName:"吉隆坡 16:10",no:"JX725"},
- events:[
-  ["集合","桃園國際機場","依公司搭車或自行前往安排集合，完成護照、登機證與行李作業。"],
-  ["11:15","搭乘 JX725","由桃園出發，前往吉隆坡；中餐為機上餐食。"],
-  ["16:10","抵達吉隆坡","完成入境審查、領取行李後，搭乘遊覽車前往波德申。"],
-  ["晚間","奶油螃蟹晚餐","享用奶油螃蟹風味餐後，前往大紅花渡假村辦理入住。"],
-  ["入住","大紅花海上泳池別墅","自由欣賞夕陽與海景，使用房內私人泳池。"]
- ],
- meals:[["早餐","溫暖的家"],["中餐","機上餐食"],["晚餐","奶油螃蟹風味餐 RM40"]],
- hotel:"LEXIS HIBISCUS PORT DICKSON｜大紅花海上泳池別墅渡假村",
- spots:[["🌺","大紅花渡假村","花瓣造型海上 Villa"],["🏊","私人泳池","房內專屬泳池"],["🌅","馬六甲海峽","夕陽與海上景觀"],["🛏️","Premium Pool Villa","兩張 King Size 大床"]]
-},
-{
- cls:"orange",icon:"🏖️",day:"DAY 2 · 09/21 MON",title:"大紅花渡假村全日自由活動",desc:"放慢步調，好好享受飯店泳池、健身房及渡假設施。",
- events:[
-  ["上午","飯店自助早餐","睡到自然醒，在渡假村內享用早餐。"],
-  ["自由","飯店設施自由使用","可使用戶外泳池、健身房，或自行參加飯店提供的活動。"],
-  ["中午","餐費代金 RM30","為方便自由遊玩，中餐改發餐費代金。"],
-  ["下午","渡假村自由活動","拍照、散步、海景休憩或返回 Villa 使用私人泳池。"],
-  ["晚間","渡假村自助晚餐","集合享用渡假村內自助餐。"]
- ],
- meals:[["早餐","飯店內用自助餐"],["中餐","餐費代金 RM30"],["晚餐","渡假村內自助餐 RM100"]],
- hotel:"LEXIS HIBISCUS PORT DICKSON｜大紅花海上泳池別墅渡假村",
- spots:[["🏝️","海上 Villa 漫步","欣賞花瓣造型建築"],["🏊‍♀️","泳池時間","公共泳池或房內泳池"],["🏋️","健身房","飯店休閒設施"],["📷","拍照打卡","夕陽、海景與 Villa"]]
-},
-{
- cls:"blue",icon:"🏙️",day:"DAY 3 · 09/22 TUE",title:"波德申 → 吉隆坡城市探索",desc:"黑風洞、雙子星塔、全冷氣空橋、Pavilion 商圈及莎羅馬天橋夜景。",
- events:[
-  ["早餐後","退房前往吉隆坡","離開大紅花渡假村，前往吉隆坡市區。"],
-  ["上午","黑風洞與彩虹階梯","參觀印度教聖地，視個人體力挑戰 272 級彩虹階梯。"],
-  ["中午","肉骨茶＋麵包雞","享用馬來西亞特色中式料理 RM45。"],
-  ["下午","雙子星塔與全冷氣空橋","拍攝吉隆坡地標，步行前往 Pavilion 商圈。"],
-  ["自由","Pavilion Shopping Mall","自由逛街與購物；晚餐發放 RM30 餐費代金。"],
-  ["夜間","莎羅馬彩色行人天橋","欣賞 LED 夜景後，前往雙威偉樂飯店入住。"]
- ],
- meals:[["早餐","飯店內用自助餐"],["中餐","肉骨茶＋麵包雞 RM45"],["晚餐","餐費代金 RM30"]],
- hotel:"SUNWAY VELOCITY HOTEL KUALA LUMPUR｜吉隆坡雙威偉樂",
- spots:[["🛕","黑風洞","印度教聖地與彩虹階梯"],["🏢","雙子星塔","吉隆坡代表性地標"],["🛍️","Pavilion","市中心購物商圈"],["🌉","Saloma Link","彩色 LED 夜景天橋"]]
-},
-{
- cls:"purple",icon:"🚡",day:"DAY 4 · 09/23 WED",title:"雲頂高原・老城文青・亞羅街夜市",desc:"高空纜車、天際線斜坡滑車、源昌隆咖啡店、特產巡禮與夜市美食。",
- events:[
-  ["上午","雲頂高空纜車 Awana SkyWay","搭乘約 3.8 公里纜車，俯瞰熱帶雨林並前往高原。"],
-  ["體驗","天際線斜坡滑車 1 次","體驗 Skyline Luge 斜坡滑車活動。"],
-  ["中午","虹姊鐵板海鮮風味餐","享用鐵板海鮮午餐 RM40。"],
-  ["下午","源昌隆咖啡店","品嚐海南茶、咖椰吐司與生熟蛋，漫步老城文青區。"],
-  ["購物","巧克力與南洋土產","可選購熱帶水果巧克力、肉骨茶、豆蔻膏等伴手禮。"],
-  ["晚間","亞羅街夜市","於黃亞華小吃店享用晚餐，體驗吉隆坡夜市氣氛。"]
- ],
- meals:[["早餐","飯店內用自助餐"],["中餐","虹姊鐵板海鮮 RM40"],["下午茶","海南茶＋咖椰吐司＋生熟蛋"],["晚餐","黃亞華小吃店 RM45"]],
- hotel:"SUNWAY VELOCITY HOTEL KUALA LUMPUR｜吉隆坡雙威偉樂",
- spots:[["🚡","Awana SkyWay","雲頂高空纜車"],["🛷","Skyline Luge","天際線斜坡滑車"],["☕","源昌隆咖啡店","百年郵局改建老店"],["🍢","亞羅街夜市","燒雞翅與南洋小吃"]]
-},
-{
- cls:"pink",icon:"🕌",day:"DAY 5 · 09/24 THU",title:"布城 → 三井 Outlet → 吉隆坡機場 → 桃園",desc:"參觀粉紅清真寺與布城湖，登機前最後購物後搭機返台。",
- flight:{from:"KUL",fromName:"吉隆坡 17:20",to:"TPE",toName:"桃園 22:15",no:"JX726"},
- events:[
-  ["早餐後","飯店退房","整理行李並確認護照、個人物品及房卡。"],
-  ["上午","布城行政首都","參觀粉紅清真寺、布城湖、首相署及首相府廣場。"],
-  ["中午","隆盛中式合菜","享用中式合菜午餐 RM40。"],
-  ["下午","三井 Outlet","登機前最後購物，Outlet 鄰近吉隆坡國際機場。"],
-  ["機場","辦理登機與行李託運","領隊協助團體辦理 JX726 登機作業。"],
-  ["17:20","搭乘 JX726 返回桃園","晚餐為機上餐食，預計 22:15 抵達桃園。"]
- ],
- meals:[["早餐","飯店內用自助餐"],["中餐","隆盛中式合菜 RM40"],["晚餐","機上餐食"]],
- hotel:"溫暖的家",
- spots:[["🕌","粉紅清真寺","湖畔現代清真寺"],["🌊","布城湖","行政首都人工湖"],["🏛️","首相署廣場","布城政府建築群"],["🛍️","三井 Outlet","登機前最後購物"]]
-}
-];
-function renderDay(index){
- const d=itinerary[index];
- const flight=d.flight?`<div class="flight-strip"><div class="airport"><b>${d.flight.from}</b><span>${d.flight.fromName}</span></div><div class="plane">✈️<small>${d.flight.no}</small></div><div class="airport"><b>${d.flight.to}</b><span>${d.flight.toName}</span></div></div>`:'';
- const events=d.events.map(e=>`<div class="event"><div class="event-time">${e[0]}</div><div class="event-dot"></div><div><h3>${e[1]}</h3><p>${e[2]}</p></div></div>`).join('');
- const meals=d.meals.map(m=>`<div class="meal-row"><b>${m[0]}</b><span>${m[1]}</span></div>`).join('');
- const spots=d.spots.map(s=>`<div class="spot"><i>${s[0]}</i><b>${s[1]}</b><span>${s[2]}</span></div>`).join('');
- document.getElementById('dayDetail').innerHTML=`<div class="day-cover ${d.cls}" data-icon="${d.icon}"><div class="day-no">${d.day}</div><h2>${d.title}</h2><p>${d.desc}</p></div>${flight}<div class="schedule">${events}</div><div class="meal-card">${meals}</div><div class="hotel-card"><b>🏨 今日住宿</b><span>${d.hotel}</span></div><div class="spot-grid">${spots}</div>`;
-}
-document.querySelectorAll('.day-tab').forEach(b=>b.onclick=()=>{activeDay=Number(b.dataset.day);document.querySelectorAll('.day-tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderDay(activeDay)});
-
-const people=[{"id": 1, "name": "沈時儀", "en": "SHEN, SHIH-YI", "out": "22J", "back": "22J", "note": "自行前往機場", "lexis": "大紅花房 01", "lexisType": "雙人房", "sunway": "雙威房 01", "sunwayType": "雙人房"}, {"id": 2, "name": "徐采均", "en": "HSU, TSAI-CHUN", "out": "22K", "back": "22K", "note": "自行前往機場", "lexis": "大紅花房 01", "lexisType": "雙人房", "sunway": "雙威房 01", "sunwayType": "雙人房"}, {"id": 3, "name": "陳沛嫻", "en": "CHEN, PEI-HSIEN", "out": "33C", "back": "33C", "note": "自行前往機場", "lexis": "大紅花房 02", "lexisType": "雙人房", "sunway": "雙威房 02", "sunwayType": "雙人房"}, {"id": 4, "name": "連家緯", "en": "LIEN, CHIA-WEI", "out": "33B", "back": "33B", "note": "自行前往機場", "lexis": "大紅花房 02", "lexisType": "雙人房", "sunway": "雙威房 02", "sunwayType": "雙人房"}, {"id": 5, "name": "洪圻涵", "en": "HUNG, CHI-HAN", "out": "22A", "back": "22A", "note": "自行前往機場", "lexis": "大紅花房 03", "lexisType": "雙人房", "sunway": "雙威房 03", "sunwayType": "雙人房"}, {"id": 6, "name": "蔡順傑", "en": "TSAI, SHUN-CHIEH", "out": "22B", "back": "22B", "note": "自行前往機場", "lexis": "大紅花房 03", "lexisType": "雙人房", "sunway": "雙威房 03", "sunwayType": "雙人房"}, {"id": 7, "name": "周明慧", "en": "CHOU, MING-HUI", "out": "32A", "back": "32A", "note": "自行前往機場", "lexis": "大紅花房 04", "lexisType": "雙人房", "sunway": "雙威房 04", "sunwayType": "雙人房"}, {"id": 8, "name": "黃國華", "en": "HUANG, KUO-HUA", "out": "32B", "back": "32B", "note": "自行前往機場", "lexis": "大紅花房 04", "lexisType": "雙人房", "sunway": "雙威房 04", "sunwayType": "雙人房"}, {"id": 9, "name": "詹宏仁", "en": "CHAN, HUNG-JEN", "out": "26B", "back": "26B", "note": "公司搭車前往機場", "lexis": "大紅花房 05", "lexisType": "雙人房", "sunway": "雙威房 05", "sunwayType": "雙人房"}, {"id": 10, "name": "張婕妤", "en": "ZHANG, JIE-YU", "out": "26A", "back": "26A", "note": "公司搭車前往機場", "lexis": "大紅花房 05", "lexisType": "雙人房", "sunway": "雙威房 05", "sunwayType": "雙人房"}, {"id": 11, "name": "莊迦燕", "en": "CHUANG, CHIA-YEN", "out": "32K", "back": "32K", "note": "自行前往機場", "lexis": "大紅花房 06", "lexisType": "雙人房", "sunway": "雙威房 06", "sunwayType": "雙人房"}, {"id": 12, "name": "林永杰", "en": "LIN, YUNG-CHIEH", "out": "32H", "back": "32H", "note": "自行前往機場", "lexis": "大紅花房 06", "lexisType": "雙人房", "sunway": "雙威房 06", "sunwayType": "雙人房"}, {"id": 13, "name": "譚明德", "en": "TAN, MING-TE", "out": "31J", "back": "31J", "note": "自行前往機場", "lexis": "大紅花房 07", "lexisType": "雙人房", "sunway": "雙威房 07", "sunwayType": "雙人房"}, {"id": 14, "name": "譚若妘", "en": "TAN, RUO-YUN", "out": "31K", "back": "31K", "note": "自行前往機場", "lexis": "大紅花房 07", "lexisType": "雙人房", "sunway": "雙威房 07", "sunwayType": "雙人房"}, {"id": 15, "name": "胡中文", "en": "HU, CHUNG-WEN", "out": "30J", "back": "30J", "note": "公司搭車前往機場", "lexis": "大紅花房 08", "lexisType": "雙人房", "sunway": "雙威房 08", "sunwayType": "雙人房"}, {"id": 16, "name": "胡淑貞", "en": "HU, SHU-CHEN", "out": "30K", "back": "30K", "note": "公司搭車前往機場", "lexis": "大紅花房 08", "lexisType": "雙人房", "sunway": "雙威房 08", "sunwayType": "雙人房"}, {"id": 17, "name": "張慧君", "en": "JHANG, HUEI-JUN", "out": "27K", "back": "27K", "note": "公司搭車前往機場", "lexis": "大紅花房 09", "lexisType": "三人房", "sunway": "雙威房 09", "sunwayType": "雙人房"}, {"id": 18, "name": "曾婉鈞", "en": "TSENG, WAN-CHUN", "out": "27H", "back": "27H", "note": "公司搭車前往機場", "lexis": "大紅花房 09", "lexisType": "三人房", "sunway": "雙威房 09", "sunwayType": "雙人房"}, {"id": 19, "name": "宋煥煥", "en": "SONG, HUAN-HUAN", "out": "27J", "back": "27J", "note": "公司搭車前往機場", "lexis": "大紅花房 09", "lexisType": "三人房", "sunway": "雙威房 10", "sunwayType": "雙人房"}, {"id": 20, "name": "黃美桃", "en": "HUYNH MY DAO", "out": "23K", "back": "23K", "note": "公司搭車前往機場", "lexis": "大紅花房 10", "lexisType": "三人房", "sunway": "雙威房 10", "sunwayType": "雙人房"}, {"id": 21, "name": "阮氏玉小", "en": "NGUYEN THI NGOC BE", "out": "23H", "back": "23H", "note": "公司搭車前往機場", "lexis": "大紅花房 10", "lexisType": "三人房", "sunway": "雙威房 11", "sunwayType": "雙人房"}, {"id": 22, "name": "武氏七", "en": "VU THI BAY", "out": "23J", "back": "23J", "note": "公司搭車前往機場", "lexis": "大紅花房 10", "lexisType": "三人房", "sunway": "雙威房 11", "sunwayType": "雙人房"}, {"id": 23, "name": "鐘河坤", "en": "CHUNG, HO-KUN", "out": "27A", "back": "27A", "note": "公司搭車前往機場", "lexis": "大紅花房 11", "lexisType": "三人房", "sunway": "雙威房 12", "sunwayType": "雙人房"}, {"id": 24, "name": "張昌維", "en": "CHANG, CHANG-WEI", "out": "27B", "back": "27B", "note": "公司搭車前往機場", "lexis": "大紅花房 11", "lexisType": "三人房", "sunway": "雙威房 12", "sunwayType": "雙人房"}, {"id": 25, "name": "林柏伸", "en": "LIN, BO-SHEN", "out": "27C", "back": "27C", "note": "公司搭車前往機場", "lexis": "大紅花房 11", "lexisType": "三人房", "sunway": "團員單人房", "sunwayType": "單人房"}, {"id": 26, "name": "斐玲芝", "en": "BUI LINH CHI", "out": "20B", "back": "20B", "note": "公司搭車前往機場", "lexis": "大紅花房 12", "lexisType": "雙人房", "sunway": "雙威房 13", "sunwayType": "雙人房"}, {"id": 27, "name": "阮氏茸", "en": "NGUYEN THI NHUNG", "out": "20C", "back": "20C", "note": "公司搭車前往機場", "lexis": "大紅花房 12", "lexisType": "雙人房", "sunway": "雙威房 13", "sunwayType": "雙人房"}, {"id": 28, "name": "阮氏青賢", "en": "NGUYEN THI THANH HIEN", "out": "21A", "back": "21A", "note": "公司搭車前往機場", "lexis": "大紅花房 13", "lexisType": "雙人房", "sunway": "雙威房 14", "sunwayType": "雙人房"}, {"id": 29, "name": "陳氏貞", "en": "TRAN THI TRINH", "out": "21B", "back": "21B", "note": "公司搭車前往機場", "lexis": "大紅花房 13", "lexisType": "雙人房", "sunway": "雙威房 14", "sunwayType": "雙人房"}, {"id": 30, "name": "丁氏翠銀", "en": "DINH THI THUY NGAN", "out": "20A", "back": "20A", "note": "公司搭車前往機場", "lexis": "大紅花房 14", "lexisType": "雙人房", "sunway": "雙威房 15", "sunwayType": "雙人房"}, {"id": 31, "name": "陳氏玲", "en": "TRAN THI LINH", "out": "21C", "back": "21C", "note": "公司搭車前往機場", "lexis": "大紅花房 14", "lexisType": "雙人房", "sunway": "雙威房 15", "sunwayType": "雙人房"}, {"id": 32, "name": "簡政義", "en": "JIAN ZHENG YI", "out": "12C", "back": "12C", "note": "自行前往機場", "role": "領隊", "lexis": "領隊單人房", "lexisType": "單人房", "sunway": "領隊單人房", "sunwayType": "單人房"}];
-let hotel='lexis',lang='zh';
-const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);
-function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
-function mates(p,field){return people.filter(x=>x[field]===p[field]).map(x=>x.name)}
-const validPages=['home','itinerary','traveler','rooms'];
-function showPage(id,scroll=true){
- if(!validPages.includes(id)) id='home';
- $$('.page').forEach(x=>x.classList.remove('active'));
- const target=$('#'+id);
- if(target) target.classList.add('active');
- $$('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===id));
- if(id==='rooms') renderRooms();
- if(id==='itinerary') renderDay(activeDay);
- if(scroll) window.scrollTo({top:0,behavior:'smooth'});
-}
-function go(id){
- const hash='#/'+id;
- if(location.hash===hash) showPage(id);
- else location.hash=hash;
-}
-function route(){
- const id=(location.hash.replace(/^#\/?/,'').split('/')[0]||'home').toLowerCase();
- showPage(id,false);
-}
-window.addEventListener('hashchange',route);
-$$('.nav button').forEach(b=>b.onclick=()=>go(b.dataset.page));
-function card(p){let lm=mates(p,'lexis'),sm=mates(p,'sunway');return `<article class="card person"><div class="person-top"><div class="avatar">${p.role?'⭐':'👤'}</div><div class="person-name"><h3>${esc(p.name)}</h3><div class="en">${esc(p.en)}</div></div><span class="badge ${p.role?'leader':''}">${p.role?'領隊':'團員'}</span></div><div class="seat-row"><div class="seat"><span>去程 JX725</span><b>${esc(p.out)}</b></div><div class="seat"><span>回程 JX726</span><b>${esc(p.back)}</b></div></div><div class="hotel-block"><div class="hotel-line"><strong>🌺 ${esc(p.lexis)}｜${esc(p.lexisType)}</strong><p>同房：${lm.map(esc).join('、')}</p></div><div class="hotel-line"><strong>🏙️ ${esc(p.sunway)}｜${esc(p.sunwayType)}</strong><p>同房：${sm.map(esc).join('、')}</p></div></div><div class="note">🚐 ${esc(p.note)}</div></article>`}
-function renderPeople(){let q=$('#search').value.trim().toLowerCase();let list=people.filter(p=>[p.name,p.en,p.out,p.back,p.note,p.role,p.lexis,p.sunway].join(' ').toLowerCase().includes(q));$('#results').innerHTML=list.length?list.map(card).join(''):`<div class="card empty">找不到符合的團員資料。</div>`}
-$('#search').addEventListener('input',renderPeople);$$('.chip').forEach(b=>b.onclick=()=>{$('#search').value=b.dataset.q;renderPeople()});
-function groupRooms(field){let map={};people.forEach(p=>(map[p[field]]??=[]).push(p));return Object.entries(map)}
-function renderRooms(){let arr=groupRooms(hotel);$('#roomList').innerHTML=arr.map(([room,ps])=>`<article class="card room-card"><div class="room-head"><div><h3>${hotel==='lexis'?'🌺':'🏙️'} ${esc(room)}</h3><div class="en">${esc(ps[0][hotel+'Type'])} · ${ps.length} 人</div></div>${ps.some(x=>x.role)?'<span class="badge leader">領隊</span>':''}</div><ul>${ps.map(p=>`<li><span>${esc(p.name)}${p.role?' ⭐':''}</span><span>JX725 ${esc(p.out)}／JX726 ${esc(p.back)}</span></li>`).join('')}</ul></article>`).join('')}
-$$('.room-tab').forEach(b=>b.onclick=()=>{$$('.room-tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');hotel=b.dataset.hotel;renderRooms()});
-$('#langBtn').onclick=()=>{lang=lang==='zh'?'vi':'zh';$('#langBtn').textContent=lang==='zh'?'VI':'中';$$('[data-zh]').forEach(el=>el.innerHTML=el.dataset[lang])};
-renderPeople();renderRooms();renderDay(0);route();
-</script>
-</body></html>
+    <div id="sheetBackdrop" class="sheet-backdrop" hidden></div>
+    <aside id="sideSheet" class="side-sheet" aria-label="More menu">
+      <div class="sheet-handle"></div>
+      <button class="sheet-link" data-go="members">👥 團員名單／Danh sách thành viên</button>
+      <button class="sheet-link" data-go="rooms">🛏 房間總覽／Phòng</button>
+      <button class="sheet-link" data-go="seats">✈️ 機位總覽／Ghế</button>
+      <button class="sheet-link" data-go="leader">📋 領隊總覽／Trưởng đoàn</button>
+      <button class="sheet-link" data-go="emergency">🆘 緊急資訊／Khẩn cấp</button>
+      <button class="sheet-link" data-go="settings">⚙️ 設定／Cài đặt</button>
+      <button id="installButton" class="sheet-link" hidden>📲 安裝 App／Cài đặt App</button>
+      <p id="sheetVersion" class="sheet-version"></p>
+    </aside>
+    <div id="toast" class="toast" role="status"></div>
+  </div>
+  <script type="module" src="./js/app.js?v=2.3.1"></script>
+</body>
+</html>
