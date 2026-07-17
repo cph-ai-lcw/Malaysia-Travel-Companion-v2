@@ -1,11 +1,39 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
+
+<script>
+(function(){
+  const CLEANUP_VERSION = 'm23-20260717-v3';
+  const key = 'amt-pwa-cleanup-version';
+  async function cleanupOldPWA(){
+    if (localStorage.getItem(key) === CLEANUP_VERSION) return;
+    try {
+      if ('serviceWorker' in navigator) {
+        const regs = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map(reg => reg.unregister()));
+      }
+      if ('caches' in window) {
+        const names = await caches.keys();
+        await Promise.all(names.map(name => caches.delete(name)));
+      }
+      localStorage.setItem(key, CLEANUP_VERSION);
+      const url = new URL(location.href);
+      url.searchParams.set('v', CLEANUP_VERSION);
+      location.replace(url.pathname + url.search + (location.hash || '#/home'));
+    } catch (err) {
+      console.warn('PWA cache cleanup failed:', err);
+    }
+  }
+  window.addEventListener('load', cleanupOldPWA, { once: true });
+})();
+</script>
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#fffaf3">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>馬來西亞手帳 2026｜Milestone 2-3 Route Fix</title>
+<title>馬來西亞手帳 2026｜Milestone 2-3 Cache Fix V3</title>
 <style>
 :root{--cream:#fffaf3;--paper:#fff;--ink:#283637;--muted:#82908e;--green:#1f8b78;--green2:#dff4eb;--orange:#f39a4a;--yellow:#ffd66b;--blue:#62a9d8;--pink:#ef8fa0;--line:#eee9df;--shadow:0 12px 32px rgba(50,74,68,.10);--r:24px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{margin:0;background:var(--cream);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;padding-bottom:88px}.app{max-width:680px;margin:auto}.top{position:sticky;top:0;z-index:30;height:59px;padding:9px 16px;background:rgba(255,250,243,.92);backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(230,222,210,.75)}.logo{display:flex;align-items:center;gap:9px}.logo-mark{width:38px;height:38px;border-radius:15px;background:linear-gradient(145deg,#ffe48f,#ffb76b);display:grid;place-items:center;font-size:22px;box-shadow:0 7px 15px rgba(235,150,60,.18)}.logo b{font-size:13px;display:block}.logo small{font-size:8px;color:var(--muted);letter-spacing:.1em}.lang{border:0;background:#fff;border-radius:999px;padding:9px 12px;box-shadow:0 5px 15px rgba(60,80,75,.08);color:var(--green);font-weight:900}.page{display:none;padding:14px 14px 25px}.page.active{display:block;animation:show .22s ease}@keyframes show{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
@@ -44,7 +72,7 @@
 </head>
 <body>
 <div class="app">
-<header class="top"><div class="logo"><div class="logo-mark">🌺</div><div><b>馬來西亞手帳</b><small>國能員旅 · MILESTONE 2-3 ROUTE FIX · 2026.07.17</small></div></div><button id="langBtn" class="lang">VI</button></header>
+<header class="top"><div class="logo"><div class="logo-mark">🌺</div><div><b>馬來西亞手帳</b><small>國能員旅 · MILESTONE 2-3 · CACHE FIX V3 · 2026.07.17</small></div></div><button id="langBtn" class="lang">VI</button></header>
 
 <main id="home" class="page active">
 <section class="hero"><div class="small">MALAYSIA · 5 DAYS</div><h1 data-zh="一起出發，收藏<br>馬來西亞的美好" data-vi="Cùng khởi hành và lưu giữ<br>những kỷ niệm Malaysia">一起出發，收藏<br>馬來西亞的美好</h1><p data-zh="機位、房間與同房團員已依 0717 最終版名單完成整合。" data-vi="Ghế ngồi, phòng và người cùng phòng đã được cập nhật theo danh sách 17/07.">機位、房間與同房團員已依 0717 最終版名單完成整合。</p><div class="date-chip">2026.09.20 SUN — 09.24 THU</div></section>

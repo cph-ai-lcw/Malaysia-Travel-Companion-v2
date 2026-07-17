@@ -1,9 +1,7 @@
-Milestone 1-2 System Config
-
-將 data/system 內所有檔案複製到：
-Malaysia-Travel-Companion-v2/data/system/
-
-Commit：
-Milestone 1-2 Create System Config
-
-完成後按 Push origin。
+GitHub 更新方式
+1. 將 index.html 覆蓋 Repository 根目錄的 index.html。
+2. 若 Repository 中有 service-worker.js，使用本資料夾版本覆蓋。
+3. 若 Repository 中有 sw.js，使用本資料夾版本覆蓋。
+4. Commit 後，第一次開啟網站請做一次 Ctrl + Shift + R。
+5. 新版會自動註銷舊 Service Worker 並清除舊快取；之後普通重新整理不會回到舊版。
+6. 頁面頂端應顯示：MILESTONE 2-3 · CACHE FIX V3 · 2026.07.17
