@@ -19,7 +19,6 @@ import { emergencyPage } from "./pages/emergency.js";
 import { membersPage } from "./pages/members.js";
 import { roomsPage } from "./pages/rooms.js";
 import { seatsPage } from "./pages/seats.js";
-import { budgetPage } from "./pages/budget.js";
 import { memberSummaryCard } from "./components/member-card.js";
 
 function registerRoutes() {
@@ -35,7 +34,6 @@ function registerRoutes() {
   registerRoute("members", membersPage);
   registerRoute("rooms", roomsPage);
   registerRoute("seats", seatsPage);
-  registerRoute("budget", budgetPage);
 }
 
 function updateChrome() {
@@ -103,13 +101,6 @@ function bindEvents() {
   });
 
   document.addEventListener("change", (event) => {
-    if (event.target.id === "budgetRateInput") {
-      const rate = Math.max(1, Math.min(20, Number(event.target.value) || 7.5));
-      storage.set("budgetExchangeRate", rate);
-      const totalMin = 90, totalMax = 480;
-      const node = document.getElementById("budgetTwdTotal");
-      if (node) node.textContent = `NT$${Math.round(totalMin * rate).toLocaleString()}–${Math.round(totalMax * rate).toLocaleString()}`;
-    }
     if (event.target.id === "languageSelect") setLanguage(event.target.value);
     if (event.target.id === "themeSelect") setTheme(event.target.value);
     if (event.target.id === "memberSelect" && event.target.value) {

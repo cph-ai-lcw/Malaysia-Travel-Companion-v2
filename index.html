@@ -1,65 +1,17 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#0f766e">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="description" content="2026 國能馬來西亞員工旅遊手帳">
-  <title>馬來西亞旅遊手帳 2026</title>
-  <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="icon" href="./icons/icon-192.png">
-  <link rel="apple-touch-icon" href="./icons/icon-192.png">
-  <link rel="stylesheet" href="./css/variables.css">
-  <link rel="stylesheet" href="./css/base.css">
-  <link rel="stylesheet" href="./css/layout.css">
-  <link rel="stylesheet" href="./css/components.css">
-  <link rel="stylesheet" href="./css/navigation.css">
-  <link rel="stylesheet" href="./css/dashboard.css">
-  <link rel="stylesheet" href="./css/milestone2.css">
-  <link rel="stylesheet" href="./css/theme.css">
-  <link rel="stylesheet" href="./css/animation.css">
-  <link rel="stylesheet" href="./css/responsive.css">
-  <link rel="stylesheet" href="./css/app.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#167d72">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icons/icon-192.png">
+<link rel="stylesheet" href="./css/release-v25.css?v=250">
+<title>馬來西亞手帳 2026｜Release v2.5</title>
 </head>
 <body>
-  <div id="appShell">
-    <header class="topbar">
-      <button id="menuButton" class="icon-button" aria-label="Menu">☰</button>
-      <div class="brand"><strong id="brandTitle">馬來西亞旅遊手帳</strong><span id="brandSubtitle">2026 國能馬來西亞員工旅遊</span></div>
-      <div class="topbar-actions">
-        <button id="themeButton" class="icon-button" aria-label="Theme">◐</button>
-        <button id="languageButton" class="pill-button" aria-label="Language">中</button>
-      </div>
-    </header>
-
-    <main id="app" tabindex="-1"></main>
-
-    <nav class="bottom-nav" aria-label="Primary navigation">
-      <a href="#/home" data-route="home"><span class="nav-icon">⌂</span><small data-i18n="home">首頁</small></a>
-      <a href="#/itinerary" data-route="itinerary"><span class="nav-icon">🗓</span><small data-i18n="itinerary">行程</small></a>
-      <a href="#/guide" data-route="guide"><span class="nav-icon">🧭</span><small data-i18n="guide">攻略</small></a>
-      <a href="#/tools" data-route="tools"><span class="nav-icon">✓</span><small data-i18n="tools">工具</small></a>
-      <a href="#/profile" data-route="profile"><span class="nav-icon">👤</span><small data-i18n="profile">我的</small></a>
-      <a href="#/more" data-route="more"><span class="nav-icon">•••</span><small data-i18n="more">更多</small></a>
-    </nav>
-
-    <div id="sheetBackdrop" class="sheet-backdrop" hidden></div>
-    <aside id="sideSheet" class="side-sheet" aria-label="More menu">
-      <div class="sheet-handle"></div>
-      <button class="sheet-link" data-go="members">👥 團員名單／Danh sách thành viên</button>
-      <button class="sheet-link" data-go="rooms">🛏 房間總覽／Phòng</button>
-      <button class="sheet-link" data-go="seats">✈️ 機位總覽／Ghế</button>
-      <button class="sheet-link" data-go="budget">💰 每日費用／Chi phí mỗi ngày</button>
-      <button class="sheet-link" data-go="leader">📋 領隊總覽／Trưởng đoàn</button>
-      <button class="sheet-link" data-go="emergency">🆘 緊急資訊／Khẩn cấp</button>
-      <button class="sheet-link" data-go="settings">⚙️ 設定／Cài đặt</button>
-      <button id="installButton" class="sheet-link" hidden>📲 安裝 App／Cài đặt App</button>
-      <p id="sheetVersion" class="sheet-version"></p>
-    </aside>
-    <div id="toast" class="toast" role="status"></div>
-  </div>
-  <script type="module" src="./js/app.js?v=2.4.0"></script>
+<div id="app"></div>
+<script type="module" src="./js/release-v25.js?v=250"></script>
 </body>
 </html>

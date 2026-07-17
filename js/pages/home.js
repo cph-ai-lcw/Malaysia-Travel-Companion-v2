@@ -13,7 +13,6 @@ ${m?`<section class="m2-personal" data-navigate="profile"><div class="m2-persona
 <button class="m2-feature-card" data-navigate="rooms"><div class="m2-feature-icon">🛏</div><strong>${tx("房間分配","Phân phòng")}</strong><small>${tx("大紅花與雙威住宿名單","Danh sách hai khách sạn")}</small></button>
 <button class="m2-feature-card" data-navigate="seats"><div class="m2-feature-icon">✈</div><strong>${tx("機位分配","Phân ghế")}</strong><small>${tx("去回程依座位排序","Sắp theo ghế đi/về")}</small></button>
 <button class="m2-feature-card" data-navigate="itinerary"><div class="m2-feature-icon">🗓</div><strong>${tx("五日行程","Lịch trình 5 ngày")}</strong><small>${tx("每日景點與集合資訊","Điểm tham quan và tập trung")}</small></button>
-<button class="m2-feature-card" data-navigate="budget"><div class="m2-feature-icon">💰</div><strong>${tx("每日費用","Chi phí mỗi ngày")}</strong><small>${tx("已含、自費與建議現金","Đã bao gồm, tự chọn và tiền mặt")}</small></button>
 </section>
 <div class="m2-section-head"><div><h2>${tx("旅行提醒","Nhắc nhở")}</h2></div></div>
 <section class="grid-2"><article class="mini-card"><div class="emoji">🌦</div><strong>24–33°C</strong><small>${getLanguage()==="zh-TW"?WEATHER_CONFIG.reminderZh:WEATHER_CONFIG.reminderVi}</small></article><article class="mini-card"><div class="emoji">🍽</div><strong>RM 30 × 2</strong><small>${tx("9/21 午餐、9/22 晚餐自理","21/9 trưa, 22/9 tối tự túc")}</small></article></section>

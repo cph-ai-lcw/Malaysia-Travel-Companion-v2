@@ -1,3 +1,2 @@
-import { getLanguage } from "../core/i18n.js";
-const tx=(a,b)=>getLanguage()==="zh-TW"?a:b;
-export function toolsPage(){return `<header class="page-header"><h1>${tx("旅行工具","Công cụ du lịch")}</h1><p>${tx("行前與旅途中常用工具","Công cụ hữu ích trước và trong chuyến đi")}</p></header><section class="m2-main-grid"><button class="m2-feature-card" data-navigate="budget"><div class="m2-feature-icon">💰</div><strong>${tx("每日費用","Chi phí mỗi ngày")}</strong><small>${tx("團費已含、自費與建議現金","Đã bao gồm, tự chọn và tiền mặt đề xuất")}</small></button><button class="m2-feature-card" type="button" disabled><div class="m2-feature-icon">🧳</div><strong>${tx("打包清單","Danh sách hành lý")}</strong><small>${tx("下一階段開放","Sẽ mở ở giai đoạn tiếp theo")}</small></button></section>`;}
+import { placeholder } from "../components/placeholder.js";
+export const toolsPage = () => placeholder("⌘","tools","打包、花費與相簿工具將於後續加入。","Hành lý, chi tiêu và album sẽ được bổ sung.");
