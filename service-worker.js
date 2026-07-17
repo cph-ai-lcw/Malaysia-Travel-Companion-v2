@@ -1,10 +1,10 @@
-const CACHE = "mtc-v2-m23-final-20260717";
+const CACHE = "mtc-v2-m24-20260717";
 const APP_SHELL = [
   "./", "./index.html", "./manifest.webmanifest",
   "./css/variables.css", "./css/base.css", "./css/layout.css", "./css/components.css",
   "./css/navigation.css", "./css/dashboard.css", "./css/milestone2.css", "./css/theme.css",
   "./css/animation.css", "./css/responsive.css", "./css/app.css",
-  "./js/app.js", "./data/index.js", "./data/trip/index.js", "./data/trip/itinerary.js",
+  "./js/app.js", "./js/pages/budget.js", "./data/index.js", "./data/trip/index.js", "./data/trip/itinerary.js", "./data/trip/daily-budget.js",
   "./icons/icon-192.png", "./icons/icon-512.png"
 ];
 self.addEventListener("install", event => {

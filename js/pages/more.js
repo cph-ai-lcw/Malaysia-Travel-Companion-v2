@@ -6,6 +6,7 @@ export function morePage() {
     ["members","👥",zh ? "團員查詢" : "Tìm thành viên",zh ? "姓名、機位或分房代碼搜尋" : "Tìm theo tên, ghế hoặc mã phòng"],
     ["rooms","🛏",zh ? "房間分配" : "Phân phòng",zh ? "大紅花與雙威分房名單" : "Danh sách phòng Lexis và Sunway"],
     ["seats","✈",zh ? "機位分配" : "Phân ghế",zh ? "去回程座位排序" : "Ghế chiều đi và chiều về"],
+    ["budget","💰",zh ? "每日費用" : "Chi phí mỗi ngày",zh ? "團費已含、自費與建議現金" : "Đã bao gồm, tự chọn và tiền mặt đề xuất"],
     ["settings","⚙",t("settings"),zh ? "語言、主題與版本" : "Ngôn ngữ, giao diện và phiên bản"],
     ["leader","🧭",t("leader"),zh ? "團員、房間與機位總覽" : "Tổng quan thành viên, phòng và ghế"],
     ["emergency","☎",t("emergency"),zh ? "重要電話與求助" : "Số điện thoại quan trọng"]
