@@ -1,104 +1,162 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#0f766e">
-  <meta name="description" content="2026 國能馬來西亞員工旅遊 PWA 手帳">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Malaysia Trip">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b746f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Milestone 2-2｜房間／機位資料系統</title>
 
-  <title>Malaysia Travel Companion</title>
-
-  <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="icon" href="./icons/icon-192.png">
-  <link rel="apple-touch-icon" href="./icons/icon-192.png">
-
-  <link rel="stylesheet" href="./css/variables.css">
-  <link rel="stylesheet" href="./css/base.css">
-  <link rel="stylesheet" href="./css/layout.css">
-  <link rel="stylesheet" href="./css/components.css">
-  <link rel="stylesheet" href="./css/dashboard.css">
-  <link rel="stylesheet" href="./css/navigation.css">
-  <link rel="stylesheet" href="./css/theme.css">
-  <link rel="stylesheet" href="./css/animation.css">
-  <link rel="stylesheet" href="./css/responsive.css">
-  <link rel="stylesheet" href="./css/milestone2.css">
+<style>
+:root{--bg:#f3f7f5;--card:#fff;--ink:#163538;--muted:#718386;--line:#e1ebe7;--brand:#08766f;--brand2:#12a184;--gold:#efb649;--rose:#de6376;--shadow:0 14px 38px rgba(25,71,67,.12);--r:23px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:linear-gradient(180deg,#e3f5ef,#f7f8f5 330px);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;padding-bottom:95px}
+button,input,select{font:inherit}.app{max-width:680px;margin:auto}.top{position:sticky;top:0;z-index:30;padding:12px 15px;background:rgba(244,248,246,.86);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.8);display:flex;align-items:center;justify-content:space-between}.brand b{display:block;font-size:14px}.brand small{font-size:9px;color:var(--muted);letter-spacing:.08em}.lang{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 12px;font-weight:850;color:var(--brand)}
+.hero{padding:26px 18px 35px;color:#fff;background:linear-gradient(135deg,#075d64,#08766f 48%,#14a07f);border-radius:0 0 34px 34px;position:relative;overflow:hidden}.hero:after{content:"🌺";position:absolute;right:8px;top:2px;font-size:100px;opacity:.15;transform:rotate(12deg)}.hero .eyebrow{font-size:9px;font-weight:900;letter-spacing:.18em;opacity:.8}.hero h1{font-size:27px;line-height:1.18;margin:9px 0 7px}.hero p{font-size:10px;line-height:1.6;margin:0;opacity:.82;max-width:78%}
+.view{display:none;padding:0 14px 30px}.view.active{display:block;animation:up .22s ease}@keyframes up{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:-18px;position:relative;z-index:2}.stat,.card{background:rgba(255,255,255,.96);border:1px solid rgba(255,255,255,.85);box-shadow:var(--shadow);border-radius:var(--r)}.stat{padding:13px 7px;text-align:center}.stat b{display:block;font-size:20px;color:var(--brand)}.stat span{font-size:8px;color:var(--muted)}
+.title{display:flex;justify-content:space-between;align-items:end;margin:24px 2px 11px}.title h2{font-size:18px;margin:0}.title span{font-size:8px;background:#dff2ec;color:var(--brand);font-weight:900;padding:6px 9px;border-radius:999px}
+.search{padding:15px}.search input{width:100%;border:1px solid var(--line);background:#fff;border-radius:17px;padding:14px 15px;color:var(--ink);outline:none}.search input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(8,118,111,.1)}
+.hints{display:flex;gap:6px;overflow:auto;margin-top:10px}.hint{border:0;border-radius:999px;padding:7px 10px;background:#edf6f3;color:var(--brand);font-size:9px;font-weight:800;white-space:nowrap}
+.results{display:grid;gap:10px;margin-top:11px}.person{padding:16px}.person-head{display:flex;justify-content:space-between;gap:10px;align-items:start}.person h3{font-size:17px;margin:0 0 4px}.sub{font-size:9px;color:var(--muted)}.tag{font-size:8px;padding:5px 8px;border-radius:999px;background:#fff2d9;color:#956000;font-weight:900;white-space:nowrap}
+.seatgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:13px}.seat{padding:12px;border-radius:17px;background:#eef7f4}.seat span{display:block;font-size:8px;color:var(--muted)}.seat b{display:block;font-size:20px;color:var(--brand);margin:3px 0}.seat small{font-size:8px;color:var(--muted)}
+.rooms{margin-top:10px;padding:12px;border-radius:17px;background:#f8f5eb}.roomline{padding:8px 0;border-top:1px dashed #ded6bd}.roomline:first-child{border:0}.roomline strong{font-size:11px}.roomline div{font-size:9px;color:var(--muted);line-height:1.55;margin-top:3px}
+.empty{padding:30px 15px;text-align:center;color:var(--muted);font-size:10px;line-height:1.7}
+.filterbar{display:flex;gap:7px;overflow:auto;padding-bottom:10px}.filter{flex:0 0 auto;border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:999px;padding:9px 12px;font-size:9px;font-weight:850}.filter.active{background:var(--brand);border-color:var(--brand);color:#fff}
+.room-list{display:grid;gap:10px}.room-card{padding:15px}.room-top{display:flex;align-items:start;justify-content:space-between;gap:10px}.room-card h3{margin:0 0 4px;font-size:15px}.room-card ul{list-style:none;padding:0;margin:10px 0 0}.room-card li{padding:9px 0;border-top:1px solid var(--line);font-size:11px;display:flex;justify-content:space-between;gap:8px}.room-card li span:last-child{color:var(--muted);font-size:9px}
+.import-card{padding:17px}.privacy{padding:14px;border-radius:17px;background:#fff7e5;font-size:9px;color:#795e25;line-height:1.65}.upload{display:block;margin-top:12px;border:2px dashed #a9cdc3;border-radius:19px;padding:23px 15px;text-align:center;background:#f4fbf8;cursor:pointer}.upload input{display:none}.upload b{display:block;color:var(--brand);font-size:14px}.upload span{font-size:9px;color:var(--muted);line-height:1.6}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.btn{border:0;border-radius:999px;padding:10px 13px;background:var(--brand);color:#fff;font-size:10px;font-weight:850}.btn.secondary{background:#edf5f2;color:var(--brand)}.btn.danger{background:#fff0f2;color:#b83c54}.status{margin-top:11px;padding:11px;border-radius:14px;background:#eef7f4;font-size:9px;line-height:1.6}
+.map-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:9px}.map-table th,.map-table td{padding:8px;border-bottom:1px solid var(--line);text-align:left}.map-table th{color:var(--muted)}
+.bottom{position:fixed;bottom:0;left:0;right:0;z-index:40;background:rgba(251,253,252,.93);backdrop-filter:blur(18px);border-top:1px solid var(--line);padding:8px 8px calc(8px + env(safe-area-inset-bottom))}.nav{max-width:680px;margin:auto;display:grid;grid-template-columns:repeat(3,1fr)}.nav button{border:0;background:transparent;color:#859592;font-size:9px;font-weight:850;padding:4px}.nav i{font-style:normal;display:block;font-size:23px;margin-bottom:2px}.nav button.active{color:var(--brand)}
+@media(max-width:390px){.stats{grid-template-columns:repeat(2,1fr)}.seatgrid{grid-template-columns:1fr}.hero h1{font-size:24px}}
+</style>
 </head>
-
 <body>
-  <div id="appShell">
-    <header class="topbar">
-      <button id="menuButton" class="icon-button" type="button" aria-label="開啟更多選單">☰</button>
+<div class="app">
+<header class="top"><div class="brand"><b>AMT MALAYSIA 2026</b><small>MILESTONE 2-2 · ROOM & SEAT</small></div><button class="lang" id="langBtn">VI</button></header>
 
-      <div class="brand">
-        <strong id="brandTitle">馬來西亞旅遊手帳</strong>
-        <span id="brandSubtitle">2026 國能員工旅遊</span>
-      </div>
+<main class="view active" id="lookup">
+<section class="hero"><div class="eyebrow">國能員旅 · 09/20–09/24</div><h1 data-zh="房間／機位快速查詢" data-vi="Tra cứu phòng / ghế nhanh">房間／機位快速查詢</h1><p data-zh="輸入姓名、房號或機位，即可查看去回程座位及兩間飯店的同房安排。" data-vi="Nhập tên, số phòng hoặc số ghế để xem chỗ ngồi và người cùng phòng.">輸入姓名、房號或機位，即可查看去回程座位及兩間飯店的同房安排。</p></section>
+<section class="stats">
+<div class="stat"><b id="statPeople">0</b><span data-zh="團員" data-vi="Thành viên">團員</span></div>
+<div class="stat"><b id="statLexis">0</b><span data-zh="大紅花房數" data-vi="Phòng Lexis">大紅花房數</span></div>
+<div class="stat"><b id="statSunway">0</b><span data-zh="雙威房數" data-vi="Phòng Sunway">雙威房數</span></div>
+<div class="stat"><b id="statSeats">0</b><span data-zh="已配置機位" data-vi="Ghế đã xếp">已配置機位</span></div>
+</section>
+<div class="title"><h2 data-zh="快速查詢" data-vi="Tra cứu nhanh">快速查詢</h2><span>NAME · ROOM · SEAT</span></div>
+<section class="card search"><input id="searchInput" data-ph-zh="輸入姓名／房號／機位" data-ph-vi="Nhập tên / phòng / ghế" placeholder="輸入姓名／房號／機位"><div class="hints"><button class="hint" data-key="">全部</button><button class="hint" data-key="大紅花">大紅花</button><button class="hint" data-key="雙威">雙威</button><button class="hint" data-key="自理">餐食自理</button></div></section>
+<div class="results" id="results"></div>
+</main>
 
-      <div class="topbar-actions">
-        <button id="languageButton" class="pill-button" type="button" aria-label="切換語言">中</button>
-        <button id="themeButton" class="icon-button" type="button" aria-label="切換主題">◐</button>
-      </div>
-    </header>
+<main class="view" id="rooms">
+<div class="title" style="margin-top:25px"><h2 data-zh="房間總表" data-vi="Danh sách phòng">房間總表</h2><span id="roomCountTag">0 ROOMS</span></div>
+<div class="filterbar"><button class="filter active" data-hotel="all" data-zh="全部" data-vi="Tất cả">全部</button><button class="filter" data-hotel="lexis">🌺 大紅花</button><button class="filter" data-hotel="sunway">🏙️ 雙威</button></div>
+<div class="room-list" id="roomList"></div>
+</main>
 
-    <main id="app" tabindex="-1"></main>
+<main class="view" id="import">
+<div class="title" style="margin-top:25px"><h2 data-zh="資料管理" data-vi="Quản lý dữ liệu">資料管理</h2><span>LOCAL ONLY</span></div>
+<section class="card import-card">
+<div class="privacy" data-zh="🔒 隱私設計：Excel 只在目前裝置的瀏覽器中讀取與保存，不會上傳到伺服器。公開 GitHub Pages 不會直接包含團員完整資料。" data-vi="🔒 Bảo mật: Excel chỉ được đọc và lưu trong trình duyệt của thiết bị này, không tải lên máy chủ.">🔒 隱私設計：Excel 只在目前裝置的瀏覽器中讀取與保存，不會上傳到伺服器。公開 GitHub Pages 不會直接包含團員完整資料。</div>
+<div class="status" style="margin-top:12px">建議方式：在 Excel 全選資料（含第一列標題）→ 複製 → 貼到下方。</div>
+<textarea id="pasteArea" style="width:100%;min-height:180px;margin-top:12px;padding:13px;border:1px solid var(--line);border-radius:17px;background:#fff;resize:vertical" placeholder="請從 Excel 複製整個表格後貼上"></textarea>
+<div class="actions"><button class="btn" id="pasteBtn">解析貼上資料</button><label class="btn secondary" style="display:inline-block;cursor:pointer"><input id="fileInput" type="file" accept=".csv,.txt" hidden>選擇 CSV / TXT</label></div>
+<div class="actions"><button class="btn secondary" id="exportBtn" data-zh="匯出 JSON 備份" data-vi="Xuất JSON">匯出 JSON 備份</button><button class="btn secondary" id="jsonImportBtn" data-zh="匯入 JSON" data-vi="Nhập JSON">匯入 JSON</button><button class="btn danger" id="clearBtn" data-zh="清除本機資料" data-vi="Xóa dữ liệu">清除本機資料</button><input type="file" id="jsonFile" accept=".json" hidden></div>
+<div class="status" id="status">尚未載入資料。請從 Excel 複製整個表格後貼上。</div>
+<table class="map-table"><thead><tr><th>系統欄位</th><th>可辨識 Excel 欄位</th></tr></thead><tbody>
+<tr><td>姓名</td><td>姓名、中文姓名、旅客姓名、Name</td></tr>
+<tr><td>去程機位</td><td>去程機位、JX725、去程座位</td></tr>
+<tr><td>回程機位</td><td>回程機位、JX726、回程座位</td></tr>
+<tr><td>大紅花房間</td><td>大紅花、Lexis、第一飯店房間</td></tr>
+<tr><td>雙威房間</td><td>雙威、Sunway、第二飯店房間</td></tr>
+<tr><td>備註</td><td>備註、餐食、特殊需求、Note</td></tr>
+</tbody></table>
+</section>
+</main>
+</div>
 
-    <nav id="bottomNavigation" class="bottom-nav" aria-label="主要導覽">
-      <a href="#/home" data-route="home">
-        <span class="nav-icon">⌂</span>
-        <small data-i18n="home">首頁</small>
-      </a>
-      <a href="#/itinerary" data-route="itinerary">
-        <span class="nav-icon">▤</span>
-        <small data-i18n="itinerary">行程</small>
-      </a>
-      <a href="#/guide" data-route="guide">
-        <span class="nav-icon">✦</span>
-        <small data-i18n="guide">攻略</small>
-      </a>
-      <a href="#/tools" data-route="tools">
-        <span class="nav-icon">⌘</span>
-        <small data-i18n="tools">工具</small>
-      </a>
-      <a href="#/profile" data-route="profile">
-        <span class="nav-icon">◎</span>
-        <small data-i18n="profile">我的</small>
-      </a>
-      <a href="#/more" data-route="more">
-        <span class="nav-icon">•••</span>
-        <small data-i18n="more">更多</small>
-      </a>
-    </nav>
+<nav class="bottom"><div class="nav"><button class="active" data-view="lookup"><i>🔎</i><span data-zh="查詢" data-vi="Tra cứu">查詢</span></button><button data-view="rooms"><i>🛏️</i><span data-zh="房間" data-vi="Phòng">房間</span></button><button data-view="import"><i>📥</i><span data-zh="匯入" data-vi="Nhập">匯入</span></button></div></nav>
 
-    <div id="sheetBackdrop" class="sheet-backdrop" hidden></div>
+<script>
+const KEY='amt-malaysia-m2-2-data-v1';
+let lang='zh', data=JSON.parse(localStorage.getItem(KEY)||'[]'), roomFilter='all';
 
-    <aside id="sideSheet" class="side-sheet" aria-hidden="true">
-      <div class="sheet-handle"></div>
-
-      <button class="sheet-link" data-go="settings" type="button">
-        <span>⚙</span><span data-i18n="settings">設定</span>
-      </button>
-
-      <button class="sheet-link" data-go="leader" type="button">
-        <span>🧭</span><span data-i18n="leader">領隊專區</span>
-      </button>
-
-      <button class="sheet-link" data-go="emergency" type="button">
-        <span>☎</span><span data-i18n="emergency">緊急聯絡</span>
-      </button>
-
-      <button id="installButton" class="sheet-link" type="button" hidden>
-        <span>＋</span><span data-i18n="installApp">安裝 App</span>
-      </button>
-
-      <p id="sheetVersion" class="sheet-version"></p>
-    </aside>
-
-    <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  </div>
-
-  <script type="module" src="./js/app.js"></script>
+const aliases={
+ name:['姓名','中文姓名','旅客姓名','團員姓名','name','Name'],
+ seatOut:['去程機位','去程座位','JX725','jx725','Seat Out','outbound'],
+ seatBack:['回程機位','回程座位','JX726','jx726','Seat Back','inbound'],
+ lexis:['大紅花房間','大紅花','Lexis','LEXIS','第一飯店房間','房間1'],
+ sunway:['雙威房間','雙威','Sunway','SUNWAY','第二飯店房間','房間2'],
+ note:['備註','餐食','特殊需求','Note','note'],
+ role:['身分','類別','角色','Role']
+};
+function clean(v){return v==null?'':String(v).trim()}
+function pick(row,keys){for(const k of keys){if(row[k]!=null&&clean(row[k]))return clean(row[k])}return ''}
+function normalize(rows){
+ return rows.map((r,i)=>({id:i+1,name:pick(r,aliases.name),seatOut:pick(r,aliases.seatOut),seatBack:pick(r,aliases.seatBack),lexis:pick(r,aliases.lexis),sunway:pick(r,aliases.sunway),note:pick(r,aliases.note),role:pick(r,aliases.role)})).filter(x=>x.name);
+}
+function esc(s){return clean(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function roomMates(person,field){return data.filter(x=>x[field]&&x[field]===person[field]).map(x=>x.name)}
+function save(){localStorage.setItem(KEY,JSON.stringify(data));renderAll()}
+function renderStats(){
+ statPeople.textContent=data.length;
+ statLexis.textContent=new Set(data.map(x=>x.lexis).filter(Boolean)).size;
+ statSunway.textContent=new Set(data.map(x=>x.sunway).filter(Boolean)).size;
+ statSeats.textContent=data.filter(x=>x.seatOut||x.seatBack).length;
+}
+function personHtml(p){
+ const lexisM=roomMates(p,'lexis'), sunwayM=roomMates(p,'sunway');
+ return `<article class="card person"><div class="person-head"><div><h3>${esc(p.name)}</h3><div class="sub">${esc(p.role||'國能員旅團員')}</div></div>${p.note?`<span class="tag">${esc(p.note)}</span>`:''}</div>
+ <div class="seatgrid"><div class="seat"><span>去程機位 · JX725</span><b>${esc(p.seatOut||'—')}</b><small>TPE → KUL</small></div><div class="seat"><span>回程機位 · JX726</span><b>${esc(p.seatBack||'—')}</b><small>KUL → TPE</small></div></div>
+ <div class="rooms"><div class="roomline"><strong>🌺 大紅花 Lexis｜${esc(p.lexis||'尚未分配')}</strong><div>${p.lexis?`同房：${lexisM.map(esc).join('、')}`:'—'}</div></div><div class="roomline"><strong>🏙️ 雙威 Sunway｜${esc(p.sunway||'尚未分配')}</strong><div>${p.sunway?`同房：${sunwayM.map(esc).join('、')}`:'—'}</div></div></div></article>`;
+}
+function renderResults(){
+ const q=clean(searchInput.value).toLowerCase();
+ let list=data.filter(p=>[p.name,p.seatOut,p.seatBack,p.lexis,p.sunway,p.note,p.role].join(' ').toLowerCase().includes(q));
+ if(!data.length){results.innerHTML=`<div class="card empty">尚未載入團員資料。<br>請至「匯入」選擇 0717 Excel 房間名單。</div>`;return}
+ if(!list.length){results.innerHTML=`<div class="card empty">找不到符合資料。<br>請確認姓名、房號或機位是否正確。</div>`;return}
+ results.innerHTML=list.slice(0,30).map(personHtml).join('');
+}
+function groupedRooms(){
+ const arr=[];
+ [['lexis','🌺 大紅花 Lexis'],['sunway','🏙️ 雙威 Sunway']].forEach(([field,label])=>{
+  const map={};data.forEach(p=>{if(p[field]) (map[p[field]] ||= []).push(p)});
+  Object.keys(map).sort((a,b)=>a.localeCompare(b,'zh-Hant',{numeric:true})).forEach(room=>arr.push({hotel:field,label,room,people:map[room]}));
+ });
+ return arr;
+}
+function renderRooms(){
+ let rooms=groupedRooms().filter(r=>roomFilter==='all'||r.hotel===roomFilter);
+ roomCountTag.textContent=`${rooms.length} ROOMS`;
+ if(!rooms.length){roomList.innerHTML=`<div class="card empty">尚無房間資料。</div>`;return}
+ roomList.innerHTML=rooms.map(r=>`<article class="card room-card"><div class="room-top"><div><h3>${r.label}</h3><div class="sub">${esc(r.room)} · ${r.people.length} 人</div></div><span class="tag">${esc(r.room)}</span></div><ul>${r.people.map(p=>`<li><span>${esc(p.name)}</span><span>${esc(p.seatOut||'—')} / ${esc(p.seatBack||'—')}</span></li>`).join('')}</ul></article>`).join('');
+}
+function renderAll(){renderStats();renderResults();renderRooms();status.textContent=data.length?`已載入 ${data.length} 位團員；資料保存在此裝置瀏覽器。`:'尚未載入資料。請從 Excel 複製整個表格後貼上。'}
+searchInput.addEventListener('input',renderResults);
+document.querySelectorAll('.hint').forEach(b=>b.onclick=()=>{searchInput.value=b.dataset.key;renderResults()});
+document.querySelectorAll('.filter').forEach(b=>b.onclick=()=>{document.querySelectorAll('.filter').forEach(x=>x.classList.remove('active'));b.classList.add('active');roomFilter=b.dataset.hotel;renderRooms()});
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));document.getElementById(b.dataset.view).classList.add('active');window.scrollTo({top:0,behavior:'smooth'})});
+function parseDelimited(text){
+ const lines=text.replace(/\r/g,'').split('\n').filter(x=>x.trim());
+ if(lines.length<2) throw new Error('資料列不足');
+ const delimiter=lines[0].includes('\t')?'\t':',';
+ const headers=lines[0].split(delimiter).map(x=>x.trim().replace(/^"|"$/g,''));
+ return lines.slice(1).map(line=>{const vals=line.split(delimiter).map(x=>x.trim().replace(/^"|"$/g,''));const obj={};headers.forEach((h,i)=>obj[h]=vals[i]||'');return obj});
+}
+pasteBtn.onclick=()=>{
+ try{const rows=parseDelimited(pasteArea.value);const parsed=normalize(rows);if(!parsed.length)throw new Error('找不到姓名欄位');data=parsed;save();status.textContent=`貼上成功，共 ${data.length} 位團員。`;}catch(err){status.textContent=`解析失敗：${err.message}。請從 Excel 連同第一列標題一起複製。`;}
+};
+fileInput.onchange=async e=>{
+ const f=e.target.files[0];if(!f)return;
+ try{const text=await f.text();const rows=parseDelimited(text);const parsed=normalize(rows);if(!parsed.length)throw new Error('找不到姓名欄位');data=parsed;save();status.textContent=`匯入成功：${f.name}，共 ${data.length} 位團員。`;}catch(err){status.textContent=`匯入失敗：${err.message}`;}
+};
+exportBtn.onclick=()=>{
+ const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='malaysia-room-seat-backup.json';a.click();URL.revokeObjectURL(a.href)
+};
+jsonImportBtn.onclick=()=>jsonFile.click();
+jsonFile.onchange=async e=>{try{const parsed=JSON.parse(await e.target.files[0].text());if(!Array.isArray(parsed))throw Error('格式不正確');data=parsed;save()}catch(err){alert('JSON 匯入失敗：'+err.message)}};
+clearBtn.onclick=()=>{if(confirm('確定清除本機房間與機位資料？')){data=[];localStorage.removeItem(KEY);renderAll()}};
+langBtn.onclick=()=>{lang=lang==='zh'?'vi':'zh';langBtn.textContent=lang==='zh'?'VI':'中';document.querySelectorAll('[data-zh]').forEach(el=>el.textContent=el.dataset[lang]);document.querySelectorAll('[data-ph-zh]').forEach(el=>el.placeholder=el.dataset['ph'+(lang==='zh'?'Zh':'Vi')])};
+renderAll();
+</script>
 </body>
 </html>
