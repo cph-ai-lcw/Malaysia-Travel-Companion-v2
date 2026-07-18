@@ -111,3 +111,16 @@
 .leader-session-banner small{font-weight:600}
 .leader-settings{display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end;padding:18px}
 @media(max-width:680px){.leader-mode-title{display:block}.leader-logout{margin-top:14px}.leader-session-banner{display:grid}.leader-settings{grid-template-columns:1fr}}
+
+
+/* Milestone 4-6 Firebase */
+.firebase-hero{background:linear-gradient(135deg,#183b5b,#126f68);color:#fff}
+.firebase-form,.firebase-actions,.firebase-rules{margin-top:16px}
+.firebase-form h2,.firebase-actions h2,.firebase-rules h2{margin-top:0}
+.firebase-form input{width:100%;box-sizing:border-box}
+.firebase-message{margin-top:14px;font-weight:700}
+.firebase-actions .admin-card-actions{justify-content:flex-start;flex-wrap:wrap}
+.firebase-actions button{min-height:44px}
+.firebase-rules pre{overflow:auto;background:#10232f;color:#eaf8f6;padding:14px;border-radius:14px;font-size:12px;line-height:1.55}
+.firebase-rules ol{padding-left:22px;line-height:1.8}
+@media(max-width:680px){.firebase-actions .admin-card-actions button{width:100%}.firebase-rules pre{font-size:11px}}
