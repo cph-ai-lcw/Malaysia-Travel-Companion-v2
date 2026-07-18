@@ -1,36 +1,20 @@
 # Malaysia Travel Companion
 
-2026 國能馬來西亞員工旅遊 PWA 手帳。
+2026 國能馬來西亞員工旅遊 PWA。
 
-## Current Release
-
-- Version: 5.5.0
-- Milestone: Milestone 5
-- Stage: Sprint 5-5 Complete
+- Version: **5.6.0 Stable**
+- Milestone: **5-6 Complete**
+- Build: **20260718-M5-6-STABLE**
 - Deployment: GitHub Pages
 
-## Production Entry Points
+## Milestone 5-6
 
-- `index.html`
-- `css/app.css`
-- `js/app.js`
-- `service-worker.js`
+- 出發倒數 Dashboard
+- 30／14／7／3／1 天與出發當日提醒
+- 出發準備完成度
+- 房間、機位、MDAC、公告與檢查清單整合
+- 領隊首頁重要提醒管理
+- 中越雙語
+- PWA 離線快取
 
-## Included Features
-
-- 繁體中文／越南文
-- 五日行程、費用、美食、購物、地圖、天氣與匯率
-- 團員、房間與機位資料
-- 正式 Dashboard
-- 公告、點名、QR 報到
-- 領隊 PIN 模式
-- Firebase 雲端同步
-- PWA 安裝與離線快取
-
-## GitHub Pages
-
-Repository → Settings → Pages：
-
-- Source：Deploy from a branch
-- Branch：main
-- Folder：/ (root)
+MDAC 由公司或旅行社統一協助處理，員工端不提供自行重複填寫入口。
