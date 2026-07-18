@@ -24,3 +24,9 @@
 
 ## 3.7.0 — Milestone 3-7
 - Added live MYR/TWD exchange-rate converter, cached fallback and bilingual travel spending references.
+
+## 3.9.0 — Milestone 3-9 Food Assistant
+- Added bilingual food assistant with day, location and category filters.
+- Added wish list, favorites, price recording and food budget summary.
+- Added dietary, spice, halal and allergy guidance.
+- Added Malay ordering phrases with speech playback.

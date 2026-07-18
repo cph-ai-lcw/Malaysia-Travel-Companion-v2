@@ -17,3 +17,5 @@ export { DIGITAL_GUIDE } from "./guide.js";
 export { EXCHANGE_CONFIG } from "./exchange.js";
 
 export { SHOPPING_ASSISTANT } from "./shopping-assistant.js";
+
+export { FOOD_ASSISTANT } from "./food-assistant.js";
