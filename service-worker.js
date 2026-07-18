@@ -1,4 +1,4 @@
-const CACHE='mtc-release-v440-20260718';
+const CACHE='mtc-release-v450-20260718';
 const ASSETS=['./','./index.html','./css/release-v25.css','./data/trip/map-locations.js','./data/trip/announcement.js','./data/trip/checkin.js','./data/trip/countdown.js','./data/trip/weather.js','./data/trip/exchange.js','./data/trip/shopping-assistant.js','./data/trip/food-assistant.js','./js/release-v25.js','./js/qrcode-browser.js','./js/milestone4-pro-store.js','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./data/trip/itinerary.js','./data/trip/daily-budget.js','./data/trip/foods.js','./data/trip/shopping.js','./data/trip/resort.js','./data/trip/members.js','./data/trip/rooms.js','./data/trip/airport-transfer.js','./data/trip/guide.js','./data/system/version.js'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));

@@ -40,8 +40,8 @@ export function createProDatabase({ members = [], rooms = [], announcements = []
     meta: {
       schema: 'amt-travel-pro',
       schemaVersion: 1,
-      milestone: '4-4',
-      appVersion: '4.4.0',
+      milestone: '4-5',
+      appVersion: '4.5.0',
       createdAt,
       updatedAt: createdAt,
       migration: {
@@ -101,7 +101,11 @@ export function createProDatabase({ members = [], rooms = [], announcements = []
       sessionTimeoutMinutes: 30,
       allowAnnouncementEdit: true,
       allowAttendanceEdit: true,
-      allowMemberDataView: true
+      allowQrCheckin: true,
+      allowBackupRestore: true,
+      allowMemberDataView: true,
+      failedAttempts: 0,
+      lockedUntil: null
     },
     sync: {
       provider: 'local',
@@ -119,8 +123,9 @@ export function loadProDatabase(seed) {
   try {
     const current = JSON.parse(localStorage.getItem(PRO_KEY) || 'null');
     if (current?.meta?.schema === 'amt-travel-pro') {
-      current.meta.milestone = '4-4'; current.meta.appVersion = '4.4.0';
+      current.meta.milestone = '4-5'; current.meta.appVersion = '4.5.0';
       current.checkinRecords = Array.isArray(current.checkinRecords) ? current.checkinRecords : [];
+      current.leaderSettings = { authMode: 'local-pin', pinConfigured: false, pinHash: '', sessionTimeoutMinutes: 30, allowAnnouncementEdit: true, allowAttendanceEdit: true, allowQrCheckin: true, allowBackupRestore: true, allowMemberDataView: true, failedAttempts: 0, lockedUntil: null, ...(current.leaderSettings || {}) };
       current.members = (current.members || []).map(m => ({...m, qrCode: m.qrCode || `AMT-MY26-${m.id}`, checkinStatus: m.checkinStatus || 'pending'}));
       saveProDatabase(current); return current;
     }
