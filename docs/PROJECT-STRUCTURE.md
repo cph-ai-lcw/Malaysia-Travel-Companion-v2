@@ -21,6 +21,7 @@
 └─ docs/
    ├─ MILESTONE-5-BASELINE.md
    ├─ MILESTONE-5-1.md
+   ├─ MILESTONE-5-2.md
    ├─ PROJECT-STRUCTURE.md
    └─ archive/
 ```
