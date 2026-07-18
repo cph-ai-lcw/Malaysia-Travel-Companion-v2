@@ -1,7 +1,7 @@
 {
-  "name": "Malaysia Travel Companion Release v3.0",
+  "name": "Malaysia Travel Companion Release v3.2",
   "short_name": "Malaysia Trip",
-  "description": "2026 國能馬來西亞員工旅遊 PWA 電子旅行手冊",
+  "description": "2026 國能馬來西亞員工旅遊 PWA｜電子旅行手冊與 GPS 地圖模式",
   "start_url": "./#/home",
   "scope": "./",
   "display": "standalone",
