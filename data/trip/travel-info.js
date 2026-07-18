@@ -1,5 +1,19 @@
 export const TRAVEL_INFO = Object.freeze({
   updatedAt: '2026-07-18',
+  mdac: {
+    titleZh:'MDAC 馬來西亞數位入境卡',
+    titleVi:'Thẻ nhập cảnh kỹ thuật số Malaysia – MDAC',
+    ownerZh:'由公司或旅行社統一協助處理',
+    ownerVi:'Do công ty hoặc công ty du lịch hỗ trợ xử lý thống nhất',
+    noticeZh:'請勿自行重複填寫。相關資料收集、填報方式與確認結果，將由公司、旅行社或領隊於出發前另行通知。',
+    noticeVi:'Vui lòng không tự khai lại để tránh trùng lặp. Việc thu thập dữ liệu, cách khai và kết quả xác nhận sẽ được công ty, công ty du lịch hoặc trưởng đoàn thông báo trước ngày khởi hành.',
+    statuses:[
+      {id:'pending',zh:'尚未通知',vi:'Chưa thông báo'},
+      {id:'collecting',zh:'資料收集中',vi:'Đang thu thập dữ liệu'},
+      {id:'processing',zh:'旅行社處理中',vi:'Công ty du lịch đang xử lý'},
+      {id:'completed',zh:'已完成',vi:'Đã hoàn thành'}
+    ]
+  },
   quickFacts: [
     {icon:'🔌',titleZh:'電壓與插座',titleVi:'Điện áp và ổ cắm',value:'240V · Type G',noteZh:'三孔英規插座，建議攜帶萬用轉接頭。',noteVi:'Ổ cắm 3 chấu kiểu Anh, nên mang bộ chuyển đổi.'},
     {icon:'🕒',titleZh:'時差',titleVi:'Múi giờ',value:'UTC+8',noteZh:'與台灣相同，無需調整時間。',noteVi:'Cùng múi giờ với Đài Loan.'},
@@ -15,7 +29,7 @@ export const TRAVEL_INFO = Object.freeze({
     {days:'9/22–9/24',icon:'🏙️',nameZh:'雙威偉樂酒店',nameVi:'Sunway Velocity Hotel Kuala Lumpur',noteZh:'鄰近 Sunway Velocity Mall；房卡與實際房號以領隊通知為準。',noteVi:'Gần Sunway Velocity Mall; số phòng thực tế theo thông báo của trưởng đoàn.'}
   ],
   entry: [
-    {icon:'🛂',titleZh:'護照與入境',titleVi:'Hộ chiếu và nhập cảnh',itemsZh:['護照須保持完整、無污損，並確認有效期限。','入境馬來西亞前 3 天內填寫免費 MDAC 數位入境卡。','備妥回程機票、住宿與行程資料，以供入境查驗。'],itemsVi:['Hộ chiếu phải còn nguyên vẹn và còn hiệu lực.','Điền MDAC miễn phí trong vòng 3 ngày trước khi nhập cảnh.','Chuẩn bị vé về, khách sạn và lịch trình để xuất trình khi cần.'],officialUrl:'https://imigresen-online.imi.gov.my/mdac/main'},
+    {icon:'🛂',titleZh:'護照與入境',titleVi:'Hộ chiếu và nhập cảnh',itemsZh:['護照須保持完整、無污損，並確認有效期限。','本團 MDAC 將由公司或旅行社統一協助處理，請勿自行重複填寫。','備妥回程機票、住宿與行程資料，以供入境查驗。'],itemsVi:['Hộ chiếu phải còn nguyên vẹn và còn hiệu lực.','MDAC của đoàn sẽ do công ty hoặc công ty du lịch hỗ trợ xử lý; vui lòng không tự khai lại.','Chuẩn bị vé về, khách sạn và lịch trình để xuất trình khi cần.'],officialUrl:'https://imigresen-online.imi.gov.my/mdac/main'},
     {icon:'🧳',titleZh:'海關與攜帶物品',titleVi:'Hải quan và hành lý',itemsZh:['毒品、電子煙及受管制物品不得攜帶。','處方藥請保留原包裝、處方或醫師證明。','現金或可轉讓票據達申報門檻時，應主動向海關申報。'],itemsVi:['Không mang ma túy, thuốc lá điện tử hoặc hàng bị kiểm soát.','Thuốc kê đơn nên giữ bao bì gốc và đơn thuốc hoặc giấy bác sĩ.','Khai báo với hải quan khi tiền mặt hoặc công cụ chuyển nhượng đạt ngưỡng quy định.'],officialUrl:'https://www.customs.gov.my/en/individu/pengembara/travelers-guide'}
   ],
   baggage: [
@@ -37,7 +51,7 @@ export const TRAVEL_INFO = Object.freeze({
   ],
   checklist: [
     {id:'passport',zh:'護照與護照影本',vi:'Hộ chiếu và bản sao'},
-    {id:'mdac',zh:'完成 MDAC 數位入境卡',vi:'Hoàn thành MDAC'},
+    {id:'mdac-info',zh:'確認已收到公司／旅行社的 MDAC 通知',vi:'Xác nhận đã nhận thông báo MDAC từ công ty / công ty du lịch'},
     {id:'ticket',zh:'確認航班與集合時間',vi:'Xác nhận chuyến bay và giờ tập trung'},
     {id:'insurance',zh:'旅平險與醫療保險資料',vi:'Bảo hiểm du lịch và y tế'},
     {id:'adapter',zh:'Type G 轉接頭與充電線',vi:'Đầu chuyển Type G và cáp sạc'},

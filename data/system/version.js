@@ -1,1 +1,1 @@
-export const VERSION = Object.freeze({version:'5.5.0-alpha',build:'20260718-M5-5-TRAVEL-CONTENT',milestone:'Milestone 5',stage:'Sprint 5-5 Started',releaseDate:'2026-07-18',cacheVersion:'mtc-release-v550a-20260718'});
+export const VERSION = Object.freeze({version:'5.5.0',build:'20260718-M5-5-COMPLETE',milestone:'Milestone 5',stage:'Sprint 5-5 Complete',releaseDate:'2026-07-18',cacheVersion:'mtc-release-v550-20260718'});

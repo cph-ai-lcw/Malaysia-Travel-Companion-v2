@@ -4,9 +4,9 @@
 
 ## Current Release
 
-- Version: 5.5.0-alpha
+- Version: 5.5.0
 - Milestone: Milestone 5
-- Stage: Sprint 5-5 Started
+- Stage: Sprint 5-5 Complete
 - Deployment: GitHub Pages
 
 ## Production Entry Points
