@@ -1,168 +1,481 @@
-import { APP_CONFIG, VERSION } from "../data/index.js";
-import { registerRoute, startRouter, navigate, renderRoute } from "./core/router.js";
-import { getLanguage, setLanguage, toggleLanguage, translateStaticText } from "./core/i18n.js";
-import { applyTheme, setTheme, cycleTheme } from "./core/theme.js";
-import { storage } from "./core/storage.js";
-import { setSelectedMemberId, searchMembers } from "./core/member-store.js";
-import { initPWA } from "./core/pwa.js";
-import { openSheet, closeSheet, showToast } from "./core/ui.js";
+import { ITINERARY } from '../data/trip/itinerary.js';
+import { DAILY_BUDGET } from '../data/trip/daily-budget.js';
+import { FOODS } from '../data/trip/foods.js';
+import { SHOPPING } from '../data/trip/shopping.js';
+import { RESORT_ACTIVITIES } from '../data/trip/resort.js';
+import { MEMBERS } from '../data/trip/members.js';
+import { ROOMS } from '../data/trip/rooms.js';
+import { VERSION } from '../data/system/version.js';
+import { AIRPORT_TRANSFER } from '../data/trip/airport-transfer.js';
+import { DIGITAL_GUIDE } from '../data/trip/guide.js';
+import { MAP_LOCATIONS, MAP_CATEGORIES } from '../data/trip/map-locations.js';
+import { ANNOUNCEMENTS, ANNOUNCEMENT_TYPES } from '../data/trip/announcement.js';
+import { CHECKIN_DAYS, CHECKIN_STATUS } from '../data/trip/checkin.js';
+import { TRIP_COUNTDOWN } from '../data/trip/countdown.js';
+import { WEATHER_LOCATIONS, WEATHER_CODE } from '../data/trip/weather.js';
+import { EXCHANGE_CONFIG } from '../data/trip/exchange.js';
+import { SHOPPING_ASSISTANT } from '../data/trip/shopping-assistant.js';
+import { FOOD_ASSISTANT } from '../data/trip/food-assistant.js';
+import { loadProDatabase, saveProDatabase, exportProDatabase, importProDatabase, resetProDatabase } from './milestone4-pro-store.js';
+import { testFirebaseConnection, uploadFirebaseDatabase, downloadFirebaseDatabase, startFirebaseRealtime, stopFirebaseRealtime, scheduleFirebaseUpload } from './firebase-sync.js';
 
-import { homePage } from "./pages/home.js";
-import { itineraryPage } from "./pages/itinerary.js";
-import { guidePage } from "./pages/guide.js";
-import { toolsPage } from "./pages/tools.js";
-import { profilePage } from "./pages/profile.js";
-import { morePage } from "./pages/more.js";
-import { settingsPage } from "./pages/settings.js";
-import { leaderPage } from "./pages/leader.js";
-import { emergencyPage } from "./pages/emergency.js";
-import { membersPage } from "./pages/members.js";
-import { roomsPage } from "./pages/rooms.js";
-import { seatsPage } from "./pages/seats.js";
-import { memberSummaryCard } from "./components/member-card.js";
+const proSeed={members:MEMBERS,rooms:ROOMS,announcements:ANNOUNCEMENTS};
+let proData=loadProDatabase(proSeed);
 
-function registerRoutes() {
-  registerRoute("home", homePage);
-  registerRoute("itinerary", itineraryPage);
-  registerRoute("guide", guidePage);
-  registerRoute("tools", toolsPage);
-  registerRoute("profile", profilePage);
-  registerRoute("more", morePage);
-  registerRoute("settings", settingsPage);
-  registerRoute("leader", leaderPage);
-  registerRoute("emergency", emergencyPage);
-  registerRoute("members", membersPage);
-  registerRoute("rooms", roomsPage);
-  registerRoute("seats", seatsPage);
+const state={lang:localStorage.getItem('mtc-lang')||'zh',day:1,hotel:'lexis',guideCategory:null,guideQuery:'',mapCategory:'all',mapDay:0,mapQuery:'',mapInstance:null,mapMarkers:[],userPosition:null,noticeFilter:'all',noticeEditor:false,announcementEditId:null,announcementQuery:'',announcementStatus:'all',attendanceSessionId:null,attendanceQuery:'',attendanceFilter:'all',attendanceGroup:'all',attendanceEditId:null,qrQuery:'',qrFilter:'all',qrSelectedMemberId:null,qrScannerActive:false,qrLastResult:'',checkinDay:1,checkinQuery:'',checkinFilter:'all',weatherLocation:'kuala-lumpur',weatherData:null,weatherLoading:false,weatherError:'',exchangeRate:null,exchangeLoading:false,exchangeError:'',exchangeAmount:'100',exchangeDirection:'MYR_TWD',shoppingCategory:'all',shoppingStore:'all',shoppingQuery:'',shoppingBudget:localStorage.getItem('mtc-shopping-budget')||String(SHOPPING_ASSISTANT.defaultBudgetMYR),foodCategory:'all',foodLocation:'all',foodDay:0,foodQuery:'',foodBudget:localStorage.getItem('mtc-food-budget')||String(FOOD_ASSISTANT.defaultBudgetMYR),firebaseBusy:false,firebaseMessage:'',dashboardMemberId:localStorage.getItem('mtc-dashboard-member')||'M003'};
+const t=(zh,vi)=>state.lang==='zh'?zh:vi;
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const routes=['home','itinerary','budget','food','shopping','resort','traveler','rooms','guide','map','notifications','checkin','countdown','weather','exchange','pro','announcement-admin','attendance-admin','qr-checkin','firebase-admin'];
+function route(){const r=(location.hash.replace('#/','')||'home').split('?')[0];return routes.includes(r)?r:'home'}
+const LEADER_SESSION_KEY='amt-m4-leader-session-v1';
+const PROTECTED_ROUTES=new Set(['announcement-admin','attendance-admin','qr-checkin','firebase-admin']);
+function leaderSettings(){return proData.leaderSettings||{}}
+function leaderSession(){try{return JSON.parse(sessionStorage.getItem(LEADER_SESSION_KEY)||'null')}catch{return null}}
+function leaderAuthenticated(){const session=leaderSession();if(!session?.authenticated)return false;const timeout=Math.max(5,Number(leaderSettings().sessionTimeoutMinutes)||30)*60000;if(Date.now()-Number(session.lastActive||0)>timeout){sessionStorage.removeItem(LEADER_SESSION_KEY);return false}session.lastActive=Date.now();sessionStorage.setItem(LEADER_SESSION_KEY,JSON.stringify(session));return true}
+function setLeaderSession(){sessionStorage.setItem(LEADER_SESSION_KEY,JSON.stringify({authenticated:true,loginAt:Date.now(),lastActive:Date.now()}))}
+function clearLeaderSession(){sessionStorage.removeItem(LEADER_SESSION_KEY)}
+async function hashPin(pin){const data=new TextEncoder().encode(String(pin));const digest=await crypto.subtle.digest('SHA-256',data);return Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,'0')).join('')}
+function leaderLocked(){const until=Date.parse(leaderSettings().lockedUntil||'');return Number.isFinite(until)&&until>Date.now()}
+function leaderLoginPanel(){const configured=leaderSettings().pinConfigured===true;const locked=leaderLocked();return `<section class="pro-hero leader-login-hero"><span class="pill">Milestone 4 Pro · Sprint 4-8</span><h1>${t('領隊模式','Chế độ trưởng đoàn')}</h1><p>${configured?t('請輸入領隊 PIN 進入管理功能。','Nhập mã PIN trưởng đoàn để mở chức năng quản lý.'):t('首次使用請建立 4～8 位數領隊 PIN。','Lần đầu sử dụng, hãy tạo mã PIN 4–8 chữ số.')}</p></section><form class="card leader-login-card" id="leaderAuthForm"><div class="leader-lock-icon">${configured?'🔐':'🛡️'}</div><label>${configured?t('領隊 PIN','PIN trưởng đoàn'):t('建立 PIN','Tạo PIN')}<input id="leaderPin" name="pin" inputmode="numeric" pattern="[0-9]{4,8}" minlength="4" maxlength="8" autocomplete="off" required ${locked?'disabled':''}></label>${configured?'':`<label>${t('再次確認 PIN','Xác nhận lại PIN')}<input name="confirmPin" inputmode="numeric" pattern="[0-9]{4,8}" minlength="4" maxlength="8" autocomplete="off" required></label>`}<button type="submit" ${locked?'disabled':''}>${configured?'🔓 '+t('登入領隊模式','Đăng nhập chế độ trưởng đoàn'):'✅ '+t('建立並登入','Tạo và đăng nhập')}</button><p class="notice-limit">${locked?t('PIN 錯誤次數過多，請稍後再試。','Sai PIN quá nhiều lần, vui lòng thử lại sau.'):t('PIN 僅保存在此裝置。離開共用裝置前請登出領隊模式。','PIN chỉ lưu trên thiết bị này. Hãy đăng xuất trước khi rời thiết bị dùng chung.')}</p></form>`}
+function header(){return `<div class="topbar"><div class="brand"><div class="brand-mark">🇲🇾</div><div><b>${t('馬來西亞手帳 2026','Sổ tay Malaysia 2026')}</b><small>國能員旅 · Release v5.1</small></div></div><button class="lang" id="langBtn">${state.lang==='zh'?'VI':'中'}</button></div>`}
+function nav(active){const items=[['home','🏠',t('首頁','Trang chủ')],['itinerary','🗓️',t('行程','Lịch trình')],['budget','💰',t('費用','Chi phí')],['traveler','👥',t('團員','Thành viên')],['guide','📖',t('手冊','Cẩm nang')],['map','🗺️',t('地圖','Bản đồ')],['notifications','🔔',t('通知','Thông báo')],['checkin','✅',t('簽到','Điểm danh')],['countdown','⏳',t('倒數','Đếm ngược')],['weather','🌦️',t('天氣','Thời tiết')],['exchange','💱',t('匯率','Tỷ giá')],['food','🍜',t('美食','Ẩm thực')],['shopping','🛍️',t('購物','Mua sắm')],['pro','🧭',t('領隊','Trưởng đoàn')]];return `<nav class="nav"><div class="nav-inner">${items.map(([r,i,l])=>`<a href="#/${r}" class="${active===r?'active':''}"><i>${i}</i>${l}</a>`).join('')}</div></nav>`}
+function shell(content,active){return `<div class="shell">${header()}<main>${content}<div class="version">Release ${VERSION.version} · ${VERSION.build}</div></main>${nav(active)}</div>`}
+
+const countdownStartMs=Date.parse(TRIP_COUNTDOWN.tripStart);
+const countdownEndMs=Date.parse(TRIP_COUNTDOWN.tripEnd);
+let countdownInterval=null;
+function countdownParts(now=Date.now()){
+  const before=now<countdownStartMs,after=now>countdownEndMs;
+  const target=before?countdownStartMs:countdownEndMs;
+  const diff=Math.max(0,target-now);
+  const days=Math.floor(diff/86400000),hours=Math.floor(diff%86400000/3600000),minutes=Math.floor(diff%3600000/60000),seconds=Math.floor(diff%60000/1000);
+  const dayStart=Date.parse('2026-09-20T00:00:00+08:00');
+  const tripDay=Math.min(5,Math.max(1,Math.floor((now-dayStart)/86400000)+1));
+  return {before,after,days,hours,minutes,seconds,tripDay};
+}
+function countdownUnit(value,labelZh,labelVi){return `<div><b data-count-value>${String(value).padStart(2,'0')}</b><span>${t(labelZh,labelVi)}</span></div>`}
+function countdownCompact(){const c=countdownParts();if(c.after)return `<a class="countdown-home card" href="#/countdown"><div class="countdown-home-icon">🏠</div><div><small>${t('旅程已完成','Chuyến đi đã hoàn thành')}</small><h2>${t('平安返家，珍藏美好回憶','Về nhà bình an, lưu giữ kỷ niệm đẹp')}</h2><p>2026/09/20–09/24</p></div><span>›</span></a>`;if(!c.before)return `<a class="countdown-home card" href="#/countdown"><div class="countdown-home-icon">🇲🇾</div><div><small>${t('旅程進行中','Chuyến đi đang diễn ra')}</small><h2>DAY ${c.tripDay} · ${t(ITINERARY[c.tripDay-1]?.titleZh||'',ITINERARY[c.tripDay-1]?.titleVi||'')}</h2><p>${t('查看今日進度與重要時間','Xem tiến độ hôm nay và thời gian quan trọng')}</p></div><span>›</span></a>`;return `<a class="countdown-home card" href="#/countdown"><div class="countdown-home-icon">⏳</div><div><small>${t('距離集合出發還有','Còn lại đến giờ tập trung')}</small><h2><strong data-home-days>${c.days}</strong> ${t('天','ngày')} <strong data-home-hours>${String(c.hours).padStart(2,'0')}</strong>:<strong data-home-minutes>${String(c.minutes).padStart(2,'0')}</strong>:<strong data-home-seconds>${String(c.seconds).padStart(2,'0')}</strong></h2><p>2026/09/20 07:00 · ${t('鶯歌集合','Tập trung tại Yingge')}</p></div><span>›</span></a>`}
+function countdownPage(){const c=countdownParts();const phase=c.after?'after':c.before?'before':'during';let main='';if(phase==='before')main=`<div class="countdown-clock">${countdownUnit(c.days,'天','Ngày')}${countdownUnit(c.hours,'時','Giờ')}${countdownUnit(c.minutes,'分','Phút')}${countdownUnit(c.seconds,'秒','Giây')}</div><p class="countdown-target">📍 2026/09/20 07:00 · ${t('鶯歌區中湖里大湖路324號集合','Tập trung tại số 324 đường Dahu, Yingge')}</p>`;else if(phase==='during'){const d=ITINERARY[c.tripDay-1];const progress=Math.min(100,Math.max(0,((Date.now()-countdownStartMs)/(countdownEndMs-countdownStartMs))*100));main=`<div class="trip-now"><span>DAY ${c.tripDay}</span><h2>${t(d?.titleZh||'',d?.titleVi||'')}</h2><p>🏨 ${d?.hotel||''}</p></div><div class="trip-progress"><div style="width:${progress.toFixed(1)}%"></div></div><small class="progress-label">${t('旅程進度','Tiến độ chuyến đi')} ${progress.toFixed(0)}%</small>`}else main=`<div class="trip-finished"><div>🏠</div><h2>${t('旅程圓滿完成','Chuyến đi đã hoàn thành')}</h2><p>${t('感謝每位同仁共同留下美好回憶。','Cảm ơn mọi người đã cùng tạo nên những kỷ niệm đẹp.')}</p></div>`;
+  const now=Date.now();const milestones=TRIP_COUNTDOWN.milestones.map(x=>{const done=now>=Date.parse(x.at);return `<article class="countdown-milestone ${done?'done':''}"><div>${done?'✓':x.icon}</div><div><b>${t(x.titleZh,x.titleVi)}</b><small>${new Date(x.at).toLocaleString(state.lang==='zh'?'zh-TW':'vi-VN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Taipei'})}</small><p>${t(x.noteZh,x.noteVi)}</p></div></article>`}).join('');
+  return shell(`<section class="countdown-hero"><span class="pill">Milestone 3-5 · Travel Countdown</span><h1>${t('旅行倒數','Đếm ngược chuyến đi')}</h1><p>${t('從集合出發到平安返家，依時間自動切換倒數、旅遊日與完成狀態。','Tự động chuyển từ đếm ngược sang ngày du lịch và trạng thái hoàn thành.')}</p>${main}</section><div class="section-head"><h2>${t('重要時間軸','Mốc thời gian quan trọng')}</h2><span>2026/09/20–09/24</span></div><div class="countdown-timeline">${milestones}</div><div class="notice-limit">${t('倒數以台灣／馬來西亞 UTC+8 時區計算。裝置時間若不正確，顯示結果也會受到影響。','Đếm ngược theo múi giờ UTC+8 của Đài Loan/Malaysia. Kết quả có thể sai nếu giờ thiết bị không chính xác.')}</div>`,'countdown')}
+function updateCountdownDom(){const c=countdownParts();const values=[c.days,c.hours,c.minutes,c.seconds];document.querySelectorAll('.countdown-clock [data-count-value]').forEach((el,i)=>el.textContent=String(values[i]).padStart(2,'0'));const ids=['days','hours','minutes','seconds'];ids.forEach((id,i)=>{const el=document.querySelector(`[data-home-${id}]`);if(el)el.textContent=i===0?values[i]:String(values[i]).padStart(2,'0')})}
+
+function dashboardMember(){return MEMBERS.find(m=>String(m.id)===String(state.dashboardMemberId))||MEMBERS[0]}
+function dashboardRoom(member,hotelId){const id=member?.roomAssignments?.[hotelId];return ROOMS.find(r=>r.id===id||r.assignmentCode===id)}
+function dashboardDay(){const c=countdownParts();return c.before?1:c.after?5:c.tripDay}
+function dashboardAnnouncement(){return allAnnouncements()[0]||null}
+function dashboardNextMeeting(){const sessions=[...(proData.attendanceSessions||[])].filter(x=>x.active!==false);const now=Date.now();const timed=sessions.map(x=>({...x,_ts:Date.parse(`${x.date||''}T${x.time||'00:00'}:00+08:00`)})).filter(x=>Number.isFinite(x._ts)&&x._ts>=now).sort((a,b)=>a._ts-b._ts);return timed[0]||null}
+function dashboardWeather(){const data=state.weatherData||readWeatherCache(state.weatherLocation);if(!data?.current)return null;const m=weatherMeta(data.current.weather_code);return {temp:Math.round(data.current.temperature_2m),feel:Math.round(data.current.apparent_temperature),icon:m.icon,label:m.label,rain:data.daily?.precipitation_probability_max?.[0]??0}}
+function home(){
+ const member=dashboardMember(),day=dashboardDay(),trip=ITINERARY[day-1],notice=dashboardAnnouncement(),meeting=dashboardNextMeeting(),wx=dashboardWeather();
+ const lexis=dashboardRoom(member,'lexis'),sunway=dashboardRoom(member,'sunway');
+ const noticeTypeData=notice?noticeType(notice):null;
+ return shell(`<section class="dashboard-hero"><div><span class="pill">Milestone 5 · Sprint 5-1</span><h1>${t('國能馬來西亞員旅 Dashboard','Dashboard du lịch Malaysia')}</h1><p>${t('公告、集合、個人房間、機位、天氣與今日行程集中顯示。','Tập trung thông báo, giờ tập trung, phòng, ghế ngồi, thời tiết và lịch trình hôm nay.')}</p></div><div class="dashboard-mode">${leaderAuthenticated()?'🧭 '+t('領隊模式','Chế độ trưởng đoàn'):'👤 '+t('一般模式','Chế độ thường')}</div></section>
+ ${countdownCompact()}
+ <section class="dashboard-person card"><div><small>${t('我的旅遊資料','Thông tin chuyến đi của tôi')}</small><h2>${esc(member.nameZh)} <span>${esc(member.nameEn)}</span></h2></div><label>${t('切換團員','Đổi thành viên')}<select id="dashboardMember">${MEMBERS.map(m=>`<option value="${m.id}" ${m.id===member.id?'selected':''}>${m.number}. ${esc(m.nameZh)}</option>`).join('')}</select></label></section>
+ <div class="dashboard-grid">
+  <a class="card dashboard-card dashboard-notice" href="#/notifications"><span>${noticeTypeData?.icon||'🔔'}</span><div><small>${t('最新公告','Thông báo mới nhất')}</small><h3>${notice?esc(t(notice.titleZh,notice.titleVi)):t('目前沒有新公告','Hiện không có thông báo mới')}</h3><p>${notice?esc(t(notice.messageZh,notice.messageVi)):t('領隊發布後會顯示在這裡','Thông báo của trưởng đoàn sẽ hiện ở đây')}</p>${notice?`<em>${esc(notice.date||'')} ${esc(notice.time||'')} ${notice.locationZh?'· 📍 '+esc(t(notice.locationZh,notice.locationVi)):''}</em>`:''}</div><b>›</b></a>
+  <a class="card dashboard-card dashboard-meeting" href="#/checkin"><span>🚌</span><div><small>${t('下一集合','Lần tập trung tiếp theo')}</small><h3>${meeting?esc(t(meeting.titleZh||meeting.title,meeting.titleVi||meeting.titleZh||meeting.title)):t('尚未設定集合','Chưa đặt giờ tập trung')}</h3><p>${meeting?`${esc(meeting.date||'')} ${esc(meeting.time||'')} · ${esc(t(meeting.locationZh||meeting.location,meeting.locationVi||meeting.locationZh||meeting.location))}`:t('請留意領隊最新公告','Hãy theo dõi thông báo mới nhất')}</p></div><b>›</b></a>
+  <a class="card dashboard-card" href="#/rooms"><span>🏨</span><div><small>${t('房間分配','Phân phòng')}</small><h3>${lexis?.assignmentCode||'-'} · ${sunway?.assignmentCode||'-'}</h3><p>Lexis Hibiscus / Sunway Velocity</p></div><b>›</b></a>
+  <a class="card dashboard-card" href="#/traveler"><span>✈️</span><div><small>${t('我的機位','Ghế của tôi')}</small><h3>JX725 ${esc(member.seatOutbound||'-')} · JX726 ${esc(member.seatReturn||'-')}</h3><p>${esc(member.airportTransport||'')}</p></div><b>›</b></a>
+  <a class="card dashboard-card" href="#/weather"><span>${wx?.icon||'🌦️'}</span><div><small>${t('即時天氣','Thời tiết trực tiếp')}</small><h3>${wx?`${wx.temp}°C · ${esc(wx.label)}`:t('點擊載入天氣','Nhấn để tải thời tiết')}</h3><p>${wx?`${t('體感','Cảm giác')} ${wx.feel}° · ☔ ${wx.rain}%`:t('吉隆坡與波德申天氣預報','Dự báo Kuala Lumpur và Port Dickson')}</p></div><b>›</b></a>
+  <a class="card dashboard-card" href="#/exchange"><span>💱</span><div><small>${t('即時匯率','Tỷ giá trực tiếp')}</small><h3>${state.exchangeRate?.rate?`RM 1 ≈ NT$ ${Number(state.exchangeRate.rate).toFixed(2)}`:t('馬幣／台幣快速換算','Đổi nhanh MYR / TWD')}</h3><p>${t('購物與餐費換算','Quy đổi mua sắm và ăn uống')}</p></div><b>›</b></a>
+ </div>
+ <div class="section-head"><h2>DAY ${day} · ${t('今日行程','Lịch trình hôm nay')}</h2><span>${trip?.date||''}</span></div>
+ <section class="card dashboard-itinerary"><div class="dashboard-itinerary-head"><div><small>${esc(trip?.hotel||'')}</small><h2>${esc(t(trip?.titleZh||'',trip?.titleVi||''))}</h2></div><a href="#/itinerary">${t('完整行程','Xem đầy đủ')} ›</a></div><div class="dashboard-timeline">${(trip?.items||[]).slice(0,5).map(x=>`<div><time>${esc(x.time)}</time><p>${esc(t(x.zh,x.vi))}</p></div>`).join('')}</div></section>
+ <div class="section-head"><h2>${t('快速工具','Công cụ nhanh')}</h2><span>Quick Access</span></div><div class="dashboard-shortcuts">${[['notifications','🔔','通知','Thông báo'],['checkin','✅','簽到','Điểm danh'],['map','🗺️','地圖','Bản đồ'],['guide','📖','手冊','Cẩm nang'],['food','🍜','美食','Ẩm thực'],['shopping','🛍️','購物','Mua sắm'],['budget','💰','費用','Chi phí'],['pro','🧭','領隊','Trưởng đoàn']].map(x=>`<a class="card" href="#/${x[0]}"><i>${x[1]}</i><b>${t(x[2],x[3])}</b></a>`).join('')}</div>`, 'home')
+}
+function itinerary(){const d=ITINERARY.find(x=>x.day===state.day)||ITINERARY[0];return shell(`<div class="section-head"><h2>${t('五日正式行程','Lịch trình chính thức')}</h2><span>Milestone 2-3 Final</span></div><div class="day-tabs">${ITINERARY.map(x=>`<button class="day-tab ${x.day===state.day?'active':''}" data-day="${x.day}">DAY ${x.day}<br>${x.date.slice(5)}</button>`).join('')}</div><div class="card day-card"><div class="day-cover"><p>DAY ${d.day} · ${d.date}</p><h2>${t(d.titleZh,d.titleVi)}</h2><p>🏨 ${d.hotel}</p></div><div class="event-list">${d.items.map(i=>`<div class="event"><div class="time">${esc(i.time)}</div><div class="dot"></div><div><b>${t(i.zh,i.vi)}${i.included?`<span class="badge included">🎁 ${t('已含','Đã gồm')}</span>`:''}${i.optional?`<span class="badge optional">✨ ${t('自費','Tự chọn')}</span>`:''}</b></div></div>`).join('')}</div></div><div class="meal-hotel"><div class="card info-card"><h3>🍽️ ${t('當日餐食','Bữa ăn')}</h3><ul>${d.meals.map(m=>`<li>${m}</li>`).join('')}</ul></div></div>`, 'itinerary')}
+function budget(){return shell(`<div class="section-head"><h2>${t('每日費用資訊卡','Thẻ chi phí hàng ngày')}</h2><span>Milestone 2-4</span></div><div class="notice">💡 ${t('建議攜帶現金 RM150–500，購物費用另計。以下為參考區間，實際以現場公告為準。','Nên mang RM150–500 tiền mặt, chưa bao gồm mua sắm. Giá chỉ tham khảo.')}</div><div class="grid" style="margin-top:11px">${DAILY_BUDGET.map(x=>`<div class="card budget-card"><div class="budget-top"><b>DAY ${x.day}</b><span class="badge optional">RM</span></div><div class="budget-values"><div class="budget-value"><span>${t('基本支出','Chi phí cơ bản')}</span><b>${x.basic}</b></div><div class="budget-value"><span>${t('自費／購物','Tự chọn / mua sắm')}</span><b>${x.optional}</b></div></div><p>${x.note}</p></div>`).join('')}</div>`, 'budget')}
+function products(title,subtitle,data,active){return shell(`<div class="section-head"><h2>${title}</h2><span>${subtitle}</span></div><div class="grid product-grid">${data.map(x=>`<div class="card product"><i>${x.icon}</i><b>${t(x.nameZh||x.zh,x.nameVi||x.vi)}</b><span>${x.price}</span><small>${x.place||x.where||x.note||''}</small></div>`).join('')}</div>`,active)}
+function foodListKey(){return 'mtc-food-list-v1'}
+function readFoodList(){try{return JSON.parse(localStorage.getItem(foodListKey())||'{}')}catch{return {}}}
+function saveFoodList(v){try{localStorage.setItem(foodListKey(),JSON.stringify(v))}catch{}}
+function foodFiltered(){const q=state.foodQuery.trim().toLowerCase();return FOOD_ASSISTANT.items.filter(x=>(state.foodCategory==='all'||x.category===state.foodCategory)&&(state.foodLocation==='all'||x.location===state.foodLocation)&&(!state.foodDay||x.day===state.foodDay)&&`${x.nameZh} ${x.nameVi} ${x.placeZh} ${x.placeVi} ${x.tipZh} ${x.tipVi}`.toLowerCase().includes(q))}
+function foodTotals(){const list=readFoodList();let total=0,count=0;FOOD_ASSISTANT.items.forEach(x=>{const row=list[x.id];if(row?.checked){count++;total+=Number(row.price)||x.priceMin}});return {total,count}}
+function food(){const list=readFoodList(),items=foodFiltered(),tot=foodTotals(),budget=Math.max(0,Number(state.foodBudget)||0),rate=shoppingRate(),pct=budget?Math.min(100,tot.total/budget*100):0;const cards=items.map(x=>{const row=list[x.id]||{},spice='🌶️'.repeat(x.spice)||t('不辣','Không cay');return `<article class="card food-assistant-item ${row.checked?'selected':''}"><div class="food-item-head"><label><input type="checkbox" data-food-check="${x.id}" ${row.checked?'checked':''}><span class="food-icon">${x.icon}</span><span><b>${t(x.nameZh,x.nameVi)}</b><small>DAY ${x.day} · ${t(x.placeZh,x.placeVi)}</small></span></label><span class="badge ${x.included?'included':'optional'}">${x.included?t('團費已含','Đã bao gồm'):t('自費','Tự túc')}</span></div><div class="food-tags"><span>${spice}</span>${x.halal?`<span>☪️ Halal</span>`:''}${x.vegetarian?`<span>🥬 ${t('可素食','Có món chay')}</span>`:''}<span>RM ${x.priceMin}–${x.priceMax}</span></div><p>${t(x.tipZh,x.tipVi)}</p><div class="food-price"><label>${t('實際／預估價格 RM','Giá thực tế / dự kiến RM')}<input type="number" min="0" step="1" data-food-price="${x.id}" value="${row.price??x.priceMin}"></label><button type="button" data-food-favorite="${x.id}" class="${row.favorite?'active':''}">${row.favorite?'★':'☆'} ${t('收藏','Yêu thích')}</button></div></article>`}).join('')||`<div class="empty">${t('找不到符合條件的美食','Không tìm thấy món phù hợp')}</div>`;return shell(`<section class="food-hero"><span class="pill">Milestone 3-9 · Food Assistant</span><h1>${t('馬來西亞美食助手','Trợ lý ẩm thực Malaysia')}</h1><p>${t('依日期、地點與類型找美食，記錄想吃清單、價格與飲食提醒。','Tìm món theo ngày, địa điểm và loại; lưu danh sách muốn thử, giá và lưu ý ăn uống.')}</p></section><section class="card food-summary"><div><small>${t('已選美食','Món đã chọn')}</small><b>${tot.count}</b></div><div><small>${t('預估支出','Chi tiêu dự kiến')}</small><b>RM ${tot.total.toFixed(2)}</b><span>${rate?`≈ NT$ ${Math.round(tot.total*rate).toLocaleString()}`:t('尚無匯率','Chưa có tỷ giá')}</span></div><label>${t('美食預算 RM','Ngân sách ăn uống RM')}<input id="foodBudget" type="number" min="0" step="10" value="${esc(state.foodBudget)}"></label><div class="food-progress"><i style="width:${pct}%"></i></div><small class="${tot.total>budget&&budget?'over':''}">${budget?(tot.total>budget?t('已超出預算 RM ','Vượt ngân sách RM ')+(tot.total-budget).toFixed(2):t('剩餘預算 RM ','Ngân sách còn lại RM ')+(budget-tot.total).toFixed(2)):t('請設定美食預算','Hãy đặt ngân sách ăn uống')}</small></section><input class="search" id="foodSearch" value="${esc(state.foodQuery)}" placeholder="${t('搜尋美食、地點或關鍵字','Tìm món, địa điểm hoặc từ khóa')}"><div class="food-filter-row">${FOOD_ASSISTANT.categories.map(c=>`<button class="${state.foodCategory===c.id?'active':''}" data-food-category="${c.id}">${c.icon} ${t(c.zh,c.vi)}</button>`).join('')}</div><div class="food-filter-grid"><select id="foodLocation">${FOOD_ASSISTANT.locations.map(x=>`<option value="${x.id}" ${state.foodLocation===x.id?'selected':''}>${t(x.zh,x.vi)}</option>`).join('')}</select><select id="foodDay"><option value="0">${t('全部日期','Tất cả ngày')}</option>${[1,2,3,4,5].map(d=>`<option value="${d}" ${state.foodDay===d?'selected':''}>DAY ${d}</option>`).join('')}</select></div><div class="food-assistant-list">${cards}</div><div class="section-head"><h2>${t('點餐實用語','Câu gọi món hữu ích')}</h2><span>Chinese · Vietnamese · Malay</span></div><div class="food-phrases">${FOOD_ASSISTANT.phrases.map(x=>`<article class="card"><b>${state.lang==='zh'?x.zh:x.vi}</b><p>${x.ms}</p><button type="button" data-food-speak="${esc(x.ms)}">🔊 ${t('播放馬來語','Phát tiếng Mã Lai')}</button></article>`).join('')}</div><div class="notice-limit">${t('價格與清真、素食資訊為旅遊規劃參考，實際菜單、食材與過敏原請以餐廳現場確認。','Giá, thông tin halal và món chay chỉ để tham khảo. Hãy xác nhận thực đơn, nguyên liệu và chất gây dị ứng tại nhà hàng.')}</div>`,'food')}
+
+function shoppingListKey(){return 'mtc-shopping-list-v1'}
+function readShoppingList(){try{return JSON.parse(localStorage.getItem(shoppingListKey())||'{}')}catch{return {}}}
+function saveShoppingList(v){try{localStorage.setItem(shoppingListKey(),JSON.stringify(v))}catch{}}
+function shoppingRate(){return Number(state.exchangeRate?.rate||readExchangeCache()?.rate)||0}
+function shoppingFiltered(){const q=state.shoppingQuery.trim().toLowerCase();return SHOPPING_ASSISTANT.items.filter(x=>(state.shoppingCategory==='all'||x.category===state.shoppingCategory)&&(state.shoppingStore==='all'||x.stores.includes(state.shoppingStore))&&`${x.nameZh} ${x.nameVi} ${x.tipZh} ${x.tipVi}`.toLowerCase().includes(q))}
+function shoppingTotals(){const list=readShoppingList();let total=0,count=0;SHOPPING_ASSISTANT.items.forEach(x=>{const row=list[x.id];if(row?.checked){const qty=Math.max(1,Number(row.qty)||1),price=Math.max(0,Number(row.price)||x.min);total+=qty*price;count+=qty}});return {total,count}}
+function shoppingPage(){
+ const list=readShoppingList(),items=shoppingFiltered(),tot=shoppingTotals(),budget=Math.max(0,Number(state.shoppingBudget)||0),rate=shoppingRate(),pct=budget?Math.min(100,tot.total/budget*100):0;
+ const categoryButtons=SHOPPING_ASSISTANT.categories.map(c=>`<button class="${state.shoppingCategory===c.id?'active':''}" data-shop-category="${c.id}">${c.icon} ${t(c.zh,c.vi)}</button>`).join('');
+ const storeOptions=`<option value="all">${t('全部購物地點','Tất cả địa điểm')}</option>`+SHOPPING_ASSISTANT.stores.map(x=>`<option value="${x.id}" ${state.shoppingStore===x.id?'selected':''}>${t(x.zh,x.vi)}</option>`).join('');
+ const cards=items.map(x=>{const row=list[x.id]||{},checked=!!row.checked,qty=Math.max(1,Number(row.qty)||1),price=Number(row.price)||x.min;return `<article class="card shop-item ${checked?'selected':''}" data-shop-item="${x.id}"><div class="shop-item-head"><label><input type="checkbox" data-shop-check="${x.id}" ${checked?'checked':''}><span class="shop-icon">${x.icon}</span><span><b>${t(x.nameZh,x.nameVi)}</b><small>RM ${x.min}–${x.max} / ${t(x.unitZh,x.unitVi)}</small></span></label><button class="shop-expand" data-shop-expand="${x.id}" aria-label="details">⌄</button></div><div class="shop-item-controls"><label>${t('數量','Số lượng')}<input type="number" min="1" max="99" value="${qty}" data-shop-qty="${x.id}"></label><label>${t('單價 RM','Đơn giá RM')}<input type="number" min="0" step="0.5" value="${price}" data-shop-price="${x.id}"></label><strong>RM ${(qty*price).toFixed(2)}</strong></div><div class="shop-detail" id="shop-detail-${x.id}"><p>💡 ${t(x.tipZh,x.tipVi)}</p><p>🏷️ ${t(x.bestZh,x.bestVi)}</p><div>${x.stores.map(id=>{const st=SHOPPING_ASSISTANT.stores.find(y=>y.id===id);return `<span>${t(st.zh,st.vi)}</span>`}).join('')}</div></div></article>`}).join('')||`<div class="empty">${t('找不到符合條件的商品','Không tìm thấy sản phẩm phù hợp')}</div>`;
+ return shell(`<section class="shopping-hero"><span class="pill">Milestone 3-8 · Shopping Assistant</span><h1>${t('馬來西亞購物助手','Trợ lý mua sắm Malaysia')}</h1><p>${t('比價、記錄數量與預算，採買伴手禮時快速換算台幣。','So giá, ghi số lượng và ngân sách, đồng thời quy đổi nhanh sang Đài tệ.')}</p></section><section class="card shopping-summary"><div><small>${t('已選商品','Món đã chọn')}</small><b>${tot.count}</b></div><div><small>${t('預估支出','Chi tiêu dự kiến')}</small><b>RM ${tot.total.toFixed(2)}</b><span>${rate?`≈ NT$ ${Math.round(tot.total*rate).toLocaleString()}`:t('尚無匯率','Chưa có tỷ giá')}</span></div><label>${t('購物預算 RM','Ngân sách RM')}<input id="shoppingBudget" type="number" min="0" step="10" value="${esc(state.shoppingBudget)}"></label><div class="shopping-progress"><i style="width:${pct}%"></i></div><small class="${tot.total>budget&&budget?'over':''}">${budget?(tot.total>budget?t('已超出預算 RM ','Vượt ngân sách RM ')+(tot.total-budget).toFixed(2):t('剩餘預算 RM ','Ngân sách còn lại RM ')+(budget-tot.total).toFixed(2)):t('請設定購物預算','Hãy đặt ngân sách mua sắm')}</small></section><input class="search" id="shoppingSearch" value="${esc(state.shoppingQuery)}" placeholder="${t('搜尋商品或關鍵字','Tìm sản phẩm hoặc từ khóa')}"><div class="shop-categories">${categoryButtons}</div><select class="shop-store" id="shoppingStore">${storeOptions}</select><div class="shopping-list">${cards}</div><div class="section-head"><h2>${t('購物地點提示','Gợi ý địa điểm mua sắm')}</h2><span>Where to Buy</span></div><div class="grid shop-store-grid">${SHOPPING_ASSISTANT.stores.map(x=>`<article class="card"><b>${t(x.zh,x.vi)}</b><p>${t(x.noteZh,x.noteVi)}</p></article>`).join('')}</div><div class="notice-limit">${t('價格為旅遊規劃參考區間，實際售價、促銷、庫存與退稅規則以現場為準。食品、藥膏與液體請同時確認台灣入境及航空行李限制。','Mức giá chỉ để tham khảo khi lập kế hoạch. Giá bán, khuyến mãi, tồn kho và hoàn thuế tùy thực tế. Hãy kiểm tra quy định nhập cảnh Đài Loan và hành lý hàng không đối với thực phẩm, dầu xoa và chất lỏng.')}</div>`,'shopping')
+}
+function resort(){return shell(`<div class="section-head"><h2>${t('大紅花自費活動','Hoạt động tự chọn Lexis')}</h2><span>Resort Guide</span></div><div class="notice">⚠️ ${t('價格僅供參考，依飯店現場公告為準。水上活動可能因天候調整或取消。','Giá chỉ tham khảo. Hoạt động trên biển có thể thay đổi do thời tiết.')}</div>${[['water','🚤','水上休閒','Trên biển'],['land','🚲','陸上休閒','Trên đất liền'],['indoor','💆','館內與餐飲','Trong khách sạn']].map(g=>`<div class="section-head"><h2>${g[1]} ${t(g[2],g[3])}</h2></div><div class="grid activity-grid">${RESORT_ACTIVITIES.filter(x=>x.group===g[0]).map(x=>`<div class="card activity"><i>${x.icon}</i><b>${t(x.zh,x.vi)}</b><span>${x.price}</span><small>${x.note}</small></div>`).join('')}</div>`).join('')}`, 'resort')}
+
+function guideText(value){return t(value?.zh||value?.titleZh||'',value?.vi||value?.titleVi||'')}
+function guideCard(card){const lines=state.lang==='zh'?(card.linesZh||[]):(card.linesVi||[]);return `<article class="card guide-detail-card"><div class="guide-card-title"><i>${card.icon||'•'}</i><h3>${t(card.titleZh,card.titleVi)}</h3></div><ul>${lines.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>${card.link?`<a class="guide-official-link" href="${card.link}" target="_blank" rel="noopener">↗ ${t(card.linkLabelZh,card.linkLabelVi)}</a>`:''}</article>`}
+function guideCategoryView(id){const cat=DIGITAL_GUIDE.categories.find(x=>x.id===id);const section=DIGITAL_GUIDE.sections[id];if(!cat||!section)return '';
+  let body='';
+  if(section.cards)body=`<div class="grid guide-detail-grid">${section.cards.map(guideCard).join('')}</div>`;
+  if(section.phrases)body=`<div class="phrase-list">${section.phrases.map(p=>`<button class="card phrase-card" type="button" data-speak="${esc(state.lang==='zh'?p.zh:p.vi)}"><strong>${esc(state.lang==='zh'?p.zh:p.vi)}</strong><span>${esc(state.lang==='zh'?p.vi:p.zh)}</span><small>MY: ${esc(p.ms)} · EN: ${esc(p.en)}</small></button>`).join('')}</div>`;
+  if(section.checks)body=`<div class="card guide-checklist">${section.checks.map(c=>{const checked=localStorage.getItem('guide-check-'+c.id)==='1';return `<label class="guide-check"><input type="checkbox" data-guide-check="${c.id}" ${checked?'checked':''}><span>${esc(t(c.zh,c.vi))}</span></label>`}).join('')}<button class="guide-reset" id="guideReset" type="button">${t('清除全部勾選','Xóa tất cả dấu chọn')}</button></div>`;
+  return `<button class="guide-back" id="guideBack" type="button">‹ ${t('返回手冊目錄','Trở lại mục lục')}</button><section class="guide-category-hero"><div>${cat.icon}</div><h1>${t(cat.titleZh,cat.titleVi)}</h1><p>${t(section.heroZh,section.heroVi)}</p></section>${body}`
+}
+function guide(){
+  if(state.guideCategory)return shell(`<div class="guide-page">${guideCategoryView(state.guideCategory)}</div>`,'guide');
+  const q=state.guideQuery.trim().toLowerCase();
+  const cats=DIGITAL_GUIDE.categories.filter(c=>`${c.titleZh} ${c.titleVi} ${c.summaryZh} ${c.summaryVi}`.toLowerCase().includes(q));
+  return shell(`<section class="guide-main-hero"><span class="pill">Milestone 3-1 · Release v3.0</span><h1>${t('電子旅行手冊','Cẩm nang du lịch số')}</h1><p>${t('出發、入境、飯店、付款、文化與緊急資訊，一頁快速查找。','Tra cứu nhanh thông tin khởi hành, nhập cảnh, khách sạn, thanh toán, văn hóa và khẩn cấp.')}</p></section><input class="search guide-search" id="guideSearch" value="${esc(state.guideQuery)}" placeholder="${t('搜尋：護照、插座、緊急電話…','Tìm: hộ chiếu, ổ cắm, khẩn cấp…')}"><div class="notice guide-disclaimer">⚠️ ${t(DIGITAL_GUIDE.meta.disclaimerZh,DIGITAL_GUIDE.meta.disclaimerVi)}</div><div class="grid guide-grid">${cats.map(c=>`<button class="card guide-category" type="button" data-guide-category="${c.id}"><i>${c.icon}</i><span><b>${t(c.titleZh,c.titleVi)}</b><small>${t(c.summaryZh,c.summaryVi)}</small></span><em>›</em></button>`).join('')||`<div class="empty">${t('找不到相關內容','Không tìm thấy nội dung')}</div>`}</div><div class="section-head"><h2>${t('後續智慧模組','Mô-đun thông minh tiếp theo')}</h2><span>Roadmap</span></div><div class="grid future-grid">${DIGITAL_GUIDE.futureModules.map(x=>`<div class="card future-card"><i>${x.icon}</i><b>${t(x.titleZh,x.titleVi)}</b><small>${x.status}</small></div>`).join('')}</div>`,'guide')
 }
 
-function updateChrome() {
-  const language = getLanguage();
 
-  document.getElementById("brandTitle").textContent =
-    language === "zh-TW" ? APP_CONFIG.appNameZh : APP_CONFIG.appName;
+function mapFilteredLocations(){
+  const q=state.mapQuery.trim().toLowerCase();
+  return MAP_LOCATIONS.filter(x=>(state.mapCategory==='all'||x.category===state.mapCategory)&&(!state.mapDay||x.day===state.mapDay)&&`${x.nameZh} ${x.nameVi} ${x.addressZh} ${x.addressVi} ${x.noteZh} ${x.noteVi}`.toLowerCase().includes(q));
+}
+function haversine(a,b){const R=6371,toRad=n=>n*Math.PI/180;const dLat=toRad(b.lat-a.lat),dLng=toRad(b.lng-a.lng);const q=Math.sin(dLat/2)**2+Math.cos(toRad(a.lat))*Math.cos(toRad(b.lat))*Math.sin(dLng/2)**2;return R*2*Math.atan2(Math.sqrt(q),Math.sqrt(1-q))}
+function googleNavUrl(x){return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(x.query||`${x.lat},${x.lng}`)}`}
+function mapLocationCards(list){return list.map(x=>{const distance=state.userPosition?haversine(state.userPosition,x).toFixed(1):'';return `<article class="card map-location-card" data-map-focus="${x.id}"><div class="map-location-icon">${x.icon}</div><div class="map-location-body"><div class="map-location-title"><b>${t(x.nameZh,x.nameVi)}</b><span>DAY ${x.day}</span></div><small>📍 ${t(x.addressZh,x.addressVi)}</small><p>${t(x.noteZh,x.noteVi)}</p>${distance?`<em>距離約 ${distance} km</em>`:''}</div><a class="map-nav-btn" href="${googleNavUrl(x)}" target="_blank" rel="noopener" aria-label="導航">➤</a></article>`}).join('')||`<div class="empty">${t('找不到符合的地點','Không tìm thấy địa điểm phù hợp')}</div>`}
+function mapPage(){const list=mapFilteredLocations();return shell(`<section class="map-hero"><span class="pill">Milestone 3-2 · GPS Map</span><h1>${t('GPS 地圖模式','Chế độ bản đồ GPS')}</h1><p>${t('依照每日行程查看飯店、景點、美食與購物地點，並可一鍵開啟 Google Maps 導航。','Xem khách sạn, điểm tham quan, ẩm thực và mua sắm theo từng ngày, mở Google Maps chỉ với một chạm.')}</p></section><div class="map-toolbar"><input class="search" id="mapSearch" value="${esc(state.mapQuery)}" placeholder="${t('搜尋地點、景點或美食','Tìm địa điểm, điểm tham quan hoặc ẩm thực')}"><button class="locate-btn" id="locateMe" type="button">◎ ${t('我的位置','Vị trí của tôi')}</button></div><div class="map-filter-row">${MAP_CATEGORIES.map(c=>`<button class="map-filter ${state.mapCategory===c.id?'active':''}" data-map-category="${c.id}">${c.icon} ${t(c.zh,c.vi)}</button>`).join('')}</div><div class="day-tabs map-day-tabs"><button class="day-tab ${state.mapDay===0?'active':''}" data-map-day="0">${t('全部天數','Tất cả ngày')}</button>${[1,2,3,4,5].map(d=>`<button class="day-tab ${state.mapDay===d?'active':''}" data-map-day="${d}">DAY ${d}</button>`).join('')}</div><div class="map-status" id="mapStatus">${t('地圖需要網路連線；離線時仍可查看下方地點清單。','Bản đồ cần internet; khi ngoại tuyến vẫn xem được danh sách địa điểm bên dưới.')}</div><div id="gpsMap" class="gps-map" aria-label="GPS map"></div><div class="section-head"><h2>${t('地點清單','Danh sách địa điểm')}</h2><span>${list.length} places</span></div><div id="mapLocationList" class="map-location-list">${mapLocationCards(list)}</div>`, 'map')}
+function initMap(){
+  const el=document.getElementById('gpsMap'); if(!el)return;
+  if(!window.L){el.innerHTML=`<div class="map-offline">${t('目前無法載入互動地圖，請確認網路連線。','Không thể tải bản đồ tương tác. Vui lòng kiểm tra kết nối mạng.')}</div>`;return;}
+  const list=mapFilteredLocations();
+  state.mapInstance=L.map(el,{zoomControl:true}).setView([3.14,101.70],9);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap'}).addTo(state.mapInstance);
+  state.mapMarkers=list.map(x=>{const icon=L.divIcon({className:'map-div-icon',html:`<div>${x.icon}</div>`,iconSize:[34,34],iconAnchor:[17,17]});const m=L.marker([x.lat,x.lng],{icon}).addTo(state.mapInstance).bindPopup(`<div class="map-popup"><b>${esc(t(x.nameZh,x.nameVi))}</b><small>${esc(t(x.addressZh,x.addressVi))}</small><a href="${googleNavUrl(x)}" target="_blank" rel="noopener">${t('開始導航','Bắt đầu chỉ đường')}</a></div>`);m._locationId=x.id;return m});
+  if(list.length){const group=L.featureGroup(state.mapMarkers);state.mapInstance.fitBounds(group.getBounds().pad(.12),{maxZoom:13})}
+  if(state.userPosition){L.circleMarker([state.userPosition.lat,state.userPosition.lng],{radius:9,weight:3,color:'#167d72',fillColor:'#fff',fillOpacity:1}).addTo(state.mapInstance).bindPopup(t('我的位置','Vị trí của tôi'))}
+  setTimeout(()=>state.mapInstance?.invalidateSize(),100);
+}
+function refreshMap(){state.mapInstance?.remove();state.mapInstance=null;render()}
 
-  document.getElementById("brandSubtitle").textContent =
-    language === "zh-TW" ? APP_CONFIG.subtitle : APP_CONFIG.subtitleVi;
 
-  document.getElementById("languageButton").textContent =
-    language === "zh-TW" ? "中" : "VI";
+function activeAnnouncement(x){
+  if(x.active===false)return false;
+  if(x.expiresAt&&Date.now()>Date.parse(x.expiresAt))return false;
+  return true;
+}
+function allAnnouncements(){return [...(proData.announcements||[])].filter(activeAnnouncement).sort((a,b)=>Number(Boolean(b.pinned))-Number(Boolean(a.pinned))||`${b.date||''} ${b.time||''}`.localeCompare(`${a.date||''} ${a.time||''}`))}
+function saveAnnouncements(next){proData={...proData,announcements:next};proData=saveProDatabase(proData)}
+function readNoticeIds(){try{return new Set(JSON.parse(localStorage.getItem('mtc-read-announcements')||'[]'))}catch{return new Set()}}
+function setNoticeRead(id){const ids=readNoticeIds();ids.add(id);localStorage.setItem('mtc-read-announcements',JSON.stringify([...ids]))}
+function noticeType(x){return ANNOUNCEMENT_TYPES.find(y=>y.id===x.type)||ANNOUNCEMENT_TYPES[0]}
+function noticeCards(list){const read=readNoticeIds();return list.map(x=>{const type=noticeType(x);return `<article class="card notice-card ${read.has(x.id)?'read':''} ${x.priority==='urgent'?'urgent':''}" data-notice-id="${esc(x.id)}"><div class="notice-icon">${type.icon}</div><div class="notice-body"><div class="notice-title-row"><b>${esc(t(x.titleZh,x.titleVi))}</b><span>${esc(t(type.zh,type.vi))}</span></div><p>${esc(t(x.messageZh,x.messageVi))}</p><small>${esc(x.date||'')} ${esc(x.time||'')} ${x.locationZh?`· 📍 ${esc(t(x.locationZh,x.locationVi))}`:''}</small></div><button class="notice-read-btn" type="button" aria-label="mark read">${read.has(x.id)?'✓':'●'}</button></article>`}).join('')||`<div class="empty">${t('目前沒有通知','Hiện không có thông báo')}</div>`}
+function notificationsPage(){const all=allAnnouncements();const list=state.noticeFilter==='all'?all:all.filter(x=>x.type===state.noticeFilter);const unread=all.filter(x=>!readNoticeIds().has(x.id)).length;return shell(`<section class="notification-hero"><span class="pill">Milestone 3-3 · Notification Center</span><h1>${t('即時通知中心','Trung tâm thông báo')}</h1><p>${t('集中查看集合時間、巴士位置、房務與臨時公告。通知會保存在此裝置。','Xem giờ tập trung, vị trí xe, thông tin phòng và thông báo khẩn. Thông báo được lưu trên thiết bị này.')}</p><div class="notification-summary"><b>${unread}</b><span>${t('則未讀通知','thông báo chưa đọc')}</span></div></section><div class="notification-actions"><button id="enableBrowserNotice" type="button">🔔 ${t('開啟瀏覽器通知','Bật thông báo trình duyệt')}</button><a class="notice-admin-link" href="#/announcement-admin">⚙️ ${t('公告管理','Quản lý thông báo')}</a></div><div class="notice-limit">${t('目前為裝置端通知中心；未連接雲端後台時，新增公告只會保存在此手機／電腦，無法自動同步到其他團員裝置。','Hiện đây là trung tâm thông báo trên thiết bị. Khi chưa kết nối máy chủ đám mây, thông báo mới chỉ lưu trên điện thoại/máy tính này và không tự đồng bộ sang thiết bị khác.')}</div>${state.noticeEditor?noticeEditor():''}<div class="map-filter-row">${ANNOUNCEMENT_TYPES.map(c=>`<button class="map-filter ${state.noticeFilter===c.id?'active':''}" data-notice-filter="${c.id}">${c.icon} ${t(c.zh,c.vi)}</button>`).join('')}</div><div class="notification-list">${noticeCards(list)}</div>`, 'notifications')}
+function noticeEditor(){return `<form class="card notice-editor" id="noticeEditor"><h3>${t('新增公告','Thêm thông báo')}</h3><div class="notice-form-grid"><label>${t('類型','Loại')}<select name="type">${ANNOUNCEMENT_TYPES.filter(x=>x.id!=='all').map(x=>`<option value="${x.id}">${x.icon} ${t(x.zh,x.vi)}</option>`).join('')}</select></label><label>${t('優先層級','Mức ưu tiên')}<select name="priority"><option value="normal">${t('一般','Thường')}</option><option value="urgent">${t('緊急','Khẩn cấp')}</option></select></label><label>${t('日期','Ngày')}<input name="date" type="date" required></label><label>${t('時間','Giờ')}<input name="time" type="time"></label></div><label>${t('中文標題','Tiêu đề tiếng Hoa')}<input name="titleZh" required placeholder="例如：10:10 大廳集合"></label><label>${t('越南文標題','Tiêu đề tiếng Việt')}<input name="titleVi" required placeholder="Ví dụ: Tập trung tại sảnh lúc 10:10"></label><label>${t('中文內容','Nội dung tiếng Hoa')}<textarea name="messageZh" required></textarea></label><label>${t('越南文內容','Nội dung tiếng Việt')}<textarea name="messageVi" required></textarea></label><div class="notice-form-grid"><label>${t('中文地點','Địa điểm tiếng Hoa')}<input name="locationZh"></label><label>${t('越南文地點','Địa điểm tiếng Việt')}<input name="locationVi"></label></div><button class="notice-save" type="submit">${t('儲存公告','Lưu thông báo')}</button></form>`}
+function showBrowserNotification(x){if(!('Notification' in window)||Notification.permission!=='granted')return;const n=new Notification(t(x.titleZh,x.titleVi),{body:t(x.messageZh,x.messageVi),icon:'./icons/icon-192.png',tag:x.id});n.onclick=()=>{window.focus();location.hash='#/notifications'}}
 
-  document.getElementById("sheetVersion").textContent =
-    `${VERSION.version} · ${VERSION.milestone}`;
 
-  translateStaticText();
+function checkinKey(day,memberId){return `mtc-checkin-d${day}-m${memberId}`}
+function checkinValue(day,memberId){return localStorage.getItem(checkinKey(day,memberId))||'pending'}
+function setCheckinValue(day,memberId,status){localStorage.setItem(checkinKey(day,memberId),status)}
+function checkinCounts(day){const out={present:0,late:0,absent:0,pending:0};MEMBERS.forEach(m=>out[checkinValue(day,m.id)]++);return out}
+function checkinMemberCards(list){return list.map(m=>{const st=checkinValue(state.checkinDay,m.id);const def=CHECKIN_STATUS.find(x=>x.id===st)||CHECKIN_STATUS[3];return `<article class="card checkin-member ${st}"><div class="checkin-person"><div class="avatar">${m.number===32?'🧑‍✈️':'👤'}</div><div><b>${esc(m.nameZh)}</b><small>${esc(m.nameEn)}</small></div></div><div class="checkin-status-current">${def.icon} ${t(def.zh,def.vi)}</div><div class="checkin-buttons">${CHECKIN_STATUS.filter(x=>x.id!=='pending').map(x=>`<button type="button" class="${st===x.id?'active':''}" data-checkin-member="${m.id}" data-checkin-status="${x.id}">${x.icon}<span>${t(x.zh,x.vi)}</span></button>`).join('')}</div></article>`}).join('')||`<div class="empty">${t('找不到團員','Không tìm thấy thành viên')}</div>`}
+function checkinPage(){const day=CHECKIN_DAYS.find(x=>x.day===state.checkinDay)||CHECKIN_DAYS[0];const q=state.checkinQuery.trim().toLowerCase();let list=MEMBERS.filter(m=>`${m.nameZh} ${m.nameEn}`.toLowerCase().includes(q));if(state.checkinFilter!=='all')list=list.filter(m=>checkinValue(state.checkinDay,m.id)===state.checkinFilter);const c=checkinCounts(state.checkinDay);return shell(`<section class="checkin-hero"><span class="pill">Milestone 3-4 · Daily Check-in</span><h1>${t('每日簽到','Điểm danh hằng ngày')}</h1><p>${t('依每日集合狀況記錄已到、遲到或缺席；資料保存在目前裝置。','Ghi nhận có mặt, đến trễ hoặc vắng mặt mỗi ngày; dữ liệu được lưu trên thiết bị này.')}</p></section><div class="day-tabs checkin-days">${CHECKIN_DAYS.map(x=>`<button class="day-tab ${x.day===state.checkinDay?'active':''}" data-checkin-day="${x.day}">DAY ${x.day}<br>${x.date.slice(5)}</button>`).join('')}</div><div class="card checkin-session"><div><small>${t('今日簽到主題','Chủ đề điểm danh')}</small><h3>${t(day.titleZh,day.titleVi)}</h3><p>📍 ${t(day.locationZh,day.locationVi)}</p></div><button id="markAllPresent" type="button">✓ ${t('全部已到','Tất cả có mặt')}</button></div><div class="checkin-summary"><div><b>${c.present}</b><span>✅ ${t('已到','Có mặt')}</span></div><div><b>${c.late}</b><span>⏰ ${t('遲到','Đến trễ')}</span></div><div><b>${c.absent}</b><span>❌ ${t('缺席','Vắng')}</span></div><div><b>${c.pending}</b><span>● ${t('未簽到','Chưa điểm danh')}</span></div></div><div class="checkin-toolbar"><input class="search" id="checkinSearch" value="${esc(state.checkinQuery)}" placeholder="${t('搜尋團員姓名','Tìm tên thành viên')}"><button id="resetCheckin" type="button">↺ ${t('重設本日','Đặt lại ngày này')}</button></div><div class="map-filter-row">${[['all','👥','全部','Tất cả'],...CHECKIN_STATUS.map(x=>[x.id,x.icon,x.zh,x.vi])].map(x=>`<button class="map-filter ${state.checkinFilter===x[0]?'active':''}" data-checkin-filter="${x[0]}">${x[1]} ${t(x[2],x[3])}</button>`).join('')}</div><div class="checkin-list">${checkinMemberCards(list)}</div><div class="notice-limit">${t('目前為單機版簽到；未連接雲端後台時，簽到結果只保存在此手機／電腦，不會同步到其他裝置。','Hiện là điểm danh trên một thiết bị. Khi chưa kết nối máy chủ đám mây, kết quả chỉ lưu trên điện thoại/máy tính này và không đồng bộ sang thiết bị khác.')}</div>`, 'checkin')}
+
+
+function weatherMeta(code){
+  const x=WEATHER_CODE[String(code)]||WEATHER_CODE.default;
+  return {icon:x.icon,label:t(x.zh,x.vi)};
+}
+function weatherCacheKey(id){return `mtc-weather-${id}`}
+function readWeatherCache(id){
+  try{const x=JSON.parse(localStorage.getItem(weatherCacheKey(id))||'null');return x&&Date.now()-x.savedAt<1800000?x.data:null}catch{return null}
+}
+function saveWeatherCache(id,data){try{localStorage.setItem(weatherCacheKey(id),JSON.stringify({savedAt:Date.now(),data}))}catch{}}
+function weatherApiUrl(loc){
+  const current='temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m';
+  const daily='weather_code,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,precipitation_probability_max,precipitation_sum,uv_index_max,sunrise,sunset';
+  return `https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lng}&current=${current}&daily=${daily}&timezone=Asia%2FKuala_Lumpur&forecast_days=7`;
+}
+async function loadWeather(force=false){
+  const loc=WEATHER_LOCATIONS.find(x=>x.id===state.weatherLocation)||WEATHER_LOCATIONS[0];
+  if(!force){const cached=readWeatherCache(loc.id);if(cached){state.weatherData=cached;state.weatherError='';render();return}}
+  state.weatherLoading=true;state.weatherError='';render();
+  try{
+    const res=await fetch(weatherApiUrl(loc),{cache:'no-store'});
+    if(!res.ok)throw new Error(`HTTP ${res.status}`);
+    const data=await res.json();
+    state.weatherData=data;saveWeatherCache(loc.id,data);
+  }catch(err){
+    state.weatherData=null;
+    state.weatherError=t('無法取得即時天氣，請確認網路連線後重試。','Không thể tải thời tiết trực tiếp. Vui lòng kiểm tra mạng và thử lại.');
+  }finally{state.weatherLoading=false;render()}
+}
+function weatherAdvice(data){
+  if(!data?.current)return [];
+  const c=data.current, rain=Math.max(...(data.daily?.precipitation_probability_max||[0])), uv=Math.max(...(data.daily?.uv_index_max||[0]));
+  const out=[];
+  if(rain>=50)out.push(['☂️','午後降雨機率偏高，請攜帶摺疊傘或輕便雨衣。','Khả năng mưa chiều cao, hãy mang ô gấp hoặc áo mưa nhẹ.']);
+  if(uv>=7)out.push(['🧴','紫外線偏強，建議補擦防曬並戴帽子。','Tia UV mạnh, nên thoa lại kem chống nắng và đội mũ.']);
+  if(c.temperature_2m>=31)out.push(['💧','天氣炎熱，請少量多次補充水分。','Trời nóng, hãy uống nước thường xuyên từng ít một.']);
+  if(c.wind_speed_10m>=25)out.push(['🌬️','風勢較強，戶外活動請注意帽子與隨身物品。','Gió khá mạnh, hãy giữ kỹ mũ và đồ dùng cá nhân.']);
+  if(!out.length)out.push(['👕','建議穿著透氣短袖，並備一件薄外套供室內冷氣使用。','Nên mặc áo ngắn tay thoáng khí và mang áo khoác mỏng khi vào nơi có máy lạnh.']);
+  return out;
+}
+function weatherForecastCards(data){
+  const d=data.daily;if(!d)return '';
+  return d.time.map((date,i)=>{
+    const m=weatherMeta(d.weather_code[i]);
+    const day=new Date(`${date}T12:00:00+08:00`).toLocaleDateString(state.lang==='zh'?'zh-TW':'vi-VN',{weekday:'short',month:'2-digit',day:'2-digit'});
+    return `<article class="card weather-day"><div class="weather-day-date"><b>${day}</b><span>${m.icon}</span></div><strong>${Math.round(d.temperature_2m_max[i])}°</strong><small>${Math.round(d.temperature_2m_min[i])}°</small><p>${m.label}</p><div><span>☔ ${d.precipitation_probability_max[i]??0}%</span><span>UV ${Math.round(d.uv_index_max[i]??0)}</span></div></article>`
+  }).join('');
+}
+function weatherPage(){
+  const loc=WEATHER_LOCATIONS.find(x=>x.id===state.weatherLocation)||WEATHER_LOCATIONS[0],data=state.weatherData;
+  let body='';
+  if(state.weatherLoading)body=`<div class="card weather-loading"><div class="weather-spinner"></div><b>${t('正在更新天氣資料…','Đang cập nhật dữ liệu thời tiết…')}</b></div>`;
+  else if(state.weatherError)body=`<div class="card weather-error"><div>📡</div><b>${state.weatherError}</b><button id="weatherRetry">${t('重新整理','Thử lại')}</button></div>`;
+  else if(data?.current){
+    const c=data.current,m=weatherMeta(c.weather_code),updated=new Date(c.time).toLocaleString(state.lang==='zh'?'zh-TW':'vi-VN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false});
+    body=`<section class="weather-current card"><div class="weather-current-main"><div><small>${t('目前天氣','Thời tiết hiện tại')}</small><h2>${m.icon} ${Math.round(c.temperature_2m)}°C</h2><p>${m.label}</p></div><div class="weather-feels"><span>${t('體感','Cảm giác')}</span><b>${Math.round(c.apparent_temperature)}°</b></div></div><div class="weather-metrics"><div><span>💧 ${t('濕度','Độ ẩm')}</span><b>${c.relative_humidity_2m}%</b></div><div><span>🌬️ ${t('風速','Gió')}</span><b>${Math.round(c.wind_speed_10m)} km/h</b></div><div><span>🌧️ ${t('降水','Mưa')}</span><b>${c.precipitation} mm</b></div></div><small class="weather-updated">${t('資料時間','Thời gian dữ liệu')}：${updated}</small></section><div class="section-head"><h2>${t('未來7日預報','Dự báo 7 ngày')}</h2><span>Open-Meteo</span></div><div class="weather-forecast">${weatherForecastCards(data)}</div><div class="section-head"><h2>${t('旅遊穿著提醒','Gợi ý trang phục')}</h2></div><div class="weather-advice">${weatherAdvice(data).map(x=>`<div class="card"><i>${x[0]}</i><p>${t(x[1],x[2])}</p></div>`).join('')}</div>`;
+  }else body=`<div class="card weather-loading"><b>${t('尚未載入天氣資料','Chưa tải dữ liệu thời tiết')}</b></div>`;
+  return shell(`<section class="weather-hero"><span class="pill">Milestone 3-6 · Live Weather</span><h1>${t('馬來西亞即時天氣','Thời tiết Malaysia trực tiếp')}</h1><p>${t('查看波德申、吉隆坡、布城與雲頂的目前天氣及7日預報。','Xem thời tiết hiện tại và dự báo 7 ngày tại Port Dickson, Kuala Lumpur, Putrajaya và Genting.')}</p></section><div class="weather-location-row">${WEATHER_LOCATIONS.map(x=>`<button class="${x.id===state.weatherLocation?'active':''}" data-weather-location="${x.id}">${x.icon} ${t(x.nameZh,x.nameVi)}</button>`).join('')}</div><div class="weather-toolbar"><div><b>${t(loc.nameZh,loc.nameVi)}</b><small>${loc.note}</small></div><button id="weatherRefresh">↻ ${t('更新','Cập nhật')}</button></div>${body}<div class="notice-limit">${t('天氣資料來自 Open-Meteo，屬預報參考；山區與午後雷雨變化快速，請以現場狀況及領隊通知為準。','Dữ liệu từ Open-Meteo chỉ mang tính tham khảo. Thời tiết vùng núi và mưa giông chiều thay đổi nhanh; hãy theo tình hình thực tế và thông báo của trưởng đoàn.')}</div>`,'weather')
 }
 
-function bindEvents() {
-  document.addEventListener("click", (event) => {
-    const selectMemberButton = event.target.closest("[data-select-member]");
-    if (selectMemberButton) {
-      setSelectedMemberId(selectMemberButton.dataset.selectMember);
-      showToast(getLanguage() === "zh-TW" ? "已更新我的資料" : "Đã cập nhật thông tin của tôi");
-      navigate("profile");
-      return;
-    }
 
-    const roomTab = event.target.closest("[data-room-tab]");
-    if (roomTab) {
-      document.querySelectorAll("[data-room-tab]").forEach((b) => b.classList.toggle("active", b === roomTab));
-      const l = document.getElementById("roomListLexis"), s = document.getElementById("roomListSunway");
-      const mode = roomTab.dataset.roomTab;
-      if (l) l.hidden = mode === "sunway";
-      if (s) s.hidden = mode === "lexis";
-      return;
-    }
-    const seatTab = event.target.closest("[data-seat-tab]");
-    if (seatTab) {
-      document.querySelectorAll("[data-seat-tab]").forEach((b) => b.classList.toggle("active", b === seatTab));
-      const o = document.getElementById("seatOutboundList"), r = document.getElementById("seatReturnList");
-      if (o) o.hidden = seatTab.dataset.seatTab !== "outbound";
-      if (r) r.hidden = seatTab.dataset.seatTab !== "return";
-      return;
-    }
-    const navigateButton = event.target.closest("[data-navigate]");
-    if (navigateButton) {
-      navigate(navigateButton.dataset.navigate);
-      return;
-    }
-
-    if (event.target.id === "changeMemberButton") {
-      storage.remove("selectedMember");
-      renderRoute();
-      return;
-    }
-
-    const sheetButton = event.target.closest("[data-go]");
-    if (sheetButton) {
-      closeSheet();
-      navigate(sheetButton.dataset.go);
-    }
-  });
-
-  document.addEventListener("change", (event) => {
-    if (event.target.id === "languageSelect") setLanguage(event.target.value);
-    if (event.target.id === "themeSelect") setTheme(event.target.value);
-    if (event.target.id === "memberSelect" && event.target.value) {
-      setSelectedMemberId(event.target.value);
-      renderRoute();
-    }
-  });
-
-  document.addEventListener("input", (event) => {
-    if (event.target.id !== "memberSearchInput") return;
-
-    const results = searchMembers(event.target.value);
-    const resultNode = document.getElementById("memberSearchResults");
-    const countNode = document.getElementById("memberResultCount");
-
-    if (resultNode) {
-      resultNode.innerHTML = results.map((member) => `
-        <article class="m2-member-row"><div class="member-avatar">${member.nameZh.slice(0,1)}</div>
-        <div><strong>${member.nameZh}</strong><small>${member.nameEn}</small></div>
-        <button class="button primary" data-select-member="${member.id}">${getLanguage()==="zh-TW"?"查看":"Xem"}</button></article>`).join("");
-    }
-
-    if (countNode) {
-      countNode.textContent = `${results.length} ${getLanguage() === "zh-TW" ? "筆資料" : "kết quả"}`;
-    }
-  });
-
-  document.addEventListener("click", (event) => {
-    if (event.target.id === "clearDataButton") {
-      const message = getLanguage() === "zh-TW"
-        ? "確定清除這台裝置上的 App 設定？"
-        : "Xóa cài đặt ứng dụng trên thiết bị này?";
-
-      if (confirm(message)) {
-        storage.clear();
-        location.reload();
-      }
-    }
-  });
-
-  document.getElementById("languageButton").addEventListener("click", toggleLanguage);
-  document.getElementById("themeButton").addEventListener("click", cycleTheme);
-  document.getElementById("menuButton").addEventListener("click", openSheet);
-  document.getElementById("sheetBackdrop").addEventListener("click", closeSheet);
-
-  window.addEventListener("app:languagechange", () => {
-    updateChrome();
-    renderRoute();
-  });
-
-  window.addEventListener("offline", () => {
-    showToast(getLanguage() === "zh-TW" ? "目前為離線模式" : "Đang ở chế độ ngoại tuyến");
-  });
-
-  window.addEventListener("online", () => {
-    showToast(getLanguage() === "zh-TW" ? "網路已恢復" : "Kết nối mạng đã được khôi phục");
-  });
+function exchangeCacheKey(){return 'mtc-exchange-MYR-TWD-v1'}
+function readExchangeCache(){try{const x=JSON.parse(localStorage.getItem(exchangeCacheKey())||'null');return x&&x.rate?x:null}catch{return null}}
+function saveExchangeCache(x){try{localStorage.setItem(exchangeCacheKey(),JSON.stringify(x))}catch{}}
+async function loadExchange(force=false){
+  const cached=readExchangeCache();
+  if(!force&&cached&&Date.now()-cached.savedAt<EXCHANGE_CONFIG.cacheMs){state.exchangeRate=cached;state.exchangeError='';render();return}
+  state.exchangeLoading=true;state.exchangeError='';render();
+  try{
+    const res=await fetch(EXCHANGE_CONFIG.apiUrl,{cache:'no-store'});if(!res.ok)throw new Error('HTTP '+res.status);
+    const data=await res.json();const rate=Number(data?.rates?.TWD);if(!Number.isFinite(rate)||rate<=0)throw new Error('Invalid rate');
+    const x={rate,base:'MYR',quote:'TWD',updatedAt:data.time_last_update_utc||new Date().toISOString(),nextUpdate:data.time_next_update_utc||'',savedAt:Date.now(),source:'ExchangeRate-API'};
+    state.exchangeRate=x;saveExchangeCache(x);
+  }catch(e){
+    if(cached?.rate){state.exchangeRate=cached;state.exchangeError=t('無法更新，即顯示上次儲存匯率。','Không thể cập nhật; đang hiển thị tỷ giá đã lưu gần nhất.')}else{state.exchangeRate=null;state.exchangeError=t('無法取得即時匯率，請確認網路後重試。','Không thể tải tỷ giá trực tiếp. Vui lòng kiểm tra mạng và thử lại.')}
+  }finally{state.exchangeLoading=false;render()}
+}
+function exchangeNumber(n,digits=2){return Number(n||0).toLocaleString(state.lang==='zh'?'zh-TW':'vi-VN',{minimumFractionDigits:digits,maximumFractionDigits:digits})}
+function exchangeCalculation(){const amount=Math.max(0,Number(state.exchangeAmount)||0),rate=Number(state.exchangeRate?.rate)||0;if(state.exchangeDirection==='MYR_TWD')return {from:'MYR',to:'TWD',result:amount*rate,unit:rate};return {from:'TWD',to:'MYR',result:rate?amount/rate:0,unit:rate?1/rate:0}}
+function exchangePage(){
+  const x=state.exchangeRate,calc=exchangeCalculation(),cached=x?.savedAt?new Date(x.savedAt).toLocaleString(state.lang==='zh'?'zh-TW':'vi-VN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}):'';
+  const apiTime=x?.updatedAt?new Date(x.updatedAt).toLocaleString(state.lang==='zh'?'zh-TW':'vi-VN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}):'';
+  let rateBox='';
+  if(state.exchangeLoading)rateBox=`<div class="card exchange-loading"><div class="weather-spinner"></div><b>${t('正在更新匯率…','Đang cập nhật tỷ giá…')}</b></div>`;
+  else if(x?.rate)rateBox=`<section class="card exchange-rate-card"><div><small>${t('目前參考匯率','Tỷ giá tham khảo hiện tại')}</small><h2>RM 1 <span>=</span> NT$ ${exchangeNumber(x.rate,3)}</h2><p>NT$ 1 = RM ${exchangeNumber(1/x.rate,4)}</p></div><button id="exchangeRefresh">↻ ${t('更新','Cập nhật')}</button><div class="exchange-meta"><span>${t('資料時間','Thời gian dữ liệu')}：${apiTime||cached}</span><span>${t('裝置快取','Bộ nhớ thiết bị')}：${cached}</span></div></section>`;
+  else rateBox=`<div class="card weather-error"><div>💱</div><b>${state.exchangeError||t('尚未載入匯率','Chưa tải tỷ giá')}</b><button id="exchangeRetry">${t('重新整理','Thử lại')}</button></div>`;
+  const quick=state.exchangeDirection==='MYR_TWD'?EXCHANGE_CONFIG.quickMYR:EXCHANGE_CONFIG.quickTWD;
+  return shell(`<section class="exchange-hero"><span class="pill">Milestone 3-7 · Live Exchange Rate</span><h1>${t('馬幣／台幣匯率換算','Chuyển đổi MYR / TWD')}</h1><p>${t('旅途中快速換算馬來西亞令吉與新台幣，並保留最近一次成功取得的匯率。','Chuyển đổi nhanh Ringgit Malaysia và Đài tệ, đồng thời lưu tỷ giá cập nhật gần nhất.')}</p></section>${state.exchangeError?`<div class="exchange-warning">⚠️ ${state.exchangeError}</div>`:''}${rateBox}<section class="card exchange-converter"><div class="exchange-direction"><button class="${state.exchangeDirection==='MYR_TWD'?'active':''}" data-exchange-direction="MYR_TWD">RM → NT$</button><button id="exchangeSwap" aria-label="swap">⇄</button><button class="${state.exchangeDirection==='TWD_MYR'?'active':''}" data-exchange-direction="TWD_MYR">NT$ → RM</button></div><label>${t('輸入金額','Nhập số tiền')}<div class="exchange-input"><span>${calc.from==='MYR'?'RM':'NT$'}</span><input id="exchangeAmount" type="number" min="0" step="0.01" inputmode="decimal" value="${esc(state.exchangeAmount)}"></div></label><div class="exchange-quick">${quick.map(n=>`<button data-exchange-amount="${n}">${calc.from==='MYR'?'RM':'NT$'} ${n.toLocaleString()}</button>`).join('')}</div><div class="exchange-result"><small>${t('換算結果','Kết quả quy đổi')}</small><strong>${calc.to==='MYR'?'RM':'NT$'} ${exchangeNumber(calc.result,calc.to==='MYR'?2:0)}</strong><p>1 ${calc.from} ≈ ${exchangeNumber(calc.unit,calc.to==='MYR'?4:3)} ${calc.to}</p></div></section><div class="section-head"><h2>${t('旅行換算參考','Tham khảo chi tiêu')}</h2><span>Quick Guide</span></div><div class="exchange-examples">${EXCHANGE_CONFIG.examples.map(e=>`<article class="card"><span>${e.icon}</span><div><b>${t(e.zh,e.vi)}</b><small>RM ${e.myr}</small></div><strong>≈ NT$ ${x?.rate?exchangeNumber(e.myr*x.rate,0):'--'}</strong></article>`).join('')}</div><div class="notice-limit">${t('此為國際市場參考匯率，不等同銀行、信用卡或換匯所實際成交價；刷卡可能另計海外手續費。資料由 ExchangeRate-API 提供並每日更新。','Đây là tỷ giá thị trường tham khảo, không phải tỷ giá giao dịch thực tế của ngân hàng, thẻ hoặc quầy đổi tiền. Thanh toán thẻ có thể phát sinh phí nước ngoài. Dữ liệu từ ExchangeRate-API, cập nhật hằng ngày.')}</div>`,'exchange')
 }
 
-applyTheme();
-registerRoutes();
-bindEvents();
-updateChrome();
-startRouter();
-initPWA();
+function traveler(){return shell(`<div class="section-head"><h2>${t('團員與機位','Thành viên và chỗ ngồi')}</h2><span>${MEMBERS.length} people</span></div><input class="search" id="memberSearch" placeholder="${t('搜尋中文／英文姓名','Tìm tên tiếng Hoa / Anh')}"><div id="memberList" class="grid" style="margin-top:11px">${memberCards(MEMBERS)}</div>`, 'traveler')}
+function memberCards(list){return list.map(m=>`<div class="card person"><div class="person-head"><div class="avatar">${m.number===32?'🧑‍✈️':'👤'}</div><div><h3>${esc(m.nameZh)} ${m.number===32?'<span class="badge included">領隊</span>':''}</h3><small>${esc(m.nameEn)}</small></div></div><div class="person-meta"><div class="meta"><span>JX725</span><b>${m.seatOutbound}</b></div><div class="meta"><span>JX726</span><b>${m.seatReturn}</b></div><div class="meta"><span>${t('機場交通','Di chuyển')}</span><b>${esc(m.airportTransport)}</b></div></div></div>`).join('')||`<div class="empty">${t('找不到團員','Không tìm thấy')}</div>`}
+function rooms(){const groups=['lexis','sunway'];return shell(`<div class="section-head"><h2>${t('房間分配','Phân phòng')}</h2><span>${t('分房代碼非正式房號','Mã phòng không phải số phòng thật')}</span></div><div class="day-tabs">${groups.map(h=>`<button class="day-tab ${state.hotel===h?'active':''}" data-hotel="${h}">${h==='lexis'?'🌺 Lexis Hibiscus':'🏙️ Sunway Velocity'}</button>`).join('')}</div><div class="grid">${ROOMS.filter(r=>r.hotelId===state.hotel).map(r=>`<div class="card room-card"><h3>${r.assignmentCode} · ${t(r.roomTypeZh,r.roomTypeVi)}</h3><p>${r.memberIds.map(id=>MEMBERS.find(m=>m.id===id)?.nameZh).filter(Boolean).join('、')}</p></div>`).join('')}</div>`, 'rooms')}
+
+
+function announcementStatusLabel(x){if(x.active===false)return t('停用','Đã tắt');if(x.expiresAt&&Date.now()>Date.parse(x.expiresAt))return t('已過期','Đã hết hạn');return t('發布中','Đang phát')}
+function announcementAdminForm(){
+  const x=(proData.announcements||[]).find(a=>a.id===state.announcementEditId)||{};
+  return `<form class="card announcement-admin-form" id="announcementAdminForm"><div class="admin-form-head"><div><small>${state.announcementEditId?t('編輯公告','Sửa thông báo'):t('新增公告','Thêm thông báo')}</small><h3>${esc(x.titleZh||t('建立新公告','Tạo thông báo mới'))}</h3></div>${state.announcementEditId?`<button type="button" id="cancelAnnouncementEdit">✕</button>`:''}</div><div class="notice-form-grid"><label>${t('類型','Loại')}<select name="type">${ANNOUNCEMENT_TYPES.filter(c=>c.id!=='all').map(c=>`<option value="${c.id}" ${x.type===c.id?'selected':''}>${c.icon} ${t(c.zh,c.vi)}</option>`).join('')}</select></label><label>${t('優先層級','Mức ưu tiên')}<select name="priority"><option value="normal" ${x.priority!=='urgent'?'selected':''}>${t('一般','Thường')}</option><option value="urgent" ${x.priority==='urgent'?'selected':''}>${t('緊急','Khẩn cấp')}</option></select></label><label>${t('日期','Ngày')}<input name="date" type="date" value="${esc(x.date||'')}" required></label><label>${t('時間','Giờ')}<input name="time" type="time" value="${esc(x.time||'')}"></label></div><label>${t('中文標題','Tiêu đề tiếng Hoa')}<input name="titleZh" value="${esc(x.titleZh||'')}" required></label><label>${t('越南文標題','Tiêu đề tiếng Việt')}<input name="titleVi" value="${esc(x.titleVi||'')}" required></label><label>${t('中文內容','Nội dung tiếng Hoa')}<textarea name="messageZh" required>${esc(x.messageZh||'')}</textarea></label><label>${t('越南文內容','Nội dung tiếng Việt')}<textarea name="messageVi" required>${esc(x.messageVi||'')}</textarea></label><div class="notice-form-grid"><label>${t('中文地點','Địa điểm tiếng Hoa')}<input name="locationZh" value="${esc(x.locationZh||'')}"></label><label>${t('越南文地點','Địa điểm tiếng Việt')}<input name="locationVi" value="${esc(x.locationVi||'')}"></label><label>${t('有效期限','Hạn hiển thị')}<input name="expiresAt" type="datetime-local" value="${x.expiresAt?esc(x.expiresAt.slice(0,16)):''}"></label><label class="admin-checks"><span><input name="pinned" type="checkbox" ${x.pinned?'checked':''}> ${t('置頂','Ghim')}</span><span><input name="active" type="checkbox" ${x.active!==false?'checked':''}> ${t('啟用','Kích hoạt')}</span></label></div><button class="notice-save" type="submit">💾 ${state.announcementEditId?t('儲存修改','Lưu thay đổi'):t('發布公告','Đăng thông báo')}</button></form>`
+}
+function announcementAdminCards(list){return list.map(x=>{const type=noticeType(x);return `<article class="card announcement-admin-card ${x.active===false?'disabled':''}"><div class="admin-card-main"><div class="notice-icon">${type.icon}</div><div><div class="notice-title-row"><b>${esc(t(x.titleZh,x.titleVi))}</b><span>${x.pinned?'📌 ':''}${esc(announcementStatusLabel(x))}</span></div><p>${esc(t(x.messageZh,x.messageVi))}</p><small>${esc(x.date||'')} ${esc(x.time||'')} ${x.locationZh?`· 📍 ${esc(t(x.locationZh,x.locationVi))}`:''}${x.expiresAt?` · ⏳ ${esc(x.expiresAt.replace('T',' '))}`:''}</small></div></div><div class="admin-card-actions"><button data-announcement-pin="${esc(x.id)}">${x.pinned?'取消置頂':'📌 置頂'}</button><button data-announcement-toggle="${esc(x.id)}">${x.active===false?'啟用':'停用'}</button><button data-announcement-edit="${esc(x.id)}">✏️ ${t('編輯','Sửa')}</button><button class="danger" data-announcement-delete="${esc(x.id)}">🗑️ ${t('刪除','Xóa')}</button></div></article>`}).join('')||`<div class="empty">${t('目前沒有符合條件的公告','Không có thông báo phù hợp')}</div>`}
+function announcementAdminPage(){
+  const q=state.announcementQuery.trim().toLowerCase();
+  let list=[...(proData.announcements||[])].sort((a,b)=>Number(Boolean(b.pinned))-Number(Boolean(a.pinned))||String(b.updatedAt||'').localeCompare(String(a.updatedAt||'')));
+  if(q)list=list.filter(x=>`${x.titleZh||''} ${x.titleVi||''} ${x.messageZh||''} ${x.messageVi||''}`.toLowerCase().includes(q));
+  if(state.announcementStatus==='active')list=list.filter(activeAnnouncement);else if(state.announcementStatus==='inactive')list=list.filter(x=>!activeAnnouncement(x));
+  const active=(proData.announcements||[]).filter(activeAnnouncement).length,pinned=(proData.announcements||[]).filter(x=>x.pinned&&activeAnnouncement(x)).length;
+  return shell(`<section class="pro-hero announcement-admin-hero"><span class="pill">Milestone 4 Pro · Sprint 4-2</span><h1>${t('公告管理系統','Hệ thống quản lý thông báo')}</h1><p>${t('建立中越雙語公告，管理置頂、緊急層級、發布狀態與有效期限；首頁通知中心會同步讀取。','Tạo thông báo song ngữ, quản lý ghim, mức khẩn, trạng thái và thời hạn; trung tâm thông báo sẽ đồng bộ dữ liệu.')}</p></section><div class="grid pro-kpis"><article class="card stat"><b>${(proData.announcements||[]).length}</b><span>${t('公告總數','Tổng số')}</span></article><article class="card stat"><b>${active}</b><span>${t('發布中','Đang phát')}</span></article><article class="card stat"><b>${pinned}</b><span>${t('置頂公告','Đã ghim')}</span></article><article class="card stat"><b>${(proData.announcements||[]).filter(x=>x.priority==='urgent'&&activeAnnouncement(x)).length}</b><span>${t('緊急公告','Khẩn cấp')}</span></article></div>${announcementAdminForm()}<div class="announcement-admin-toolbar"><input class="search" id="announcementSearch" value="${esc(state.announcementQuery)}" placeholder="${t('搜尋標題或內容','Tìm tiêu đề hoặc nội dung')}"><div class="map-filter-row">${[['all','全部','Tất cả'],['active','發布中','Đang phát'],['inactive','停用／過期','Tắt / hết hạn']].map(x=>`<button class="map-filter ${state.announcementStatus===x[0]?'active':''}" data-announcement-status="${x[0]}">${t(x[1],x[2])}</button>`).join('')}</div></div><div class="announcement-admin-list">${announcementAdminCards(list)}</div><div class="notice-limit">${t('目前公告同步範圍為同一裝置。Firebase 啟用後，領隊更新才會即時同步到所有團員手機。','Hiện thông báo chỉ đồng bộ trên cùng thiết bị. Khi bật Firebase, cập nhật của trưởng đoàn mới đồng bộ đến mọi điện thoại.')}</div>`,'pro')
+}
+
+function attendanceRoom(member){const roomId=member.roomAssignments?.lexis||member.roomAssignments?.sunway||'';const room=(proData.rooms||[]).find(r=>r.id===roomId);return room?.actualRoomNumber||room?.assignmentCode||room?.roomNumber||room?.nameZh||roomId||'-'}
+function attendanceRecord(sessionId,memberId){return (proData.attendanceRecords||[]).find(r=>r.sessionId===sessionId&&String(r.memberId)===String(memberId))}
+function attendanceStatus(sessionId,memberId){return attendanceRecord(sessionId,memberId)?.status||'pending'}
+function saveAttendanceData(sessions,records){proData={...proData,attendanceSessions:sessions,attendanceRecords:records};proData=saveProDatabase(proData)}
+function attendanceSessionForm(){const x=(proData.attendanceSessions||[]).find(v=>v.id===state.attendanceEditId)||{};return `<form class="card attendance-session-form" id="attendanceSessionForm"><div class="admin-form-head"><div><small>${state.attendanceEditId?t('編輯點名場次','Sửa buổi điểm danh'):t('建立點名場次','Tạo buổi điểm danh')}</small><h3>${esc(x.titleZh||t('新增集合／點名','Thêm buổi tập trung'))}</h3></div>${state.attendanceEditId?`<button type="button" id="cancelAttendanceEdit">✕</button>`:''}</div><div class="notice-form-grid"><label>${t('類型','Loại')}<select name="type"><option value="gathering">${t('集合','Tập trung')}</option><option value="bus">${t('登車','Lên xe')}</option><option value="meal">${t('用餐','Dùng bữa')}</option><option value="hotel">${t('回飯店','Về khách sạn')}</option><option value="daily">${t('每日簽到','Điểm danh ngày')}</option></select></label><label>${t('日期','Ngày')}<input name="date" type="date" value="${esc(x.date||'2026-09-20')}" required></label><label>${t('時間','Giờ')}<input name="time" type="time" value="${esc(x.time||'')}" required></label><label>${t('狀態','Trạng thái')}<select name="status"><option value="draft" ${x.status!=='active'&&x.status!=='closed'?'selected':''}>${t('草稿','Nháp')}</option><option value="active" ${x.status==='active'?'selected':''}>${t('進行中','Đang diễn ra')}</option><option value="closed" ${x.status==='closed'?'selected':''}>${t('已結束','Đã kết thúc')}</option></select></label></div><label>${t('中文名稱','Tên tiếng Hoa')}<input name="titleZh" value="${esc(x.titleZh||'')}" required></label><label>${t('越南文名稱','Tên tiếng Việt')}<input name="titleVi" value="${esc(x.titleVi||'')}" required></label><div class="notice-form-grid"><label>${t('中文地點','Địa điểm tiếng Hoa')}<input name="locationZh" value="${esc(x.locationZh||'')}"></label><label>${t('越南文地點','Địa điểm tiếng Việt')}<input name="locationVi" value="${esc(x.locationVi||'')}"></label></div><button class="notice-save" type="submit">💾 ${state.attendanceEditId?t('儲存修改','Lưu thay đổi'):t('建立場次','Tạo buổi')}</button></form>`}
+function attendanceMemberCards(list,session){return list.map(m=>{const status=attendanceStatus(session.id,m.id);return `<article class="card attendance-member ${status}"><div class="attendance-member-main"><span class="attendance-number">${esc(m.number)}</span><div><b>${esc(m.nameZh)}</b><small>${esc(m.nameEn)}</small><p>🏨 ${esc(attendanceRoom(m))} · ✈️ ${esc(m.seatOutbound||'-')} / ${esc(m.seatReturn||'-')}</p></div><span class="attendance-state">${status==='present'?'✅':status==='late'?'⏰':status==='absent'?'❌':'●'}</span></div><div class="attendance-status-actions">${[['present','✅','已到','Có mặt'],['late','⏰','遲到','Đến trễ'],['absent','❌','未到','Vắng'],['pending','●','未確認','Chưa rõ']].map(x=>`<button class="${status===x[0]?'active':''}" data-attendance-member="${esc(m.id)}" data-attendance-status="${x[0]}">${x[1]} ${t(x[2],x[3])}</button>`).join('')}</div></article>`}).join('')||`<div class="empty">${t('沒有符合條件的團員','Không có thành viên phù hợp')}</div>`}
+function attendanceAdminPage(){const sessions=[...(proData.attendanceSessions||[])].sort((a,b)=>`${b.date||''}${b.time||''}`.localeCompare(`${a.date||''}${a.time||''}`));if(!state.attendanceSessionId&&sessions.length)state.attendanceSessionId=sessions[0].id;const session=sessions.find(x=>x.id===state.attendanceSessionId)||sessions[0];const total=(proData.members||[]).filter(m=>m.active!==false).length;let members=(proData.members||[]).filter(m=>m.active!==false);const q=state.attendanceQuery.trim().toLowerCase();if(q)members=members.filter(m=>`${m.nameZh} ${m.nameEn} ${attendanceRoom(m)} ${m.seatOutbound||''} ${m.seatReturn||''}`.toLowerCase().includes(q));if(session&&state.attendanceFilter!=='all')members=members.filter(m=>attendanceStatus(session.id,m.id)===state.attendanceFilter);if(state.attendanceGroup==='room')members.sort((a,b)=>attendanceRoom(a).localeCompare(attendanceRoom(b),'zh-Hant')||a.number-b.number);else if(state.attendanceGroup==='seat')members.sort((a,b)=>(a.seatOutbound||'').localeCompare(b.seatOutbound||'')||a.number-b.number);else members.sort((a,b)=>a.number-b.number);const counts={present:0,late:0,absent:0,pending:0};if(session)(proData.members||[]).filter(m=>m.active!==false).forEach(m=>counts[attendanceStatus(session.id,m.id)]++);return shell(`<section class="pro-hero attendance-hero"><span class="pill">Milestone 4 Pro · Sprint 4-3</span><h1>${t('點名管理系統','Hệ thống điểm danh')}</h1><p>${t('建立集合、登車與用餐點名場次，快速查看未到名單並保存歷史紀錄。','Tạo buổi tập trung, lên xe và dùng bữa, xem nhanh người chưa đến và lưu lịch sử.')}</p></section>${attendanceSessionForm()}<div class="attendance-session-tabs">${sessions.map(x=>`<button class="${session?.id===x.id?'active':''}" data-attendance-session="${esc(x.id)}"><small>${esc(x.date||'')} ${esc(x.time||'')}</small><b>${esc(t(x.titleZh,x.titleVi))}</b><span>${x.status==='active'?'🟢':x.status==='closed'?'⚫':'🟡'} ${esc(t(x.locationZh,x.locationVi)||'-')}</span></button>`).join('')}</div>${session?`<section class="card attendance-current"><div><small>${t('目前場次','Buổi hiện tại')}</small><h2>${esc(t(session.titleZh,session.titleVi))}</h2><p>📍 ${esc(t(session.locationZh,session.locationVi)||'-')} · ${esc(session.date||'')} ${esc(session.time||'')}</p></div><div class="attendance-current-actions"><button data-attendance-edit-session="${esc(session.id)}">✏️ ${t('編輯','Sửa')}</button><button class="danger" data-attendance-delete-session="${esc(session.id)}">🗑️ ${t('刪除','Xóa')}</button></div></section><div class="checkin-summary"><div><b>${counts.present}</b><span>✅ ${t('已到','Có mặt')}</span></div><div><b>${counts.late}</b><span>⏰ ${t('遲到','Đến trễ')}</span></div><div><b>${counts.absent}</b><span>❌ ${t('未到','Vắng')}</span></div><div><b>${counts.pending}</b><span>● ${t('未確認','Chưa rõ')}</span></div></div><div class="attendance-bulk"><button id="attendanceAllPresent">✓ ${t('全部已到','Tất cả có mặt')}</button><button id="attendanceReset">↺ ${t('全部重設','Đặt lại')}</button><button id="attendanceShowMissing">⚠️ ${t('只看未到','Chỉ xem chưa đến')}</button></div><div class="attendance-toolbar"><input class="search" id="attendanceSearch" value="${esc(state.attendanceQuery)}" placeholder="${t('搜尋姓名、房間或機位','Tìm tên, phòng hoặc ghế')}"><select id="attendanceGroup"><option value="all" ${state.attendanceGroup==='all'?'selected':''}>${t('依名單排序','Theo danh sách')}</option><option value="room" ${state.attendanceGroup==='room'?'selected':''}>${t('依房間排序','Theo phòng')}</option><option value="seat" ${state.attendanceGroup==='seat'?'selected':''}>${t('依機位排序','Theo ghế')}</option></select></div><div class="map-filter-row">${[['all','👥','全部','Tất cả'],['present','✅','已到','Có mặt'],['late','⏰','遲到','Đến trễ'],['absent','❌','未到','Vắng'],['pending','●','未確認','Chưa rõ']].map(x=>`<button class="map-filter ${state.attendanceFilter===x[0]?'active':''}" data-attendance-filter="${x[0]}">${x[1]} ${t(x[2],x[3])}</button>`).join('')}</div><div class="attendance-list">${attendanceMemberCards(members,session)}</div><div class="notice-limit">${t(`本場共 ${total} 人；資料目前僅保存在此裝置。`,`Buổi này có ${total} người; dữ liệu hiện chỉ lưu trên thiết bị này.`)}</div>`:`<div class="empty">${t('請先建立點名場次','Vui lòng tạo buổi điểm danh')}</div>`}`, 'pro')}
+
+function proPage(){
+  if(!leaderAuthenticated())return shell(leaderLoginPanel(),'pro');
+  const d=proData;
+  const migrated=d.attendanceRecords.filter(x=>x.source==='legacy-migration').length;
+  const activeAnnouncements=d.announcements.filter(x=>x.active!==false).length;
+  const timeout=Math.max(5,Number(leaderSettings().sessionTimeoutMinutes)||30);
+  return shell(`<section class="pro-hero leader-mode-hero"><span class="pill">Milestone 4 Pro · Sprint 4-8</span><div class="leader-mode-title"><div><h1>${t('領隊管理中心','Trung tâm quản lý trưởng đoàn')}</h1><p>${t('領隊模式已啟用。管理頁面已受到 PIN 與登入逾時保護。','Chế độ trưởng đoàn đã bật. Trang quản lý được bảo vệ bằng PIN và thời gian hết phiên.')}</p></div><button id="leaderLogout" class="leader-logout">🔒 ${t('登出','Đăng xuất')}</button></div></section>
+  <div class="leader-session-banner"><span>🟢 ${t('領隊模式使用中','Đang dùng chế độ trưởng đoàn')}</span><small>${t(`閒置 ${timeout} 分鐘後自動登出`,`Tự đăng xuất sau ${timeout} phút không hoạt động`)}</small></div>
+  <div class="grid pro-kpis"><article class="card stat"><b>${d.members.length}</b><span>${t('團員資料','Thành viên')}</span></article><article class="card stat"><b>${d.rooms.length}</b><span>${t('房間資料','Phòng')}</span></article><article class="card stat"><b>${activeAnnouncements}</b><span>${t('有效公告','Thông báo')}</span></article><article class="card stat"><b>${d.attendanceSessions.length}</b><span>${t('點名場次','Buổi điểm danh')}</span></article></div>
+  <div class="section-head"><h2>${t('領隊功能','Chức năng trưởng đoàn')}</h2><span>${esc(d.meta.appVersion)}</span></div><div class="grid pro-next"><a class="card pro-module-link" href="#/announcement-admin"><span>📢</span><b>4-2 ${t('公告管理','Quản lý thông báo')}</b><small>${t('新增、修改、置頂、停用與期限管理','Thêm, sửa, ghim, tắt và thời hạn')}</small></a><a class="card pro-module-link" href="#/attendance-admin"><span>✅</span><b>4-3 ${t('點名管理','Quản lý điểm danh')}</b><small>${t('建立場次、團員狀態與未到名單','Tạo buổi, trạng thái và danh sách vắng')}</small></a><a class="card pro-module-link" href="#/qr-checkin"><span>▦</span><b>4-4 ${t('QR 報到','Check-in QR')}</b><small>${t('相機掃描、手動報到與重複防護','Quét camera, thủ công và chống trùng')}</small></a><a class="card pro-module-link" href="#/firebase-admin"><span>☁️</span><b>4-6 Firebase</b><small>${t('多裝置雲端同步與離線回退','Đồng bộ nhiều thiết bị và ngoại tuyến')}</small></a></div>
+  <div class="section-head"><h2>${t('安全設定','Cài đặt bảo mật')}</h2></div><form class="card leader-settings" id="leaderSettingsForm"><label>${t('登入逾時（分鐘）','Hết phiên (phút)')}<input name="timeout" type="number" min="5" max="240" value="${timeout}"></label><label>${t('新 PIN（留白表示不變）','PIN mới (để trống nếu không đổi)')}<input name="newPin" inputmode="numeric" pattern="[0-9]{4,8}" minlength="4" maxlength="8" autocomplete="off"></label><button type="submit">💾 ${t('儲存安全設定','Lưu cài đặt')}</button></form>
+  <div class="section-head"><h2>${t('資料核心狀態','Trạng thái dữ liệu')}</h2></div><article class="card pro-status"><div><span>✅</span><p><b>${t('統一資料庫已建立','Đã tạo cơ sở dữ liệu chung')}</b><small>amt-m4-pro-data-v1</small></p></div><div><span>🔄</span><p><b>${t('舊資料自動遷移','Tự động chuyển dữ liệu cũ')}</b><small>${t(`已轉入 ${migrated} 筆簽到紀錄`,`Đã chuyển ${migrated} bản ghi`)}</small></p></div><div><span>🔐</span><p><b>${t('管理路由已鎖定','Đã khóa tuyến quản lý')}</b><small>${t('公告、點名、QR 與備份需先登入','Thông báo, điểm danh, QR và sao lưu cần đăng nhập')}</small></p></div></article>
+  <div class="section-head"><h2>${t('備份與還原','Sao lưu và khôi phục')}</h2></div><article class="card pro-actions"><button id="proExport" type="button">⬇️ ${t('匯出完整 JSON 備份','Xuất bản sao JSON')}</button><label>⬆️ ${t('匯入備份','Nhập bản sao')}<input id="proImport" type="file" accept="application/json" hidden></label><button id="proReset" class="danger" type="button">♻️ ${t('重建資料中心','Tạo lại dữ liệu')}</button></article>
+  <div class="notice-limit">${t('此 PIN 為裝置端保護，不等同雲端帳號安全。Firebase Authentication 將於後續同步階段導入。','PIN này chỉ bảo vệ trên thiết bị, không tương đương tài khoản đám mây. Firebase Authentication sẽ được thêm ở giai đoạn đồng bộ.')}</div>`, 'pro')
+}
+
+
+
+function qrCodeValue(member){return member.qrCode||`AMT-MY26-${member.id}`}
+function qrCheckinRecord(memberId){return (proData.checkinRecords||[]).filter(x=>String(x.memberId)===String(memberId)).sort((a,b)=>(b.checkedAt||'').localeCompare(a.checkedAt||''))[0]}
+function qrCheckinRoom(member){return attendanceRoom(member)}
+function saveQrCheckin(member,source='manual'){const now=new Date().toISOString(),records=[...(proData.checkinRecords||[])],latest=qrCheckinRecord(member.id);if(latest&&latest.status==='checked-in')return {duplicate:true,record:latest};const record={id:`checkin-${Date.now()}-${member.id}`,memberId:member.id,qrCode:qrCodeValue(member),status:'checked-in',checkedAt:now,source,device:'pwa-local'};records.push(record);proData={...proData,checkinRecords:records,members:(proData.members||[]).map(m=>String(m.id)===String(member.id)?{...m,checkinStatus:'checked-in',checkedInAt:now}:m)};proData=saveProDatabase(proData);return {duplicate:false,record}}
+function undoQrCheckin(memberId){const records=[...(proData.checkinRecords||[])],latest=qrCheckinRecord(memberId);if(!latest)return;const now=new Date().toISOString();records.push({id:`checkin-undo-${Date.now()}-${memberId}`,memberId,qrCode:latest.qrCode,status:'cancelled',checkedAt:now,source:'leader-undo',reverses:latest.id});proData={...proData,checkinRecords:records,members:(proData.members||[]).map(m=>String(m.id)===String(memberId)?{...m,checkinStatus:'pending',checkedInAt:null}:m)};proData=saveProDatabase(proData)}
+function findQrMember(value){const q=String(value||'').trim().toLowerCase();return (proData.members||[]).find(m=>m.active!==false&&[m.id,m.number,qrCodeValue(m),m.nameZh,m.nameEn].some(v=>String(v||'').trim().toLowerCase()===q))}
+function qrMemberCards(list){return list.map(m=>{const rec=qrCheckinRecord(m.id),checked=rec?.status==='checked-in';return `<article class="card qr-member ${checked?'checked':''}"><div class="qr-member-main"><span class="attendance-number">${esc(m.number)}</span><div><b>${esc(m.nameZh)}</b><small>${esc(m.nameEn)}</small><p>🏨 ${esc(qrCheckinRoom(m))} · ✈️ ${esc(m.seatOutbound||'-')} / ${esc(m.seatReturn||'-')}</p><code>${esc(qrCodeValue(m))}</code>${checked?`<em>✅ ${t('已報到','Đã check-in')} · ${new Date(rec.checkedAt).toLocaleString(state.lang==='zh'?'zh-TW':'vi-VN',{hour12:false})}</em>`:''}</div><button class="qr-show" data-qr-show="${esc(m.id)}">▦</button></div><div class="qr-member-actions">${checked?`<button class="danger" data-qr-undo="${esc(m.id)}">↩ ${t('取消報到','Hủy check-in')}</button>`:`<button data-qr-manual="${esc(m.id)}">✅ ${t('手動報到','Check-in thủ công')}</button>`}</div></article>`}).join('')||`<div class="empty">${t('沒有符合條件的團員','Không có thành viên phù hợp')}</div>`}
+function qrCheckinPage(){let members=(proData.members||[]).filter(m=>m.active!==false);const q=state.qrQuery.trim().toLowerCase();if(q)members=members.filter(m=>`${m.nameZh} ${m.nameEn} ${m.number} ${qrCodeValue(m)} ${qrCheckinRoom(m)}`.toLowerCase().includes(q));if(state.qrFilter==='checked')members=members.filter(m=>qrCheckinRecord(m.id)?.status==='checked-in');if(state.qrFilter==='pending')members=members.filter(m=>qrCheckinRecord(m.id)?.status!=='checked-in');members.sort((a,b)=>a.number-b.number);const total=(proData.members||[]).filter(m=>m.active!==false).length,checked=(proData.members||[]).filter(m=>m.active!==false&&qrCheckinRecord(m.id)?.status==='checked-in').length,selected=(proData.members||[]).find(m=>String(m.id)===String(state.qrSelectedMemberId));return shell(`<section class="pro-hero qr-hero"><span class="pill">Milestone 4 Pro · Sprint 4-4</span><h1>${t('QR 報到系統','Hệ thống check-in QR')}</h1><p>${t('掃描團員 QR Code 或以姓名、編號手動報到，自動保存時間並防止重複報到。','Quét QR hoặc tìm theo tên, mã số để check-in; tự lưu thời gian và ngăn trùng lặp.')}</p></section><div class="grid pro-kpis"><article class="card stat"><b>${total}</b><span>${t('團員總數','Tổng số')}</span></article><article class="card stat"><b>${checked}</b><span>${t('已報到','Đã check-in')}</span></article><article class="card stat"><b>${total-checked}</b><span>${t('未報到','Chưa check-in')}</span></article><article class="card stat"><b>${total?Math.round(checked/total*100):0}%</b><span>${t('完成率','Tỷ lệ')}</span></article></div><section class="card qr-scanner-card"><div class="section-head"><h2>📷 ${t('相機掃描','Quét bằng camera')}</h2><span>${'BarcodeDetector' in window?t('此瀏覽器支援','Trình duyệt hỗ trợ'):t('請使用手動報到','Vui lòng check-in thủ công')}</span></div><video id="qrVideo" playsinline muted></video><div class="qr-scan-actions"><button id="qrStartScan">📷 ${t('開始掃描','Bắt đầu quét')}</button><button id="qrStopScan">■ ${t('停止','Dừng')}</button></div><form id="qrCodeForm"><input id="qrCodeInput" placeholder="AMT-MY26-001 / ${t('姓名或編號','Tên hoặc mã số')}"><button>✅ ${t('確認報到','Xác nhận')}</button></form><p id="qrScanMessage" class="notice-limit">${esc(state.qrLastResult||t('相機掃描需要 HTTPS 與相機權限。','Quét camera cần HTTPS và quyền camera.'))}</p></section>${selected?`<section class="card qr-modal-inline"><button id="qrClosePreview">✕</button><canvas id="memberQrCanvas" data-qr-value="${esc(qrCodeValue(selected))}"></canvas><h2>${esc(selected.nameZh)}</h2><p>${esc(selected.nameEn)} · No.${esc(selected.number)}</p><code>${esc(qrCodeValue(selected))}</code></section>`:''}<div class="attendance-toolbar"><input class="search" id="qrSearch" value="${esc(state.qrQuery)}" placeholder="${t('搜尋姓名、編號、房間或 QR','Tìm tên, số, phòng hoặc QR')}"><div class="map-filter-row">${[['all','全部','Tất cả'],['pending','未報到','Chưa check-in'],['checked','已報到','Đã check-in']].map(x=>`<button class="map-filter ${state.qrFilter===x[0]?'active':''}" data-qr-filter="${x[0]}">${t(x[1],x[2])}</button>`).join('')}</div></div><div class="qr-member-list">${qrMemberCards(members)}</div><div class="notice-limit">${t('目前報到紀錄儲存在本裝置。後續 Firebase 啟用後，可由多位領隊共同掃描並即時同步。','Hiện dữ liệu lưu trên thiết bị này. Khi bật Firebase, nhiều trưởng đoàn có thể cùng quét và đồng bộ tức thời.')}</div>`,'pro')}
+let qrScanStream=null,qrScanTimer=null;
+function stopQrScanner(){if(qrScanTimer){clearInterval(qrScanTimer);qrScanTimer=null}if(qrScanStream){qrScanStream.getTracks().forEach(x=>x.stop());qrScanStream=null}state.qrScannerActive=false}
+async function startQrScanner(){if(!('BarcodeDetector' in window)){state.qrLastResult=t('此瀏覽器不支援 QR 相機辨識，請使用下方手動輸入。','Trình duyệt không hỗ trợ nhận dạng QR; dùng ô nhập bên dưới.');render();return}try{stopQrScanner();const video=document.getElementById('qrVideo');qrScanStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false});video.srcObject=qrScanStream;await video.play();const detector=new BarcodeDetector({formats:['qr_code']});state.qrScannerActive=true;qrScanTimer=setInterval(async()=>{if(!video||video.readyState<2)return;try{const codes=await detector.detect(video);if(codes[0]?.rawValue){const member=findQrMember(codes[0].rawValue);if(member){const result=saveQrCheckin(member,'qr-camera');state.qrLastResult=result.duplicate?`⚠️ ${member.nameZh} ${t('已經報到','đã check-in')}`:`✅ ${member.nameZh} ${t('報到完成','check-in hoàn tất')}`;stopQrScanner();render()}else{state.qrLastResult=`❌ ${t('找不到此 QR 對應的團員','Không tìm thấy thành viên cho QR')}: ${codes[0].rawValue}`;render()}}}catch{}},650)}catch(err){state.qrLastResult=`❌ ${t('無法啟用相機，請確認權限','Không thể bật camera, hãy kiểm tra quyền')}`;stopQrScanner();render()}}
+function renderMemberQr(){const canvas=document.getElementById('memberQrCanvas');if(canvas&&window.AMTQRCode)window.AMTQRCode.render(canvas,canvas.dataset.qrValue,240)}
+
+function firebaseStatusLabel(){const sync=proData.sync||{};if(sync.status==='connected')return t('已連線','Đã kết nối');if(sync.status==='connecting')return t('連線中','Đang kết nối');if(sync.status==='error')return t('連線錯誤','Lỗi kết nối');return t('未連線','Chưa kết nối')}
+function firebaseAdminPage(){
+  const sync=proData.sync||{},c=sync.firebaseConfig||{},connected=sync.enabled===true&&sync.provider==='firebase';
+  return shell(`<section class="pro-hero firebase-hero"><span class="pill">Milestone 4 Pro · Sprint 4-8</span><h1>☁️ ${t('Firebase 雲端同步','Đồng bộ Firebase')}</h1><p>${t('讓公告、點名與 QR 報到資料在多部手機之間同步；離線時仍保留本機資料。','Đồng bộ thông báo, điểm danh và QR giữa nhiều điện thoại; khi ngoại tuyến vẫn giữ dữ liệu cục bộ.')}</p></section>
+  <div class="grid pro-kpis"><article class="card stat"><b>${connected?'🟢':'⚪'}</b><span>${firebaseStatusLabel()}</span></article><article class="card stat"><b>${esc(sync.lastSyncAt?new Date(sync.lastSyncAt).toLocaleString():'—')}</b><span>${t('最後同步','Đồng bộ cuối')}</span></article><article class="card stat"><b>${esc(c.projectId||'—')}</b><span>Project ID</span></article><article class="card stat"><b>${sync.realtime!==false?'ON':'OFF'}</b><span>${t('即時監聽','Lắng nghe trực tiếp')}</span></article></div>
+  ${state.firebaseMessage?`<div class="card firebase-message">${esc(state.firebaseMessage)}</div>`:''}
+  <form class="card firebase-form" id="firebaseConfigForm"><h2>${t('Firebase Web App 設定','Cấu hình Firebase Web App')}</h2><p class="notice-limit">${t('請從 Firebase Console 的「專案設定 → 您的應用程式 → SDK 設定與配置」複製欄位。','Sao chép các trường từ Firebase Console: Project settings → Your apps → SDK setup and configuration.')}</p>
+  <div class="notice-form-grid"><label>API Key<input name="apiKey" value="${esc(c.apiKey||'')}" required></label><label>Auth Domain<input name="authDomain" value="${esc(c.authDomain||'')}"></label><label>Project ID<input name="projectId" value="${esc(c.projectId||'')}" required></label><label>App ID<input name="appId" value="${esc(c.appId||'')}" required></label><label>Storage Bucket<input name="storageBucket" value="${esc(c.storageBucket||'')}"></label><label>Messaging Sender ID<input name="messagingSenderId" value="${esc(c.messagingSenderId||'')}"></label></div>
+  <label class="admin-checks"><span><input type="checkbox" name="useAnonymousAuth" ${sync.useAnonymousAuth!==false?'checked':''}> ${t('使用匿名登入（建議）','Dùng đăng nhập ẩn danh')}</span><span><input type="checkbox" name="realtime" ${sync.realtime!==false?'checked':''}> ${t('啟用即時同步','Bật đồng bộ trực tiếp')}</span><span><input type="checkbox" name="autoUpload" ${sync.autoUpload!==false?'checked':''}> ${t('本機變更自動上傳','Tự động tải thay đổi')}</span></label>
+  <button class="notice-save" type="submit" ${state.firebaseBusy?'disabled':''}>💾 ${t('儲存並測試連線','Lưu và kiểm tra kết nối')}</button></form>
+  <section class="card firebase-actions"><h2>${t('同步操作','Thao tác đồng bộ')}</h2><div class="admin-card-actions"><button id="firebaseUpload" ${!connected||state.firebaseBusy?'disabled':''}>⬆️ ${t('本機覆蓋雲端','Tải dữ liệu cục bộ lên')}</button><button id="firebaseDownload" ${!connected||state.firebaseBusy?'disabled':''}>⬇️ ${t('雲端覆蓋本機','Tải dữ liệu đám mây xuống')}</button><button id="firebaseDisconnect" class="danger" ${!connected||state.firebaseBusy?'disabled':''}>🔌 ${t('停用雲端同步','Tắt đồng bộ')}</button></div><p class="notice-limit">${t('首次啟用建議先按「本機覆蓋雲端」。下載會以雲端的公告、點名、QR 與團員資料取代本機相同資料。','Khi bật lần đầu, nên tải dữ liệu cục bộ lên trước. Tải xuống sẽ thay thế dữ liệu thông báo, điểm danh, QR và thành viên cục bộ.')}</p></section>
+  <section class="card firebase-rules"><h2>${t('必要的 Firestore 設定','Thiết lập Firestore cần thiết')}</h2><ol><li>${t('建立 Cloud Firestore 資料庫。','Tạo cơ sở dữ liệu Cloud Firestore.')}</li><li>${t('在 Authentication 啟用 Anonymous 登入。','Bật đăng nhập Anonymous trong Authentication.')}</li><li>${t('Firestore 規則至少允許已登入使用者存取 trips 路徑。','Quy tắc Firestore phải cho phép người dùng đã đăng nhập truy cập đường dẫn trips.')}</li></ol><pre>match /trips/{tripId}/state/{document} {
+  allow read, write: if request.auth != null;
+}</pre><p class="notice-limit">${t('注意：本機領隊 PIN 不是 Firebase 伺服器端權限。正式上線前，建議再導入管理員帳號或 Custom Claims。','Lưu ý: PIN trưởng đoàn cục bộ không phải quyền máy chủ Firebase. Trước khi dùng chính thức, nên thêm tài khoản quản trị hoặc Custom Claims.')}</p></section>`,'pro')
+}
+async function activateFirebaseRealtime(){
+  if(proData.sync?.enabled!==true||proData.sync?.provider!=='firebase'||proData.sync?.realtime===false)return;
+  try{await startFirebaseRealtime(proData,next=>{proData=saveProDatabase(next);render()},status=>{if(status.status==='error'){proData=saveProDatabase({...proData,sync:{...(proData.sync||{}),status:'error',lastError:status.message||''}})}})}catch(error){proData=saveProDatabase({...proData,sync:{...(proData.sync||{}),status:'error',lastError:error?.message||String(error)}})}
+}
+
+function render(){if(countdownInterval){clearInterval(countdownInterval);countdownInterval=null}let r=route();if(PROTECTED_ROUTES.has(r)&&!leaderAuthenticated()){sessionStorage.setItem('amt-m4-return-route',r);location.hash='#/pro';r='pro'}const map={home,itinerary,budget,food,shopping:shoppingPage,resort,traveler,rooms,guide,map:mapPage,notifications:notificationsPage,checkin:checkinPage,countdown:countdownPage,weather:weatherPage,exchange:exchangePage,pro:proPage,'announcement-admin':announcementAdminPage,'attendance-admin':attendanceAdminPage,'qr-checkin':qrCheckinPage,'firebase-admin':firebaseAdminPage};document.getElementById('app').innerHTML=map[r]();bind(r);if(r==='qr-checkin')setTimeout(renderMemberQr,0);if(r==='weather'&&!state.weatherData&&!state.weatherLoading&&!state.weatherError){setTimeout(()=>loadWeather(),0)}if(r==='exchange'&&!state.exchangeRate&&!state.exchangeLoading){setTimeout(()=>loadExchange(),0)}if(r==='home'&&!state.weatherData&&!state.weatherLoading&&!state.weatherError){setTimeout(()=>loadWeather(),0)}if(r==='home'&&!state.exchangeRate&&!state.exchangeLoading){setTimeout(()=>loadExchange(),0)}if(r==='home'||r==='countdown'){countdownInterval=setInterval(updateCountdownDom,1000)}}
+function bind(r){
+  document.getElementById('dashboardMember')?.addEventListener('change',e=>{state.dashboardMemberId=e.target.value;localStorage.setItem('mtc-dashboard-member',state.dashboardMemberId);render()});
+  document.getElementById('langBtn')?.addEventListener('click',()=>{state.lang=state.lang==='zh'?'vi':'zh';localStorage.setItem('mtc-lang',state.lang);render()});
+  document.getElementById('leaderAuthForm')?.addEventListener('submit',async e=>{e.preventDefault();if(leaderLocked()){alert(t('目前暫時鎖定，請稍後再試。','Đang tạm khóa, vui lòng thử lại sau.'));return}const f=new FormData(e.currentTarget),pin=String(f.get('pin')||'');if(!/^\d{4,8}$/.test(pin)){alert(t('PIN 必須為 4～8 位數字。','PIN phải gồm 4–8 chữ số.'));return}const settings={...leaderSettings()};if(!settings.pinConfigured){if(pin!==String(f.get('confirmPin')||'')){alert(t('兩次輸入的 PIN 不一致。','Hai lần nhập PIN không khớp.'));return}settings.pinHash=await hashPin(pin);settings.pinConfigured=true;settings.failedAttempts=0;settings.lockedUntil=null;proData=saveProDatabase({...proData,leaderSettings:settings});setLeaderSession();render();return}const ok=(await hashPin(pin))===settings.pinHash;if(ok){settings.failedAttempts=0;settings.lockedUntil=null;proData=saveProDatabase({...proData,leaderSettings:settings});setLeaderSession();const next=sessionStorage.getItem('amt-m4-return-route');sessionStorage.removeItem('amt-m4-return-route');location.hash=next?`#/${next}`:'#/pro';render()}else{settings.failedAttempts=(Number(settings.failedAttempts)||0)+1;if(settings.failedAttempts>=5){settings.lockedUntil=new Date(Date.now()+5*60000).toISOString();settings.failedAttempts=0}proData=saveProDatabase({...proData,leaderSettings:settings});alert(t('PIN 錯誤。','PIN không đúng.'));render()}});
+  document.getElementById('leaderLogout')?.addEventListener('click',()=>{stopQrScanner();clearLeaderSession();location.hash='#/pro';render()});
+  document.getElementById('leaderSettingsForm')?.addEventListener('submit',async e=>{e.preventDefault();const f=new FormData(e.currentTarget),settings={...leaderSettings()},timeout=Math.min(240,Math.max(5,Number(f.get('timeout'))||30)),newPin=String(f.get('newPin')||'').trim();settings.sessionTimeoutMinutes=timeout;if(newPin){if(!/^\d{4,8}$/.test(newPin)){alert(t('新 PIN 必須為 4～8 位數字。','PIN mới phải gồm 4–8 chữ số.'));return}settings.pinHash=await hashPin(newPin);settings.pinConfigured=true}proData=saveProDatabase({...proData,leaderSettings:settings});setLeaderSession();alert(t('安全設定已儲存。','Đã lưu cài đặt bảo mật.'));render()});
+  document.querySelectorAll('[data-day]').forEach(b=>b.onclick=()=>{state.day=Number(b.dataset.day);render()});
+  document.querySelectorAll('[data-hotel]').forEach(b=>b.onclick=()=>{state.hotel=b.dataset.hotel;render()});
+  if(r==='traveler'){document.getElementById('memberSearch')?.addEventListener('input',e=>{const q=e.target.value.trim().toLowerCase();document.getElementById('memberList').innerHTML=memberCards(MEMBERS.filter(m=>`${m.nameZh} ${m.nameEn}`.toLowerCase().includes(q)))})}
+
+  if(r==='food'){
+    document.getElementById('foodSearch')?.addEventListener('input',e=>{state.foodQuery=e.target.value;render()});
+    document.getElementById('foodLocation')?.addEventListener('change',e=>{state.foodLocation=e.target.value;render()});
+    document.getElementById('foodDay')?.addEventListener('change',e=>{state.foodDay=Number(e.target.value);render()});
+    document.getElementById('foodBudget')?.addEventListener('change',e=>{state.foodBudget=e.target.value;localStorage.setItem('mtc-food-budget',state.foodBudget);render()});
+    document.querySelectorAll('[data-food-category]').forEach(b=>b.onclick=()=>{state.foodCategory=b.dataset.foodCategory;render()});
+    document.querySelectorAll('[data-food-check]').forEach(c=>c.onchange=()=>{const x=readFoodList();x[c.dataset.foodCheck]={...(x[c.dataset.foodCheck]||{}),checked:c.checked};saveFoodList(x);render()});
+    document.querySelectorAll('[data-food-price]').forEach(c=>c.onchange=()=>{const x=readFoodList();x[c.dataset.foodPrice]={...(x[c.dataset.foodPrice]||{}),price:Math.max(0,Number(c.value)||0)};saveFoodList(x);render()});
+    document.querySelectorAll('[data-food-favorite]').forEach(b=>b.onclick=()=>{const x=readFoodList(),id=b.dataset.foodFavorite;x[id]={...(x[id]||{}),favorite:!x[id]?.favorite};saveFoodList(x);render()});
+    document.querySelectorAll('[data-food-speak]').forEach(b=>b.onclick=()=>{if('speechSynthesis' in window){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(b.dataset.foodSpeak);u.lang='ms-MY';speechSynthesis.speak(u)}});
+  }
+  if(r==='shopping'){
+    document.getElementById('shoppingSearch')?.addEventListener('input',e=>{state.shoppingQuery=e.target.value;render()});
+    document.getElementById('shoppingStore')?.addEventListener('change',e=>{state.shoppingStore=e.target.value;render()});
+    document.getElementById('shoppingBudget')?.addEventListener('change',e=>{state.shoppingBudget=e.target.value;localStorage.setItem('mtc-shopping-budget',state.shoppingBudget);render()});
+    document.querySelectorAll('[data-shop-category]').forEach(b=>b.onclick=()=>{state.shoppingCategory=b.dataset.shopCategory;render()});
+    document.querySelectorAll('[data-shop-check]').forEach(c=>c.onchange=()=>{const x=readShoppingList();x[c.dataset.shopCheck]={...(x[c.dataset.shopCheck]||{}),checked:c.checked};saveShoppingList(x);render()});
+    document.querySelectorAll('[data-shop-qty]').forEach(c=>c.onchange=()=>{const x=readShoppingList();x[c.dataset.shopQty]={...(x[c.dataset.shopQty]||{}),qty:Math.max(1,Number(c.value)||1)};saveShoppingList(x);render()});
+    document.querySelectorAll('[data-shop-price]').forEach(c=>c.onchange=()=>{const x=readShoppingList();x[c.dataset.shopPrice]={...(x[c.dataset.shopPrice]||{}),price:Math.max(0,Number(c.value)||0)};saveShoppingList(x);render()});
+    document.querySelectorAll('[data-shop-expand]').forEach(b=>b.onclick=()=>document.getElementById('shop-detail-'+b.dataset.shopExpand)?.classList.toggle('open'));
+  }
+  if(r==='weather'){
+    document.querySelectorAll('[data-weather-location]').forEach(b=>b.onclick=()=>{state.weatherLocation=b.dataset.weatherLocation;state.weatherData=null;state.weatherError='';render()});
+    document.getElementById('weatherRefresh')?.addEventListener('click',()=>loadWeather(true));
+    document.getElementById('weatherRetry')?.addEventListener('click',()=>loadWeather(true));
+  }
+  if(r==='exchange'){
+    document.querySelectorAll('[data-exchange-direction]').forEach(b=>b.onclick=()=>{state.exchangeDirection=b.dataset.exchangeDirection;render()});
+    document.getElementById('exchangeSwap')?.addEventListener('click',()=>{state.exchangeDirection=state.exchangeDirection==='MYR_TWD'?'TWD_MYR':'MYR_TWD';render()});
+    document.getElementById('exchangeAmount')?.addEventListener('input',e=>{state.exchangeAmount=e.target.value;const box=document.querySelector('.exchange-result');if(box){const c=exchangeCalculation();box.querySelector('strong').textContent=`${c.to==='MYR'?'RM':'NT$'} ${exchangeNumber(c.result,c.to==='MYR'?2:0)}`;box.querySelector('p').textContent=`1 ${c.from} ≈ ${exchangeNumber(c.unit,c.to==='MYR'?4:3)} ${c.to}`}});
+    document.querySelectorAll('[data-exchange-amount]').forEach(b=>b.onclick=()=>{state.exchangeAmount=b.dataset.exchangeAmount;render()});
+    document.getElementById('exchangeRefresh')?.addEventListener('click',()=>loadExchange(true));
+    document.getElementById('exchangeRetry')?.addEventListener('click',()=>loadExchange(true));
+  }
+  if(r==='map'){
+    initMap();
+    document.getElementById('mapSearch')?.addEventListener('input',e=>{state.mapQuery=e.target.value;refreshMap()});
+    document.querySelectorAll('[data-map-category]').forEach(b=>b.onclick=()=>{state.mapCategory=b.dataset.mapCategory;refreshMap()});
+    document.querySelectorAll('[data-map-day]').forEach(b=>b.onclick=()=>{state.mapDay=Number(b.dataset.mapDay);refreshMap()});
+    document.getElementById('locateMe')?.addEventListener('click',()=>{
+      const status=document.getElementById('mapStatus');
+      if(!navigator.geolocation){if(status)status.textContent=t('此裝置不支援定位功能。','Thiết bị này không hỗ trợ định vị.');return}
+      if(status)status.textContent=t('正在取得目前位置…','Đang lấy vị trí hiện tại…');
+      navigator.geolocation.getCurrentPosition(pos=>{state.userPosition={lat:pos.coords.latitude,lng:pos.coords.longitude};refreshMap()},()=>{if(status)status.textContent=t('無法取得位置，請確認已允許定位權限。','Không thể lấy vị trí. Vui lòng cho phép quyền định vị.')},{enableHighAccuracy:true,timeout:12000,maximumAge:60000});
+    });
+    document.querySelectorAll('[data-map-focus]').forEach(card=>card.addEventListener('click',e=>{if(e.target.closest('a'))return;const marker=state.mapMarkers.find(m=>m._locationId===card.dataset.mapFocus);if(marker&&state.mapInstance){state.mapInstance.setView(marker.getLatLng(),15);marker.openPopup();document.getElementById('gpsMap')?.scrollIntoView({behavior:'smooth',block:'center'})}}));
+  }
+  if(r==='checkin'){
+    document.querySelectorAll('[data-checkin-day]').forEach(b=>b.onclick=()=>{state.checkinDay=Number(b.dataset.checkinDay);render()});
+    document.querySelectorAll('[data-checkin-filter]').forEach(b=>b.onclick=()=>{state.checkinFilter=b.dataset.checkinFilter;render()});
+    document.getElementById('checkinSearch')?.addEventListener('input',e=>{state.checkinQuery=e.target.value;render()});
+    document.querySelectorAll('[data-checkin-member]').forEach(b=>b.onclick=()=>{setCheckinValue(state.checkinDay,Number(b.dataset.checkinMember),b.dataset.checkinStatus);render()});
+    document.getElementById('markAllPresent')?.addEventListener('click',()=>{MEMBERS.forEach(m=>setCheckinValue(state.checkinDay,m.id,'present'));render()});
+    document.getElementById('resetCheckin')?.addEventListener('click',()=>{if(confirm(t('確定要清除本日所有簽到紀錄？','Bạn có chắc muốn xóa toàn bộ điểm danh hôm nay?'))){MEMBERS.forEach(m=>localStorage.removeItem(checkinKey(state.checkinDay,m.id)));render()}});
+  }
+  if(r==='notifications'){
+    document.querySelectorAll('[data-notice-filter]').forEach(b=>b.onclick=()=>{state.noticeFilter=b.dataset.noticeFilter;render()});
+    document.getElementById('toggleNoticeEditor')?.addEventListener('click',()=>{state.noticeEditor=!state.noticeEditor;render()});
+    document.getElementById('enableBrowserNotice')?.addEventListener('click',async()=>{if(!('Notification' in window)){alert(t('此瀏覽器不支援通知功能。','Trình duyệt này không hỗ trợ thông báo.'));return}const p=await Notification.requestPermission();alert(p==='granted'?t('瀏覽器通知已開啟。','Đã bật thông báo trình duyệt.'):t('未取得通知權限。','Chưa được cấp quyền thông báo.'))});
+    document.querySelectorAll('[data-notice-id]').forEach(c=>c.addEventListener('click',e=>{if(e.target.closest('button'))return;setNoticeRead(c.dataset.noticeId);render()}));
+    document.querySelectorAll('.notice-read-btn').forEach(b=>b.onclick=e=>{const card=e.currentTarget.closest('[data-notice-id]');setNoticeRead(card.dataset.noticeId);render()});
+    
+  }
+
+  if(r==='announcement-admin'){
+    document.getElementById('announcementSearch')?.addEventListener('input',e=>{state.announcementQuery=e.target.value;render()});
+    document.querySelectorAll('[data-announcement-status]').forEach(b=>b.onclick=()=>{state.announcementStatus=b.dataset.announcementStatus;render()});
+    document.getElementById('cancelAnnouncementEdit')?.addEventListener('click',()=>{state.announcementEditId=null;render()});
+    document.getElementById('announcementAdminForm')?.addEventListener('submit',e=>{e.preventDefault();const f=new FormData(e.currentTarget),now=new Date().toISOString(),existing=(proData.announcements||[]).find(x=>x.id===state.announcementEditId),item={...(existing||{}),id:existing?.id||`announcement-${Date.now()}`,type:f.get('type'),priority:f.get('priority'),date:f.get('date'),time:f.get('time'),titleZh:f.get('titleZh').trim(),titleVi:f.get('titleVi').trim(),messageZh:f.get('messageZh').trim(),messageVi:f.get('messageVi').trim(),locationZh:f.get('locationZh').trim(),locationVi:f.get('locationVi').trim(),expiresAt:f.get('expiresAt')||null,pinned:f.get('pinned')==='on',active:f.get('active')==='on',createdAt:existing?.createdAt||now,updatedAt:now,createdBy:existing?.createdBy||'leader-local'};const next=existing?(proData.announcements||[]).map(x=>x.id===item.id?item:x):[item,...(proData.announcements||[])];saveAnnouncements(next);state.announcementEditId=null;showBrowserNotification(item);render()});
+    document.querySelectorAll('[data-announcement-edit]').forEach(b=>b.onclick=()=>{state.announcementEditId=b.dataset.announcementEdit;window.scrollTo({top:0,behavior:'smooth'});render()});
+    document.querySelectorAll('[data-announcement-pin]').forEach(b=>b.onclick=()=>{saveAnnouncements((proData.announcements||[]).map(x=>x.id===b.dataset.announcementPin?{...x,pinned:!x.pinned,updatedAt:new Date().toISOString()}:x));render()});
+    document.querySelectorAll('[data-announcement-toggle]').forEach(b=>b.onclick=()=>{saveAnnouncements((proData.announcements||[]).map(x=>x.id===b.dataset.announcementToggle?{...x,active:x.active===false,updatedAt:new Date().toISOString()}:x));render()});
+    document.querySelectorAll('[data-announcement-delete]').forEach(b=>b.onclick=()=>{if(confirm(t('確定刪除此公告？此動作無法復原。','Xóa thông báo này? Không thể hoàn tác.'))){saveAnnouncements((proData.announcements||[]).filter(x=>x.id!==b.dataset.announcementDelete));if(state.announcementEditId===b.dataset.announcementDelete)state.announcementEditId=null;render()}});
+  }
+  if(r==='attendance-admin'){
+    document.querySelectorAll('[data-attendance-session]').forEach(b=>b.onclick=()=>{state.attendanceSessionId=b.dataset.attendanceSession;state.attendanceFilter='all';render()});
+    document.querySelectorAll('[data-attendance-filter]').forEach(b=>b.onclick=()=>{state.attendanceFilter=b.dataset.attendanceFilter;render()});
+    document.getElementById('attendanceSearch')?.addEventListener('input',e=>{state.attendanceQuery=e.target.value;render()});
+    document.getElementById('attendanceGroup')?.addEventListener('change',e=>{state.attendanceGroup=e.target.value;render()});
+    document.getElementById('cancelAttendanceEdit')?.addEventListener('click',()=>{state.attendanceEditId=null;render()});
+    document.getElementById('attendanceSessionForm')?.addEventListener('submit',e=>{e.preventDefault();const f=new FormData(e.currentTarget),now=new Date().toISOString(),old=(proData.attendanceSessions||[]).find(x=>x.id===state.attendanceEditId),item={...(old||{}),id:old?.id||`attendance-${Date.now()}`,type:f.get('type'),date:f.get('date'),time:f.get('time'),scheduledAt:`${f.get('date')}T${f.get('time')}`,titleZh:f.get('titleZh').trim(),titleVi:f.get('titleVi').trim(),locationZh:f.get('locationZh').trim(),locationVi:f.get('locationVi').trim(),status:f.get('status'),createdAt:old?.createdAt||now,updatedAt:now};const sessions=old?(proData.attendanceSessions||[]).map(x=>x.id===item.id?item:x):[item,...(proData.attendanceSessions||[])];saveAttendanceData(sessions,proData.attendanceRecords||[]);state.attendanceSessionId=item.id;state.attendanceEditId=null;render()});
+    document.querySelectorAll('[data-attendance-edit-session]').forEach(b=>b.onclick=()=>{state.attendanceEditId=b.dataset.attendanceEditSession;window.scrollTo({top:0,behavior:'smooth'});render()});
+    document.querySelectorAll('[data-attendance-delete-session]').forEach(b=>b.onclick=()=>{if(confirm(t('確定刪除此點名場次與相關紀錄？','Xóa buổi điểm danh và các bản ghi liên quan?'))){const id=b.dataset.attendanceDeleteSession;saveAttendanceData((proData.attendanceSessions||[]).filter(x=>x.id!==id),(proData.attendanceRecords||[]).filter(x=>x.sessionId!==id));state.attendanceSessionId=null;render()}});
+    document.querySelectorAll('[data-attendance-member]').forEach(b=>b.onclick=()=>{const sid=state.attendanceSessionId,mid=b.dataset.attendanceMember,status=b.dataset.attendanceStatus,now=new Date().toISOString(),records=[...(proData.attendanceRecords||[])],i=records.findIndex(x=>x.sessionId===sid&&String(x.memberId)===String(mid));const rec={id:i>=0?records[i].id:`record-${sid}-${mid}`,sessionId:sid,memberId:mid,status,checkedAt:status==='pending'?null:now,updatedAt:now,source:'leader-manual'};if(i>=0)records[i]=rec;else records.push(rec);saveAttendanceData(proData.attendanceSessions||[],records);render()});
+    const bulk=(status)=>{const sid=state.attendanceSessionId,now=new Date().toISOString(),records=(proData.attendanceRecords||[]).filter(x=>x.sessionId!==sid);(proData.members||[]).filter(m=>m.active!==false).forEach(m=>records.push({id:`record-${sid}-${m.id}`,sessionId:sid,memberId:m.id,status,checkedAt:status==='pending'?null:now,updatedAt:now,source:'leader-bulk'}));saveAttendanceData(proData.attendanceSessions||[],records);render()};
+    document.getElementById('attendanceAllPresent')?.addEventListener('click',()=>bulk('present'));
+    document.getElementById('attendanceReset')?.addEventListener('click',()=>{if(confirm(t('確定重設本場全部點名紀錄？','Đặt lại toàn bộ điểm danh buổi này?')))bulk('pending')});
+    document.getElementById('attendanceShowMissing')?.addEventListener('click',()=>{state.attendanceFilter='absent';render()});
+  }
+
+  if(r==='qr-checkin'){
+    document.getElementById('qrSearch')?.addEventListener('input',e=>{state.qrQuery=e.target.value;render()});
+    document.querySelectorAll('[data-qr-filter]').forEach(b=>b.onclick=()=>{state.qrFilter=b.dataset.qrFilter;render()});
+    document.querySelectorAll('[data-qr-show]').forEach(b=>b.onclick=()=>{state.qrSelectedMemberId=b.dataset.qrShow;render()});
+    document.getElementById('qrClosePreview')?.addEventListener('click',()=>{state.qrSelectedMemberId=null;render()});
+    document.querySelectorAll('[data-qr-manual]').forEach(b=>b.onclick=()=>{const m=(proData.members||[]).find(x=>String(x.id)===String(b.dataset.qrManual));const result=saveQrCheckin(m,'leader-manual');state.qrLastResult=result.duplicate?`⚠️ ${m.nameZh} ${t('已經報到','đã check-in')}`:`✅ ${m.nameZh} ${t('報到完成','check-in hoàn tất')}`;render()});
+    document.querySelectorAll('[data-qr-undo]').forEach(b=>b.onclick=()=>{if(confirm(t('確定取消此團員的報到狀態？','Hủy trạng thái check-in của thành viên này?'))){undoQrCheckin(b.dataset.qrUndo);render()}});
+    document.getElementById('qrCodeForm')?.addEventListener('submit',e=>{e.preventDefault();const m=findQrMember(document.getElementById('qrCodeInput').value);if(!m){state.qrLastResult=t('找不到符合的團員，請確認 QR 編號或姓名。','Không tìm thấy thành viên; kiểm tra mã QR hoặc tên.');render();return}const result=saveQrCheckin(m,'manual-code');state.qrLastResult=result.duplicate?`⚠️ ${m.nameZh} ${t('已經報到','đã check-in')}`:`✅ ${m.nameZh} ${t('報到完成','check-in hoàn tất')}`;render()});
+    document.getElementById('qrStartScan')?.addEventListener('click',startQrScanner);
+    document.getElementById('qrStopScan')?.addEventListener('click',()=>{stopQrScanner();state.qrLastResult=t('相機掃描已停止。','Đã dừng quét camera.');render()});
+  }
+  if(r==='firebase-admin'){
+    document.getElementById('firebaseConfigForm')?.addEventListener('submit',async e=>{e.preventDefault();state.firebaseBusy=true;state.firebaseMessage=t('正在測試 Firebase 連線…','Đang kiểm tra kết nối Firebase…');render();const f=new FormData(e.currentTarget);const sync={...(proData.sync||{}),provider:'firebase',enabled:true,status:'connecting',useAnonymousAuth:f.get('useAnonymousAuth')==='on',realtime:f.get('realtime')==='on',autoUpload:f.get('autoUpload')==='on',firebaseConfig:{apiKey:String(f.get('apiKey')||'').trim(),authDomain:String(f.get('authDomain')||'').trim(),projectId:String(f.get('projectId')||'').trim(),storageBucket:String(f.get('storageBucket')||'').trim(),messagingSenderId:String(f.get('messagingSenderId')||'').trim(),appId:String(f.get('appId')||'').trim()},lastError:''};try{const info=await testFirebaseConnection(sync.firebaseConfig,{useAnonymousAuth:sync.useAnonymousAuth});sync.status='connected';proData=saveProDatabase({...proData,sync});state.firebaseMessage=`✅ ${t('連線成功','Kết nối thành công')} · ${info.projectId}`;if(sync.realtime)await activateFirebaseRealtime()}catch(error){sync.status='error';sync.enabled=false;sync.lastError=error?.message||String(error);proData=saveProDatabase({...proData,sync});state.firebaseMessage=`❌ ${t('連線失敗','Kết nối thất bại')}: ${sync.lastError}`}finally{state.firebaseBusy=false;render()}});
+    document.getElementById('firebaseUpload')?.addEventListener('click',async()=>{if(!confirm(t('確定以本機資料覆蓋 Firebase 雲端資料？','Dùng dữ liệu cục bộ ghi đè dữ liệu Firebase?')))return;state.firebaseBusy=true;state.firebaseMessage=t('正在上傳…','Đang tải lên…');render();try{const at=await uploadFirebaseDatabase(proData);proData=saveProDatabase({...proData,sync:{...(proData.sync||{}),status:'connected',lastSyncAt:at,lastError:''}});state.firebaseMessage=t('✅ 本機資料已上傳至 Firebase。','✅ Đã tải dữ liệu cục bộ lên Firebase.')}catch(error){state.firebaseMessage=`❌ ${error?.message||error}`}finally{state.firebaseBusy=false;render()}});
+    document.getElementById('firebaseDownload')?.addEventListener('click',async()=>{if(!confirm(t('確定以 Firebase 雲端資料覆蓋本機共用資料？','Dùng dữ liệu Firebase ghi đè dữ liệu cục bộ?')))return;state.firebaseBusy=true;state.firebaseMessage=t('正在下載…','Đang tải xuống…');render();try{const next=await downloadFirebaseDatabase(proData);if(!next)throw new Error(t('雲端尚無資料','Chưa có dữ liệu đám mây'));proData=saveProDatabase(next);state.firebaseMessage=t('✅ 已下載並套用 Firebase 資料。','✅ Đã tải và áp dụng dữ liệu Firebase.')}catch(error){state.firebaseMessage=`❌ ${error?.message||error}`}finally{state.firebaseBusy=false;render()}});
+    document.getElementById('firebaseDisconnect')?.addEventListener('click',()=>{if(!confirm(t('停用 Firebase 同步？本機資料會保留。','Tắt đồng bộ Firebase? Dữ liệu cục bộ vẫn được giữ.')))return;stopFirebaseRealtime();proData=saveProDatabase({...proData,sync:{...(proData.sync||{}),provider:'local',enabled:false,status:'disconnected',lastError:''}});state.firebaseMessage=t('已停用 Firebase，同步改回本機模式。','Đã tắt Firebase và chuyển về chế độ cục bộ.');render()});
+  }
+  if(r==='pro'){
+    document.getElementById('proExport')?.addEventListener('click',()=>exportProDatabase(proData));
+    document.getElementById('proImport')?.addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;try{proData=await importProDatabase(file);alert(t('備份匯入完成。','Đã nhập bản sao.'));render()}catch{alert(t('備份格式不正確，無法匯入。','Định dạng sao lưu không hợp lệ.'))}});
+    document.getElementById('proReset')?.addEventListener('click',()=>{if(confirm(t('確定要重建 Milestone 4 Pro 資料中心？現有 Pro 資料將被取代。','Bạn có chắc muốn tạo lại dữ liệu Milestone 4 Pro?'))){proData=resetProDatabase(proSeed);render()}});
+  }
+  if(r==='guide'){
+    document.getElementById('guideSearch')?.addEventListener('input',e=>{state.guideQuery=e.target.value;render()});
+    document.querySelectorAll('[data-guide-category]').forEach(b=>b.onclick=()=>{state.guideCategory=b.dataset.guideCategory;render()});
+    document.getElementById('guideBack')?.addEventListener('click',()=>{state.guideCategory=null;render()});
+    document.querySelectorAll('[data-guide-check]').forEach(c=>c.onchange=()=>localStorage.setItem('guide-check-'+c.dataset.guideCheck,c.checked?'1':'0'));
+    document.getElementById('guideReset')?.addEventListener('click',()=>{DIGITAL_GUIDE.sections.checklist.checks.forEach(c=>localStorage.removeItem('guide-check-'+c.id));render()});
+    document.querySelectorAll('[data-speak]').forEach(b=>b.onclick=()=>{if('speechSynthesis' in window){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(b.dataset.speak);u.lang=state.lang==='zh'?'zh-TW':'vi-VN';speechSynthesis.speak(u)}});
+  }
+}
+window.addEventListener('amt:m4-datachange',e=>{const data=e.detail;if(data?.sync?.enabled===true&&data?.sync?.provider==='firebase'&&data?.sync?.autoUpload!==false){scheduleFirebaseUpload(data,at=>{proData={...proData,sync:{...(proData.sync||{}),status:'connected',lastSyncAt:at,lastError:''}};localStorage.setItem('amt-m4-pro-data-v1',JSON.stringify(proData))},error=>{proData={...proData,sync:{...(proData.sync||{}),status:'error',lastError:error?.message||String(error)}};localStorage.setItem('amt-m4-pro-data-v1',JSON.stringify(proData))})}});
+window.addEventListener('online',()=>activateFirebaseRealtime());
+window.addEventListener('offline',()=>{if(proData.sync?.enabled)proData=saveProDatabase({...proData,sync:{...(proData.sync||{}),status:'offline'}})});
+window.addEventListener('hashchange',render);render();
+activateFirebaseRealtime();
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js?v=510').catch(console.warn))}

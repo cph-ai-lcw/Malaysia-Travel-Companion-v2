@@ -1,19 +1,31 @@
-# Malaysia Travel Companion v2
+# Malaysia Travel Companion
 
 2026 國能馬來西亞員工旅遊 PWA 手帳。
 
-## Milestone 1 Complete
+## Current Release
 
-- 首頁 Dashboard
-- SPA Hash Router
-- Bottom Navigation
+- Version: 5.1.0
+- Milestone: Milestone 5
+- Stage: Sprint 5-1 Complete
+- Deployment: GitHub Pages
+
+## Production Entry Points
+
+- `index.html`
+- `css/app.css`
+- `js/app.js`
+- `service-worker.js`
+
+## Included Features
+
 - 繁體中文／越南文
-- 自動／亮色／深色模式
-- PWA 安裝
-- Service Worker 離線快取
-- LocalStorage 設定保存
-- GitHub Pages 相對路徑
-- 行程、團員、房間、機位與每日費用資料層預留
+- 五日行程、費用、美食、購物、地圖、天氣與匯率
+- 團員、房間與機位資料
+- 正式 Dashboard
+- 公告、點名、QR 報到
+- 領隊 PIN 模式
+- Firebase 雲端同步
+- PWA 安裝與離線快取
 
 ## GitHub Pages
 
@@ -22,21 +34,3 @@ Repository → Settings → Pages：
 - Source：Deploy from a branch
 - Branch：main
 - Folder：/ (root)
-
-網站網址：
-
-`https://你的帳號.github.io/Malaysia-Travel-Companion-v2/`
-
-
-## Milestone 2-1（0717 最終資料）
-
-- 資料來源：`0920-0924-馬來西亞國能房間名單-最終版-0717.xlsx`
-- 31 位團員
-- 大紅花 14 組分房
-- 雙威 16 組分房
-- 去回程機位
-- 9/21 午餐、9/22 晚餐自理補助
-- 個人資料選擇
-- 團員搜尋
-- 領隊總覽
-- 公開版排除身分證、生日、護照及機票號碼
