@@ -11,3 +11,5 @@ export { FOODS } from "./foods.js";
 export { SHOPPING } from "./shopping.js";
 export { SOUVENIRS } from "./souvenirs.js";
 export { GALLERY_CONFIG } from "./gallery.js";
+
+export { DIGITAL_GUIDE } from "./guide.js";

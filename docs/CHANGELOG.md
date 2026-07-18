@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.0.0 — Milestone 3-1
+- Added bilingual Digital Guide and route.
+- Added searchable categories and persistent checklist.
+- Updated PWA cache and manifest.
+
+
 ## 2.0.0-alpha.1 — Milestone 1 Complete
 
 - 建立 Dashboard
