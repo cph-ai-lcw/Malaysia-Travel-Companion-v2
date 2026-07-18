@@ -13,3 +13,5 @@ export { SOUVENIRS } from "./souvenirs.js";
 export { GALLERY_CONFIG } from "./gallery.js";
 
 export { DIGITAL_GUIDE } from "./guide.js";
+
+export { EXCHANGE_CONFIG } from "./exchange.js";

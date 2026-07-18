@@ -18,3 +18,6 @@
 - 建立安裝 App 流程
 - 建立 GitHub Pages 相對路徑
 - 建立行程與後續功能資料骨架
+
+## 3.7.0 — Milestone 3-7
+- Added live MYR/TWD exchange-rate converter, cached fallback and bilingual travel spending references.
