@@ -1,3 +1,12 @@
+# Changelog
+
+## 5.8.0 Stable — 2026-07-19
+
+- Complete Milestone 5-8 Leader Management Center.
+- Add readiness score, operational alerts and unified quick actions.
+- Integrate members, rooms, seats, transportation, MDAC, announcements, attendance and QR status.
+- Update PWA cache and release metadata.
+
 ## 3.8.0 — Milestone 3-8
 - Added bilingual shopping assistant, filters, budget, checklist, quantities and MYR/TWD estimates.
 
