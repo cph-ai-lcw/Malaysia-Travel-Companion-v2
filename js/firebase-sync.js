@@ -1,3 +1,4 @@
+import { chooseNewestDatabase, validateAndRepairDatabase } from './data-safety.js';
 const FIREBASE_VERSION = '12.0.0';
 const APP_URL = `https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}/firebase-app.js`;
 const AUTH_URL = `https://www.gstatic.com/firebasejs/${FIREBASE_VERSION}/firebase-auth.js`;
@@ -50,8 +51,21 @@ function cloudPayload(database) {
 
 function mergeRemote(local, remote) {
   if (!remote || remote.schema !== 'amt-travel-pro-cloud') return local;
-  return {
+  const remoteDb = validateAndRepairDatabase({
     ...local,
+    meta:{...(local.meta||{}),updatedAt:remote.sourceUpdatedAt||remote.syncedAt||new Date().toISOString()},
+    trip: remote.trip || local.trip,
+    members: remote.members,
+    rooms: remote.rooms,
+    announcements: remote.announcements,
+    attendanceSessions: remote.attendanceSessions,
+    attendanceRecords: remote.attendanceRecords,
+    checkinRecords: remote.checkinRecords
+  }).database;
+  const decision=chooseNewestDatabase(local,remoteDb);
+  if(decision.winner==='local') return {...local,sync:{...(local.sync||{}),status:'connected',lastSyncAt:remote.syncedAt||new Date().toISOString(),lastRemoteUpdateAt:remote.sourceUpdatedAt||null,lastError:'',lastConflictResolution:'local-newer'}};
+  return {
+    ...remoteDb,
     trip: remote.trip || local.trip,
     members: Array.isArray(remote.members) ? remote.members : local.members,
     rooms: Array.isArray(remote.rooms) ? remote.rooms : local.rooms,
@@ -66,7 +80,8 @@ function mergeRemote(local, remote) {
       status: 'connected',
       lastSyncAt: remote.syncedAt || new Date().toISOString(),
       lastRemoteUpdateAt: remote.sourceUpdatedAt || null,
-      lastError: ''
+      lastError: '',
+      lastConflictResolution:'remote-newer'
     }
   };
 }

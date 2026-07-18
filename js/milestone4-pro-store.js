@@ -1,3 +1,4 @@
+import { validateAndRepairDatabase, createRecoverySnapshot, safeParseJSON } from './data-safety.js';
 const PRO_KEY = 'amt-m4-pro-data-v1';
 const LEGACY_NOTICE_KEY = 'mtc-custom-announcements';
 
@@ -127,23 +128,24 @@ export function loadProDatabase(seed) {
   try {
     const current = JSON.parse(localStorage.getItem(PRO_KEY) || 'null');
     if (current?.meta?.schema === 'amt-travel-pro') {
-      current.meta.milestone = '5-1'; current.meta.appVersion = '5.1.0';
+      current.meta.milestone = '5-2'; current.meta.appVersion = '5.2.0';
       current.checkinRecords = Array.isArray(current.checkinRecords) ? current.checkinRecords : [];
       current.leaderSettings = { authMode: 'local-pin', pinConfigured: false, pinHash: '', sessionTimeoutMinutes: 30, allowAnnouncementEdit: true, allowAttendanceEdit: true, allowQrCheckin: true, allowBackupRestore: true, allowMemberDataView: true, failedAttempts: 0, lockedUntil: null, ...(current.leaderSettings || {}) };
       current.sync = { provider: 'local', enabled: false, status: 'disconnected', useAnonymousAuth: true, realtime: true, autoUpload: true, lastSyncAt: null, lastRemoteUpdateAt: null, lastError: '', firebaseConfig: { apiKey: '', authDomain: '', projectId: '', storageBucket: '', messagingSenderId: '', appId: '' }, documentPath: 'trips/amt-malaysia-2026/state/current', ...(current.sync || {}), firebaseConfig: { apiKey: '', authDomain: '', projectId: '', storageBucket: '', messagingSenderId: '', appId: '', ...(current.sync?.firebaseConfig || {}) } };
       current.members = (current.members || []).map(m => ({...m, qrCode: m.qrCode || `AMT-MY26-${m.id}`, checkinStatus: m.checkinStatus || 'pending'}));
-      saveProDatabase(current); return current;
+      const checked=validateAndRepairDatabase(current,seed).database; saveProDatabase(checked); return checked;
     }
   } catch {}
-  const database = createProDatabase(seed);
+  const database = validateAndRepairDatabase(createProDatabase(seed),seed).database;
   saveProDatabase(database);
   return database;
 }
 
 export function saveProDatabase(database) {
-  const next = clone(database);
+  const next = validateAndRepairDatabase(clone(database)).database;
   next.meta = next.meta || {};
   next.meta.updatedAt = nowIso();
+  createRecoverySnapshot(next);
   localStorage.setItem(PRO_KEY, JSON.stringify(next));
   window.dispatchEvent(new CustomEvent('amt:m4-datachange', { detail: next }));
   return next;
@@ -161,11 +163,13 @@ export function exportProDatabase(database) {
 
 export async function importProDatabase(file) {
   const text = await file.text();
-  const parsed = JSON.parse(text);
+  const result = safeParseJSON(text);
+  if(!result.ok) throw new Error('INVALID_JSON');
+  const parsed = result.value;
   if (parsed?.meta?.schema !== 'amt-travel-pro' || !Array.isArray(parsed.members)) {
     throw new Error('INVALID_PRO_BACKUP');
   }
-  return saveProDatabase(parsed);
+  return saveProDatabase(validateAndRepairDatabase(parsed).database);
 }
 
 export function resetProDatabase(seed) {
