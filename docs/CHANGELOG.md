@@ -1,3 +1,6 @@
+## 3.8.0 — Milestone 3-8
+- Added bilingual shopping assistant, filters, budget, checklist, quantities and MYR/TWD estimates.
+
 # Changelog
 
 ## v3.0.0 — Milestone 3-1

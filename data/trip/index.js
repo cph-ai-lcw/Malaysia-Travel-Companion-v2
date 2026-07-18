@@ -15,3 +15,5 @@ export { GALLERY_CONFIG } from "./gallery.js";
 export { DIGITAL_GUIDE } from "./guide.js";
 
 export { EXCHANGE_CONFIG } from "./exchange.js";
+
+export { SHOPPING_ASSISTANT } from "./shopping-assistant.js";
