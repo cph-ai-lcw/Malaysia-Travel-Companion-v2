@@ -40,8 +40,8 @@ export function createProDatabase({ members = [], rooms = [], announcements = []
     meta: {
       schema: 'amt-travel-pro',
       schemaVersion: 1,
-      milestone: '4-3',
-      appVersion: '4.3.0',
+      milestone: '4-4',
+      appVersion: '4.4.0',
       createdAt,
       updatedAt: createdAt,
       migration: {
@@ -118,7 +118,12 @@ export function createProDatabase({ members = [], rooms = [], announcements = []
 export function loadProDatabase(seed) {
   try {
     const current = JSON.parse(localStorage.getItem(PRO_KEY) || 'null');
-    if (current?.meta?.schema === 'amt-travel-pro') return current;
+    if (current?.meta?.schema === 'amt-travel-pro') {
+      current.meta.milestone = '4-4'; current.meta.appVersion = '4.4.0';
+      current.checkinRecords = Array.isArray(current.checkinRecords) ? current.checkinRecords : [];
+      current.members = (current.members || []).map(m => ({...m, qrCode: m.qrCode || `AMT-MY26-${m.id}`, checkinStatus: m.checkinStatus || 'pending'}));
+      saveProDatabase(current); return current;
+    }
   } catch {}
   const database = createProDatabase(seed);
   saveProDatabase(database);
