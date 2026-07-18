@@ -40,8 +40,8 @@ export function createProDatabase({ members = [], rooms = [], announcements = []
     meta: {
       schema: 'amt-travel-pro',
       schemaVersion: 1,
-      milestone: '4-6',
-      appVersion: '4.6.0',
+      milestone: '4-8',
+      appVersion: '4.8.0',
       createdAt,
       updatedAt: createdAt,
       migration: {
@@ -127,7 +127,7 @@ export function loadProDatabase(seed) {
   try {
     const current = JSON.parse(localStorage.getItem(PRO_KEY) || 'null');
     if (current?.meta?.schema === 'amt-travel-pro') {
-      current.meta.milestone = '4-6'; current.meta.appVersion = '4.6.0';
+      current.meta.milestone = '4-8'; current.meta.appVersion = '4.8.0';
       current.checkinRecords = Array.isArray(current.checkinRecords) ? current.checkinRecords : [];
       current.leaderSettings = { authMode: 'local-pin', pinConfigured: false, pinHash: '', sessionTimeoutMinutes: 30, allowAnnouncementEdit: true, allowAttendanceEdit: true, allowQrCheckin: true, allowBackupRestore: true, allowMemberDataView: true, failedAttempts: 0, lockedUntil: null, ...(current.leaderSettings || {}) };
       current.sync = { provider: 'local', enabled: false, status: 'disconnected', useAnonymousAuth: true, realtime: true, autoUpload: true, lastSyncAt: null, lastRemoteUpdateAt: null, lastError: '', firebaseConfig: { apiKey: '', authDomain: '', projectId: '', storageBucket: '', messagingSenderId: '', appId: '' }, documentPath: 'trips/amt-malaysia-2026/state/current', ...(current.sync || {}), firebaseConfig: { apiKey: '', authDomain: '', projectId: '', storageBucket: '', messagingSenderId: '', appId: '', ...(current.sync?.firebaseConfig || {}) } };

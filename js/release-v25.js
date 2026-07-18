@@ -478,4 +478,4 @@ window.addEventListener('online',()=>activateFirebaseRealtime());
 window.addEventListener('offline',()=>{if(proData.sync?.enabled)proData=saveProDatabase({...proData,sync:{...(proData.sync||{}),status:'offline'}})});
 window.addEventListener('hashchange',render);render();
 activateFirebaseRealtime();
-if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js?v=460').catch(console.warn))}
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js?v=480').catch(console.warn))}
