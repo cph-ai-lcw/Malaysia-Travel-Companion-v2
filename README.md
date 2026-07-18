@@ -2,7 +2,7 @@
 
 2026 國能馬來西亞員工旅遊 PWA。
 
-- Version: **5.8.0 Stable**
+- Version: **6.0.0 iOS Native**
 - Milestone: **5-8 Complete**
 - Build: **20260719-M5-8-STABLE**
 - Deployment: GitHub Pages
