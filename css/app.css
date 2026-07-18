@@ -130,3 +130,14 @@
 @media(max-width:680px){.dashboard-hero{display:block;padding:20px}.dashboard-mode{display:inline-block;margin-top:14px}.dashboard-person{align-items:stretch;flex-direction:column}.dashboard-grid{grid-template-columns:1fr}.dashboard-notice,.dashboard-meeting{grid-column:auto}.dashboard-shortcuts{grid-template-columns:repeat(4,1fr)}.dashboard-card{padding:13px}.dashboard-timeline>div{grid-template-columns:55px 1fr}}
 
 .app-error-banner{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:9999;max-width:min(92vw,720px);padding:12px 16px;border-radius:14px;background:#fff3cd;color:#664d03;box-shadow:0 10px 30px rgba(0,0,0,.2);font-weight:700}.app-error-banner button{float:right;border:0;background:transparent;font-size:20px}
+
+
+/* Milestone 5-3 performance and UX */
+.card,.map-location-card,.notice-card,.checkin-member,.attendance-member,.qr-member{content-visibility:auto;contain-intrinsic-size:1px 120px}
+button,a,input,select,textarea{touch-action:manipulation}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid rgba(22,125,114,.35);outline-offset:2px}
+.app-status-toast{position:fixed;left:50%;bottom:88px;transform:translate(-50%,18px);z-index:9998;background:#173f4a;color:#fff;padding:10px 14px;border-radius:999px;font-size:12px;font-weight:800;opacity:0;pointer-events:none;transition:.2s ease}.app-status-toast.show{opacity:1;transform:translate(-50%,0)}
+.nav-inner{scroll-behavior:smooth;overscroll-behavior-inline:contain;scroll-snap-type:x proximity}.nav a{scroll-snap-align:center;min-width:64px}
+.travel-info-hero{background:linear-gradient(135deg,#174858,#168576 58%,#7ac9ae);color:#fff;border-radius:24px;padding:24px}.travel-info-hero h1{margin:8px 0}.travel-info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.travel-fact{padding:16px}.travel-fact small{display:block;color:var(--muted);margin-bottom:6px}.travel-fact b{font-size:15px}.travel-info-list{display:grid;gap:9px}.travel-contact{display:grid;grid-template-columns:42px 1fr auto;align-items:center;gap:12px;text-decoration:none;color:inherit;padding:14px}.travel-contact i{font-style:normal;font-size:24px}.travel-contact span{display:grid;gap:3px}.travel-contact small{color:var(--muted)}.travel-contact em{font-style:normal}.travel-tools{margin-bottom:12px}
+@media(max-width:680px){.travel-info-grid{grid-template-columns:1fr}.travel-info-hero{padding:20px}.nav a{min-width:58px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
