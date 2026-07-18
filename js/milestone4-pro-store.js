@@ -40,8 +40,8 @@ export function createProDatabase({ members = [], rooms = [], announcements = []
     meta: {
       schema: 'amt-travel-pro',
       schemaVersion: 1,
-      milestone: '4-1',
-      appVersion: '4.1.0-alpha',
+      milestone: '4-2',
+      appVersion: '4.2.0',
       createdAt,
       updatedAt: createdAt,
       migration: {
