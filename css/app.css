@@ -179,3 +179,55 @@ html{background:var(--ios-bg);scroll-behavior:smooth}body{background:radial-grad
 .large-text{font-size:20px}.large-text .ios-hero p,.large-text .dashboard-card p,.large-text .countdown-home p{font-size:19px!important}.large-text .dashboard-card h3,.large-text .section-head h2{font-size:27px!important}.large-text .ios-bottom-nav a{font-size:16px!important}.large-text button,.large-text select,.large-text input{font-size:19px!important}
 @media(max-width:620px){.shell main{padding-left:16px;padding-right:16px}.ios-topbar{width:calc(100% - 32px)}.ios-hero{margin-left:-16px;margin-right:-16px;padding-left:20px;padding-right:20px;min-height:445px}.ios-weather-pill{right:20px;top:186px}.ios-hero h1{font-size:38px}.ios-eyebrow{font-size:24px}.ios-hero p{font-size:19px}.ios-hero-tabs{margin-left:-3px;margin-right:-3px}.dashboard-grid{grid-template-columns:1fr!important}.dashboard-shortcuts{grid-template-columns:repeat(4,1fr)!important}.ios-circle-btn,.ios-text-btn{width:52px;height:52px}.dashboard-person{align-items:stretch;flex-direction:column}.countdown-home h2 strong:first-child{font-size:52px}}
 @media(max-width:390px){.ios-hero-tabs span{font-size:13px}.dashboard-shortcuts{grid-template-columns:repeat(3,1fr)!important}.ios-weather-pill{min-width:112px}.ios-hero h1{font-size:34px}}
+
+/* =========================================================
+   v6.1 Phase 1 — Universal iOS Design Edition
+   Unified readable UI: no separate senior/large-text mode.
+   ========================================================= */
+:root{
+  --ios-blue:#1479f2;
+  --ios-ink:#17181b;
+  --ios-muted:#5d6068;
+  --ios-card:rgba(255,255,255,.88);
+  --ios-radius:24px;
+  --ios-shadow:0 14px 42px rgba(34,48,62,.12);
+}
+html{font-size:18px}
+body.universal-readable-ui{font-size:18px;line-height:1.68;color:var(--ios-ink);background:linear-gradient(180deg,#edf5fb 0,#f7f5f0 38%,#fffaf2 100%)}
+body.universal-readable-ui button,body.universal-readable-ui input,body.universal-readable-ui select,body.universal-readable-ui textarea{font-size:18px;min-height:56px}
+body.universal-readable-ui .ios-top-actions{gap:12px}
+body.universal-readable-ui .ios-text-btn,body.universal-readable-ui .ios-circle-btn{width:58px;height:58px;font-size:18px;background:rgba(255,255,255,.9);border:1px solid rgba(255,255,255,.72)}
+body.universal-readable-ui .ios-notice-btn{font-size:30px}
+body.universal-readable-ui .ios-hero{min-height:500px;background:linear-gradient(180deg,rgba(8,28,46,.12),rgba(8,28,46,.08) 40%,rgba(9,45,57,.72) 100%),url('../images/hero-malaysia-v61.svg') center 48%/cover no-repeat!important;color:#fff!important;border-radius:0 0 38px 38px;box-shadow:0 24px 58px rgba(28,64,88,.2)}
+body.universal-readable-ui .ios-hero:before{background:linear-gradient(90deg,rgba(7,31,48,.48),rgba(7,31,48,.08) 68%,transparent);}
+body.universal-readable-ui .ios-hero h1,body.universal-readable-ui .ios-hero p,body.universal-readable-ui .ios-eyebrow{color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.28)}
+body.universal-readable-ui .ios-eyebrow{font-size:27px}
+body.universal-readable-ui .ios-hero h1{font-size:43px}
+body.universal-readable-ui .ios-hero p{font-size:21px}
+body.universal-readable-ui .ios-weather-pill{background:rgba(255,255,255,.86);border:1px solid rgba(255,255,255,.8);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+body.universal-readable-ui .ios-hero-tabs{position:absolute;right:22px;bottom:18px;width:min(520px,calc(100% - 44px));margin:0;padding:10px 12px;border-radius:28px;background:rgba(255,255,255,.86);border:1px solid rgba(255,255,255,.82);box-shadow:0 12px 34px rgba(10,35,48,.22);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+body.universal-readable-ui .ios-hero-tabs a{min-height:70px;font-size:15px;color:#30343a}
+body.universal-readable-ui .ios-hero-tabs i{font-size:31px}
+body.universal-readable-ui .card{border-radius:24px!important;background:rgba(255,255,255,.9)!important;border:1px solid rgba(255,255,255,.82)!important;box-shadow:0 14px 40px rgba(37,54,69,.11)!important}
+body.universal-readable-ui .section-head h2{font-size:25px!important}
+body.universal-readable-ui .dashboard-card h3,body.universal-readable-ui .countdown-home h2{font-size:23px!important;line-height:1.35}
+body.universal-readable-ui .dashboard-card p,body.universal-readable-ui .countdown-home p,body.universal-readable-ui .dashboard-card small,body.universal-readable-ui .countdown-home small{font-size:17px!important;color:#4d525a!important}
+body.universal-readable-ui .dashboard-card,body.universal-readable-ui .departure-progress-card,body.universal-readable-ui .departure-reminder-card,body.universal-readable-ui .dashboard-person,body.universal-readable-ui .dashboard-itinerary{padding:25px!important}
+body.universal-readable-ui .dashboard-shortcuts a{min-height:108px!important;font-size:17px!important;border-radius:22px!important}
+body.universal-readable-ui .dashboard-shortcuts b{font-size:17px!important}
+body.universal-readable-ui .ios-bottom-nav a{font-size:15px!important;min-height:72px}
+body.universal-readable-ui .version{font-size:14px;padding-top:28px}
+body.universal-readable-ui .notice,body.universal-readable-ui .notice-limit{font-size:16px!important;line-height:1.7}
+@media(max-width:620px){
+  body.universal-readable-ui .ios-hero{min-height:485px;padding-top:112px}
+  body.universal-readable-ui .ios-hero-tabs{right:14px;bottom:14px;width:calc(100% - 28px)}
+  body.universal-readable-ui .ios-hero h1{font-size:38px}
+  body.universal-readable-ui .ios-eyebrow{font-size:24px}
+  body.universal-readable-ui .dashboard-shortcuts{grid-template-columns:repeat(3,1fr)!important}
+}
+@media(max-width:390px){
+  html{font-size:17px}
+  body.universal-readable-ui .ios-hero-tabs a{font-size:14px}
+  body.universal-readable-ui .ios-hero-tabs i{font-size:29px}
+}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}

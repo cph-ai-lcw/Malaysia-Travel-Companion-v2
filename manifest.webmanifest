@@ -1,11 +1,11 @@
 {
-  "name": "馬來西亞手帳 2026 — v6.0.0 iOS Native",
+  "name": "馬來西亞手帳 2026 — v6.1.0 Universal iOS",
   "short_name": "馬來西亞手帳",
   "description": "2026 國能馬來西亞員工旅遊 PWA｜領隊管理中心、個人旅遊資料、出發倒數、房間機位與離線功能",
   "start_url": "./#/home",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#fff9f1",
+  "background_color": "#edf5fb",
   "theme_color": "#2878ea",
   "orientation": "portrait-primary",
   "lang": "zh-TW",
