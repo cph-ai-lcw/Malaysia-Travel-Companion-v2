@@ -333,3 +333,7 @@ body.universal-readable-ui .large-text{font-size:inherit!important}
   body.universal-readable-ui .ios-hero-tabs{padding-left:8px;padding-right:8px}
   body.universal-readable-ui .ios-hero-tabs a{min-width:58px}
 }
+
+/* Phase3 home */
+.home-countdown .unit-small,.countdown .hours,.countdown .minutes,.countdown .seconds{display:none!important;}
+.home-hero{border-radius:28px;overflow:hidden;}
