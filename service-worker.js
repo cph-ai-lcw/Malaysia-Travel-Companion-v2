@@ -1,7 +1,31 @@
-const CACHE='mtc-release-v610-ui-phase4-20260719';
-const ASSETS=['./','./index.html','./css/app.css','./images/hero-malaysia-v61.svg','./data/trip/map-locations.js','./data/trip/announcement.js','./data/trip/checkin.js','./data/trip/countdown.js','./data/trip/weather.js','./data/trip/exchange.js','./data/trip/shopping-assistant.js','./data/trip/food-assistant.js','./data/trip/travel-info.js','./js/app.js','./js/qrcode-browser.js','./js/milestone4-pro-store.js','./js/firebase-sync.js','./js/data-safety.js','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./data/trip/itinerary.js','./data/trip/daily-budget.js','./data/trip/foods.js','./data/trip/shopping.js','./data/trip/resort.js','./data/trip/members.js','./data/trip/rooms.js','./data/trip/airport-transfer.js','./data/trip/guide.js','./data/system/version.js'];
-self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())));
-self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
-self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;e.respondWith(fetch(e.request).then(r=>{const copy=r.clone();caches.open(CACHE).then(c=>c.put(e.request,copy));return r}).catch(()=>caches.match(e.request).then(r=>r||caches.match('./index.html'))))});
-
-self.addEventListener('message',event=>{if(event.data?.type==='SKIP_WAITING')self.skipWaiting()});
+const CACHE = 'mtc-release-v610-github-hotfix-20260719';
+const CORE = [
+  './index.html','./css/app.css','./js/app.js','./js/qrcode-browser.js',
+  './manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png'
+];
+self.addEventListener('install', event => {
+  event.waitUntil(caches.open(CACHE).then(async cache => {
+    await Promise.allSettled(CORE.map(url => cache.add(url)));
+  }).then(() => self.skipWaiting()));
+});
+self.addEventListener('activate', event => {
+  event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim()));
+});
+self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') return;
+  const req = event.request;
+  const url = new URL(req.url);
+  if (req.mode === 'navigate') {
+    event.respondWith(fetch(req, {cache:'no-store'}).catch(() => caches.match('./index.html')));
+    return;
+  }
+  if (url.origin !== self.location.origin) return;
+  event.respondWith(fetch(req).then(res => {
+    if (res && res.ok) caches.open(CACHE).then(cache => cache.put(req, res.clone()));
+    return res;
+  }).catch(() => caches.match(req)));
+});
+self.addEventListener('message', event => {
+  if (event.data?.type === 'SKIP_WAITING') self.skipWaiting();
+  if (event.data?.type === 'CLEAR_CACHES') event.waitUntil(caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k)))));
+});
