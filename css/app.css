@@ -231,3 +231,105 @@ body.universal-readable-ui .notice,body.universal-readable-ui .notice-limit{font
   body.universal-readable-ui .ios-hero-tabs i{font-size:29px}
 }
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+
+/* =========================================================
+   v6.1 Phase 2 — Unified Interface
+   One interface for every employee: readable, touch-friendly,
+   high contrast and consistent across all existing modules.
+   ========================================================= */
+:root{
+  --ui-font-body:18px;
+  --ui-font-small:16px;
+  --ui-font-label:17px;
+  --ui-font-card:21px;
+  --ui-font-section:26px;
+  --ui-control:56px;
+  --ui-radius-sm:16px;
+  --ui-radius-md:22px;
+  --ui-radius-lg:28px;
+  --ui-border:rgba(37,59,76,.13);
+  --ui-surface:rgba(255,255,255,.94);
+  --ui-text:#17191d;
+  --ui-muted:#545b65;
+  --ui-blue:#1479f2;
+  --ui-danger:#c93636;
+}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-bottom:110px}
+body.universal-readable-ui{font-size:var(--ui-font-body);color:var(--ui-text);letter-spacing:.005em}
+body.universal-readable-ui main{padding-bottom:125px}
+body.universal-readable-ui p,body.universal-readable-ui li,body.universal-readable-ui label,body.universal-readable-ui td,body.universal-readable-ui th{font-size:var(--ui-font-body);line-height:1.7}
+body.universal-readable-ui small,body.universal-readable-ui .muted,body.universal-readable-ui .map-status,body.universal-readable-ui .notice-limit{font-size:var(--ui-font-small)!important;line-height:1.65!important;color:var(--ui-muted)!important}
+body.universal-readable-ui h1{font-size:clamp(32px,6vw,44px);line-height:1.14;letter-spacing:-.035em}
+body.universal-readable-ui h2{font-size:var(--ui-font-section);line-height:1.28;letter-spacing:-.02em}
+body.universal-readable-ui h3{font-size:var(--ui-font-card);line-height:1.35}
+body.universal-readable-ui a,body.universal-readable-ui button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+body.universal-readable-ui button,body.universal-readable-ui input,body.universal-readable-ui select,body.universal-readable-ui textarea{
+  min-height:var(--ui-control);font-size:var(--ui-font-body)!important;border-radius:var(--ui-radius-sm);line-height:1.35
+}
+body.universal-readable-ui input,body.universal-readable-ui select,body.universal-readable-ui textarea{
+  padding:14px 16px!important;border:1.5px solid var(--ui-border)!important;background:#fff!important;color:var(--ui-text)!important
+}
+body.universal-readable-ui textarea{min-height:120px}
+body.universal-readable-ui input:focus,body.universal-readable-ui select:focus,body.universal-readable-ui textarea:focus,body.universal-readable-ui button:focus-visible,body.universal-readable-ui a:focus-visible{
+  outline:3px solid rgba(20,121,242,.28)!important;outline-offset:2px
+}
+body.universal-readable-ui .card,body.universal-readable-ui [class$="-card"],body.universal-readable-ui [class*=" card"]{
+  border-radius:var(--ui-radius-md)!important
+}
+body.universal-readable-ui .pill,body.universal-readable-ui [class*="badge"],body.universal-readable-ui [class*="tag"]{
+  font-size:15px!important;line-height:1.3;padding:7px 11px;border-radius:999px
+}
+body.universal-readable-ui .grid{gap:14px}
+body.universal-readable-ui .section-head{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+body.universal-readable-ui .section-head>span{font-size:var(--ui-font-small)!important;color:var(--ui-muted)!important}
+body.universal-readable-ui .guide-main-hero p,body.universal-readable-ui .guide-category-hero p,body.universal-readable-ui .map-hero p,body.universal-readable-ui .notification-hero p,body.universal-readable-ui .pro-hero p{font-size:18px!important}
+body.universal-readable-ui .guide-main-hero h1,body.universal-readable-ui .guide-category-hero h1,body.universal-readable-ui .map-hero h1,body.universal-readable-ui .notification-hero h1,body.universal-readable-ui .pro-hero h1{font-size:31px!important}
+body.universal-readable-ui .guide-category{min-height:92px;padding:18px;grid-template-columns:54px 1fr 24px}
+body.universal-readable-ui .guide-category>i,body.universal-readable-ui .map-location-icon,body.universal-readable-ui .notice-icon{width:54px;height:54px;font-size:28px}
+body.universal-readable-ui .guide-category b,body.universal-readable-ui .map-location-title b,body.universal-readable-ui .notice-title-row b{font-size:19px!important}
+body.universal-readable-ui .guide-category small,body.universal-readable-ui .map-location-body small,body.universal-readable-ui .notice-body small,body.universal-readable-ui .future-card small{font-size:15px!important;line-height:1.55}
+body.universal-readable-ui .guide-detail-card li,body.universal-readable-ui .notice-body p,body.universal-readable-ui .map-location-body p{font-size:17px!important}
+body.universal-readable-ui .guide-official-link,body.universal-readable-ui .guide-back,body.universal-readable-ui .guide-reset,body.universal-readable-ui .notice-save,body.universal-readable-ui .locate-btn{
+  min-height:52px;padding:13px 17px;font-size:17px!important;display:inline-flex;align-items:center;justify-content:center
+}
+body.universal-readable-ui .guide-check{min-height:62px;font-size:18px!important}
+body.universal-readable-ui .guide-check input{width:26px;height:26px;min-height:26px}
+body.universal-readable-ui .phrase-card strong{font-size:21px}.universal-readable-ui .phrase-card span{font-size:18px}.universal-readable-ui .phrase-card small{font-size:15px!important}
+body.universal-readable-ui .future-card b{font-size:17px}
+body.universal-readable-ui .map-filter{min-height:48px;padding:11px 16px;font-size:16px!important}
+body.universal-readable-ui .map-status{padding:4px 3px 12px}
+body.universal-readable-ui .gps-map{min-height:420px}
+body.universal-readable-ui .map-location-card{min-height:96px;padding:16px;grid-template-columns:54px 1fr 48px}
+body.universal-readable-ui .map-nav-btn{width:48px;height:48px;font-size:22px;border-radius:16px}
+body.universal-readable-ui .notification-summary{width:84px;height:84px}.universal-readable-ui .notification-summary span{font-size:14px}.universal-readable-ui .notification-actions button{font-size:17px!important;min-height:56px}
+body.universal-readable-ui .notice-card{min-height:96px;padding:17px;grid-template-columns:54px 1fr 42px}
+body.universal-readable-ui .notice-read-btn{width:42px;height:42px;min-height:42px;font-size:18px}
+body.universal-readable-ui .notice-editor label{font-size:16px!important}.universal-readable-ui .notice-editor h3{font-size:22px}
+body.universal-readable-ui .stat b{font-size:clamp(28px,5vw,42px)!important}.universal-readable-ui .stat span{font-size:16px!important}
+body.universal-readable-ui table{font-size:17px}.universal-readable-ui th,.universal-readable-ui td{padding:14px 12px!important}
+body.universal-readable-ui .search{min-height:58px}
+body.universal-readable-ui .day-tabs button,body.universal-readable-ui [data-day],body.universal-readable-ui [data-hotel]{min-height:52px;font-size:17px!important}
+body.universal-readable-ui .admin-card-actions button,body.universal-readable-ui .qr-scan-actions button,body.universal-readable-ui #qrCodeForm button{min-height:56px;font-size:17px!important}
+body.universal-readable-ui .qr-member-list button,body.universal-readable-ui .attendance-toolbar button{min-height:50px;font-size:16px!important}
+body.universal-readable-ui code,body.universal-readable-ui pre{font-size:15px;line-height:1.6;overflow:auto}
+body.universal-readable-ui .ios-bottom-nav{border-color:rgba(30,46,61,.10)!important}
+body.universal-readable-ui .ios-bottom-nav a{min-height:72px!important;font-size:15px!important}
+body.universal-readable-ui .ios-bottom-nav a i{font-size:29px!important}
+body.universal-readable-ui .ios-bottom-nav .nav-main-action i{font-size:31px!important}
+body.universal-readable-ui .ios-hero-tabs a{min-width:62px}
+body.universal-readable-ui .ios-hero-tabs span{font-weight:750}
+body.universal-readable-ui .danger,body.universal-readable-ui button.danger{color:#fff!important;background:var(--ui-danger)!important}
+body.universal-readable-ui .large-text{font-size:inherit!important}
+@media(max-width:620px){
+  body.universal-readable-ui p,body.universal-readable-ui li,body.universal-readable-ui label,body.universal-readable-ui td,body.universal-readable-ui th{font-size:17px}
+  body.universal-readable-ui .guide-grid,body.universal-readable-ui .future-grid,body.universal-readable-ui .notification-actions,body.universal-readable-ui .notice-form-grid{grid-template-columns:1fr!important}
+  body.universal-readable-ui .gps-map{min-height:350px}
+  body.universal-readable-ui .ios-hero-tabs{overflow-x:auto;grid-template-columns:repeat(5,minmax(64px,1fr));scrollbar-width:none}
+  body.universal-readable-ui .ios-hero-tabs::-webkit-scrollbar{display:none}
+}
+@media(max-width:390px){
+  :root{--ui-font-body:17px;--ui-font-small:15px;--ui-font-section:24px;--ui-control:54px}
+  body.universal-readable-ui .ios-hero-tabs{padding-left:8px;padding-right:8px}
+  body.universal-readable-ui .ios-hero-tabs a{min-width:58px}
+}

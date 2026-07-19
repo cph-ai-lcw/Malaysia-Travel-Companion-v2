@@ -1,1 +1,1 @@
-export const VERSION = Object.freeze({version:'6.1.0',build:'20260719-V61-UI-PHASE1',milestone:'Milestone 6.1',stage:'Universal iOS Design Edition · Phase 1',releaseDate:'2026-07-19',cacheVersion:'mtc-release-v610-ui-phase1-20260719'});
+export const VERSION = Object.freeze({version:'6.1.0',build:'20260719-V61-UI-PHASE2',milestone:'Milestone 6.1',stage:'Universal iOS Design Edition · Phase 2 — Unified Interface',releaseDate:'2026-07-19',cacheVersion:'mtc-release-v610-ui-phase2-20260719'});
