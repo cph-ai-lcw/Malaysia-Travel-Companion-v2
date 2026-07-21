@@ -1,4 +1,4 @@
-const CACHE='gn-malaysia-v4.2.1-room-card-line-share-20260721';
+const CACHE='gn-malaysia-v4.2.2-room-card-image-only-share-20260721';
 const CORE=[
   './',
   './index.html',
