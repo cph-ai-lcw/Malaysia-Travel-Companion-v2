@@ -66,3 +66,17 @@ Summary：`Milestone 6-3 GN Core Rebase Leader Center`
 ## 隱私提醒
 
 GitHub Pages為公開靜態網站。裝置PIN只能避免一般使用者誤入，不能保護已放入公開JavaScript的資料。請勿加入護照號碼、身分證、生日、私人電話或其他敏感個資；若日後需要保存敏感資料，必須改用真正登入及後端權限控制。
+# Milestone 6-4｜智慧公告工作室＋圖卡產生器
+
+領隊公告功能新增：
+
+- 僅輸入中文標題與內容
+- 透過Cloudflare Workers AI自動翻譯越南文
+- 越南文可人工修改後發布
+- 明日提醒、集合、行李、天氣與緊急公告模板
+- 1080×1350公告圖卡即時預覽
+- PNG下載與手機原生分享
+- 公告複製、刪除及中越雙語發布
+- 翻譯失敗不阻止中文公告發布
+
+Cloudflare Worker部署方式請見 `cloudflare-worker/README.md`。

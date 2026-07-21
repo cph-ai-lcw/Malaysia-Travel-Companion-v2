@@ -1,0 +1,10 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "gn-malaysia-zh-vi-translate",
+  "main": "src/index.js",
+  "compatibility_date": "2026-07-21",
+  "ai": { "binding": "AI" },
+  "vars": {
+    "ALLOWED_ORIGIN": "https://cph-ai-lcw.github.io"
+  }
+}

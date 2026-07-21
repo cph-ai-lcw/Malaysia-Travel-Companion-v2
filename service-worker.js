@@ -1,4 +1,4 @@
-const CACHE='gn-malaysia-v4.0.0-milestone-6-3-20260721';
+const CACHE='gn-malaysia-v4.1.0-milestone-6-4-20260721';
 const CORE=[
   './',
   './index.html',
@@ -17,6 +17,7 @@ const CORE=[
   './js/utils.js',
   './js/data.js',
   './js/leader-store.js',
+  './js/translation.js',
   './js/components/hero.js',
   './js/components/nav.js',
   './js/components/travel-guide.js',
