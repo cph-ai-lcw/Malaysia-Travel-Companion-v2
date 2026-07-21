@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="豆蔻膏圖示">
+  <rect x="16" y="10" width="32" height="10" rx="4" fill="#FFD166" stroke="#26394A" stroke-width="3"/>
+  <path d="M18 21h28l3 8v22c0 5-4 9-9 9H24c-5 0-9-4-9-9V29l3-8Z" fill="#FFF8EF" stroke="#26394A" stroke-width="3" stroke-linejoin="round"/>
+  <rect x="19" y="29" width="26" height="22" rx="5" fill="#E4F6F4"/>
+  <ellipse cx="32" cy="40" rx="7" ry="9" fill="#B76B35"/>
+  <path d="M32 32c-2 4-2 12 0 16M27 37c4 1 7 3 10 7M37 36c-3 2-6 5-9 9" fill="none" stroke="#7B4524" stroke-width="2" stroke-linecap="round"/>
+  <path d="M32 29c3-5 8-6 11-5-2 4-6 6-11 5Z" fill="#46A878"/>
+</svg>

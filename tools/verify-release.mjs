@@ -8,6 +8,7 @@ const required=[
   '.nojekyll','index.html','manifest.webmanifest','service-worker.js','css/app.css',
   'js/app.js','js/qrcode-browser.js','js/data-safety.js','js/milestone4-pro-store.js',
   'data/system/version.js','icons/icon-192.png','icons/icon-512.png'
+  ,'images/line-group-qr.jpg','fonts/noto-sans-tc-400.woff2'
 ];
 
 for(const relative of required){
@@ -28,8 +29,8 @@ const pageFunctions=['home','itinerary','budget','food','shoppingPage','resort',
 for(const name of pageFunctions){
   if(!new RegExp(`function\\s+${name}\\s*\\(`).test(app))errors.push(`缺少頁面函式：${name}`);
 }
-if(!/version:'6\.2\.0'/.test(fs.readFileSync(path.join(root,'data/system/version.js'),'utf8')))errors.push('版本未統一為 6.2.0');
-if(!/6200-stable/.test(fs.readFileSync(path.join(root,'index.html'),'utf8')))errors.push('index.html 快取版本不正確');
+if(!/version:'6\.3\.0'/.test(fs.readFileSync(path.join(root,'data/system/version.js'),'utf8')))errors.push('版本未統一為 6.3.0');
+if(!/6300/.test(fs.readFileSync(path.join(root,'index.html'),'utf8')))errors.push('index.html 快取版本不正確');
 
 const { MEMBERS }=await import(pathToFileURL(path.join(root,'data/trip/members.js')));
 const { ROOMS }=await import(pathToFileURL(path.join(root,'data/trip/rooms.js')));
@@ -52,4 +53,4 @@ if(errors.length){
   errors.forEach(error=>console.error('- '+error));
   process.exit(1);
 }
-console.log(`VERIFY_OK · v6.2.0 · ${MEMBERS.length} members · ${ROOMS.length} room assignments · ${ITINERARY.length} days`);
+console.log(`VERIFY_OK · v6.3.0 · ${MEMBERS.length} members · ${ROOMS.length} room assignments · ${ITINERARY.length} days`);

@@ -133,7 +133,7 @@ export function loadProDatabase(seed) {
   try {
     const current = JSON.parse(proStorage.getItem(PRO_KEY) || 'null');
     if (current?.meta?.schema === 'amt-travel-pro') {
-      current.meta.milestone = '6-1'; current.meta.appVersion = '6.2.0';
+      current.meta.milestone = '6-2'; current.meta.appVersion = '6.3.0';
       current.checkinRecords = Array.isArray(current.checkinRecords) ? current.checkinRecords : [];
       current.leaderSettings = { authMode: 'local-pin', pinConfigured: false, pinHash: '', sessionTimeoutMinutes: 30, allowAnnouncementEdit: true, allowAttendanceEdit: true, allowQrCheckin: true, allowBackupRestore: true, allowMemberDataView: true, failedAttempts: 0, lockedUntil: null, ...(current.leaderSettings || {}) };
       current.sync = { provider: 'local', enabled: false, status: 'disconnected', useAnonymousAuth: true, realtime: true, autoUpload: true, lastSyncAt: null, lastRemoteUpdateAt: null, lastError: '', documentPath: 'trips/amt-malaysia-2026/state/current', ...(current.sync || {}) };

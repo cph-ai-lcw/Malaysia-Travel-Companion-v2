@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="拖鞋圖示">
+  <g transform="rotate(-14 20 32)">
+    <path d="M22 5c7 1 10 8 9 18l-2 26c-1 8-5 12-11 11-7-1-10-6-8-14l6-28c2-9 2-14 6-13Z" fill="#FF7657" stroke="#26394A" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M12 28c5-7 11-10 17-8M21 20l-1 13" fill="none" stroke="#FFF8EF" stroke-width="4" stroke-linecap="round"/>
+  </g>
+  <g transform="rotate(14 44 32)">
+    <path d="M42 5c-7 1-10 8-9 18l2 26c1 8 5 12 11 11 7-1 10-6 8-14l-6-28c-2-9-2-14-6-13Z" fill="#2AA7A0" stroke="#26394A" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M52 28c-5-7-11-10-17-8M43 20l1 13" fill="none" stroke="#FFF8EF" stroke-width="4" stroke-linecap="round"/>
+  </g>
+</svg>

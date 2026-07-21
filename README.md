@@ -1,19 +1,30 @@
 # 國能馬來西亞旅遊手帳 2026
 
-## v6.2 Stable Cleanup
+## v6.3 Milestone 6-2｜團員版介面精簡與導覽整合
 
-本版本以 `Malaysia-Travel-Companion-v2-main(38).zip` 為唯一基準，完成 Milestone 6-1 穩定化整理。
+本版本以 `Malaysia-Travel-Companion-v2-main(39).zip` 的 v6.2 Stable 核心為基準，並參考 `GN-Malaysia-Travel-Handbook-2026-main(13).zip` 的明亮 App 視覺完成介面整合。
 
-### 本次完成
+### 團員版 8 大入口
 
-- 保留正式網站實際使用的功能與資料。
-- 移除未載入的舊版 Router、Pages、Components、重複 CSS 與 archive 文件。
-- 統一網站、Manifest、資料庫與快取版本為 v6.2.0。
-- 保留 v6201 的 `countdownPage` 啟動修正。
-- 加入安全儲存層；瀏覽器封鎖 LocalStorage 時仍可先正常開啟。
-- 加強首頁載入失敗提示與修復入口。
-- 將舊 Service Worker 改為退役清理程式，避免舊 PWA 快取再次造成空白頁。
-- 加入不依賴外部套件的發布前自動檢查。
+1. 首頁
+2. 五日行程
+3. 我的旅程
+4. 打包清單
+5. 記帳・匯率
+6. 美食・購物
+7. 旅遊資訊
+8. LINE 群組
+
+房間、機位、天氣、地圖、倒數、公告與度假村活動保留，並整合為次級工具。領隊中心仍保留原管理功能。
+
+### 視覺整合
+
+- 明亮藍／湖綠／珊瑚配色。
+- 玻璃卡片、24px 圓角與柔和陰影。
+- 浮在 Hero 圖片下方的 4 個高頻 Icon Tab。
+- 手機底部固定 5 鍵膠囊導覽。
+- 內建繁體中文與越南文字型。
+- 整合正式 LINE 群組 QR Code。
 
 ### 發布前檢查
 
@@ -29,14 +40,14 @@ node tools/verify-release.mjs
 
 1. 解壓縮 ZIP。
 2. 將本資料夾內的全部內容覆蓋 GitHub 專案根目錄。
-3. GitHub Desktop Summary 輸入：`Milestone 6-1 v6.2 Stable Cleanup`。
+3. GitHub Desktop Summary 輸入：`Milestone 6-2 v6.3 Participant Navigation`。
 4. Commit to main。
 5. Push origin。
 6. 等候 GitHub Pages 完成部署。
 
 正式網址：
 
-`https://cph-ai-lcw.github.io/Malaysia-Travel-Companion-v2/?v=6200-stable#/home`
+`https://cph-ai-lcw.github.io/Malaysia-Travel-Companion-v2/?v=6300#/home`
 
 ### 注意
 
