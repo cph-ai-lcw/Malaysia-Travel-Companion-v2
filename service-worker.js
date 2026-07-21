@@ -1,4 +1,4 @@
-const CACHE='gn-malaysia-v4.2.3-simplified-leader-rooms-20260721';
+const CACHE='gn-malaysia-v4.2.4-secure-leader-mdac-20260721';
 const CORE=[
   './',
   './index.html',
