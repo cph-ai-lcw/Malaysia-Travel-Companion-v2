@@ -1,0 +1,14 @@
+GitHub Pages 無法開啟修正版（2026-07-21）
+
+修正內容：
+1. 首次載入自動解除舊版 Service Worker。
+2. 首次載入自動清除舊 PWA 快取。
+3. CSS、JavaScript 更新為 v6200，避免瀏覽器繼續使用舊檔。
+4. 暫停註冊 Service Worker，優先確保 GitHub Pages 可以穩定開啟。
+
+更新方式：
+請將本資料夾內的全部檔案覆蓋 GitHub 專案根目錄，再 Commit 與 Push。
+確認 index.html 位於專案最外層，不可只上傳外層資料夾。
+
+更新後網址：
+https://cph-ai-lcw.github.io/Malaysia-Travel-Companion-v2/?repair=6200#/home

@@ -7,13 +7,34 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./icons/icon-192.png">
-<link rel="stylesheet" href="./css/app.css?v=6105">
+<link rel="stylesheet" href="./css/app.css?v=6200">
 <title>馬來西亞手帳 2026｜v6.1.0 Universal iOS Design Edition · Phase 4</title>
 </head>
 <body>
 <div id="app"></div>
-<script src="./js/qrcode-browser.js?v=6105"></script>
-<script type="module" src="./js/app.js?v=6105"></script>
+<script>
+(function(){
+  var repairVersion='6200';
+  var key='mtc-auto-repair-'+repairVersion;
+  if(!sessionStorage.getItem(key)){
+    sessionStorage.setItem(key,'1');
+    Promise.resolve().then(async function(){
+      try{
+        if('serviceWorker' in navigator){
+          var regs=await navigator.serviceWorker.getRegistrations();
+          await Promise.all(regs.map(function(reg){return reg.unregister()}));
+        }
+        if('caches' in window){
+          var names=await caches.keys();
+          await Promise.all(names.map(function(name){return caches.delete(name)}));
+        }
+      }catch(error){}
+    });
+  }
+})();
+</script>
+<script src="./js/qrcode-browser.js?v=6200"></script>
+<script type="module" src="./js/app.js?v=6200"></script>
 <script>
 window.setTimeout(function(){
   var app=document.getElementById('app');
@@ -26,7 +47,7 @@ window.mtcRepair=async function(){
     if('serviceWorker' in navigator){var regs=await navigator.serviceWorker.getRegistrations();await Promise.all(regs.map(function(r){return r.unregister()}));}
     if('caches' in window){var keys=await caches.keys();await Promise.all(keys.map(function(k){return caches.delete(k)}));}
   }catch(e){}
-  location.replace('./?repair=6105#/home');
+  location.replace('./?repair=6200#/home');
 };
 </script>
 </body>

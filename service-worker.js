@@ -1,4 +1,4 @@
-const CACHE = 'mtc-release-v610-github-hotfix-20260719';
+const CACHE = 'mtc-release-v620-github-pages-repair-20260721';
 const CORE = [
   './index.html','./css/app.css','./js/app.js','./js/qrcode-browser.js',
   './manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png'

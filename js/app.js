@@ -557,4 +557,5 @@ window.addEventListener('online',()=>activateFirebaseRealtime());
 window.addEventListener('offline',()=>{if(proData.sync?.enabled)proData=saveProDatabase({...proData,sync:{...(proData.sync||{}),status:'offline'}})});
 window.addEventListener('hashchange',render);render();
 activateFirebaseRealtime();
-if('serviceWorker' in navigator){window.addEventListener('load',async()=>{try{const reg=await navigator.serviceWorker.register('./service-worker.js?v=6105');reg.addEventListener('updatefound',()=>{const worker=reg.installing;worker?.addEventListener('statechange',()=>{if(worker.state==='installed'&&navigator.serviceWorker.controller){if(confirm(t('有新版可用，是否立即更新？','Có phiên bản mới, cập nhật ngay?'))){worker.postMessage({type:'SKIP_WAITING'});location.reload()}}})})}catch(error){showAppError(error?.message||String(error))}})}
+// GitHub Pages hotfix: temporarily disable Service Worker registration.
+// The previous worker could keep serving stale app files and leave the site blank.
