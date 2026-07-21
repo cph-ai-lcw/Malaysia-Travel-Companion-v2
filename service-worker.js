@@ -1,31 +1,11 @@
-const CACHE = 'mtc-release-v620-github-pages-repair-20260721';
-const CORE = [
-  './index.html','./css/app.css','./js/app.js','./js/qrcode-browser.js',
-  './manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png'
-];
-self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE).then(async cache => {
-    await Promise.allSettled(CORE.map(url => cache.add(url)));
-  }).then(() => self.skipWaiting()));
-});
-self.addEventListener('activate', event => {
-  event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim()));
-});
-self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET') return;
-  const req = event.request;
-  const url = new URL(req.url);
-  if (req.mode === 'navigate') {
-    event.respondWith(fetch(req, {cache:'no-store'}).catch(() => caches.match('./index.html')));
-    return;
-  }
-  if (url.origin !== self.location.origin) return;
-  event.respondWith(fetch(req).then(res => {
-    if (res && res.ok) caches.open(CACHE).then(cache => cache.put(req, res.clone()));
-    return res;
-  }).catch(() => caches.match(req)));
-});
-self.addEventListener('message', event => {
-  if (event.data?.type === 'SKIP_WAITING') self.skipWaiting();
-  if (event.data?.type === 'CLEAR_CACHES') event.waitUntil(caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k)))));
-});
+// v6.2 Stable Cleanup: retirement worker.
+// It removes every legacy PWA cache and unregisters itself. Offline support will
+// return only after the production cache test suite is complete.
+self.addEventListener('install',event=>event.waitUntil(self.skipWaiting()));
+self.addEventListener('activate',event=>event.waitUntil((async()=>{
+  const keys=await caches.keys();
+  await Promise.all(keys.map(key=>caches.delete(key)));
+  await self.registration.unregister();
+  const clients=await self.clients.matchAll({type:'window'});
+  clients.forEach(client=>client.navigate(client.url));
+})()));

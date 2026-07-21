@@ -1,13 +1,18 @@
 import { validateAndRepairDatabase, createRecoverySnapshot, safeParseJSON } from './data-safety.js';
 const PRO_KEY = 'amt-m4-pro-data-v1';
 const LEGACY_NOTICE_KEY = 'mtc-custom-announcements';
+const proStorage={
+  getItem:key=>{try{return window['localStorage'].getItem(key)}catch{return null}},
+  setItem:(key,value)=>{try{window['localStorage'].setItem(key,value);return true}catch{return false}},
+  removeItem:key=>{try{window['localStorage'].removeItem(key)}catch{}}
+};
 
 const clone = (value) => JSON.parse(JSON.stringify(value));
 const nowIso = () => new Date().toISOString();
 
 function legacyJson(key, fallback) {
   try {
-    const value = JSON.parse(localStorage.getItem(key) || 'null');
+    const value = JSON.parse(proStorage.getItem(key) || 'null');
     return value ?? fallback;
   } catch {
     return fallback;
@@ -18,7 +23,7 @@ function buildAttendanceRecords(members) {
   const records = [];
   for (let day = 1; day <= 5; day += 1) {
     members.forEach((member) => {
-      const status = localStorage.getItem(`mtc-checkin-d${day}-m${member.id}`);
+      const status = proStorage.getItem(`mtc-checkin-d${day}-m${member.id}`);
       if (status) {
         records.push({
           id: `legacy-d${day}-${member.id}`,
@@ -126,12 +131,13 @@ export function createProDatabase({ members = [], rooms = [], announcements = []
 
 export function loadProDatabase(seed) {
   try {
-    const current = JSON.parse(localStorage.getItem(PRO_KEY) || 'null');
+    const current = JSON.parse(proStorage.getItem(PRO_KEY) || 'null');
     if (current?.meta?.schema === 'amt-travel-pro') {
-      current.meta.milestone = '5-2'; current.meta.appVersion = '5.2.0';
+      current.meta.milestone = '6-1'; current.meta.appVersion = '6.2.0';
       current.checkinRecords = Array.isArray(current.checkinRecords) ? current.checkinRecords : [];
       current.leaderSettings = { authMode: 'local-pin', pinConfigured: false, pinHash: '', sessionTimeoutMinutes: 30, allowAnnouncementEdit: true, allowAttendanceEdit: true, allowQrCheckin: true, allowBackupRestore: true, allowMemberDataView: true, failedAttempts: 0, lockedUntil: null, ...(current.leaderSettings || {}) };
-      current.sync = { provider: 'local', enabled: false, status: 'disconnected', useAnonymousAuth: true, realtime: true, autoUpload: true, lastSyncAt: null, lastRemoteUpdateAt: null, lastError: '', firebaseConfig: { apiKey: '', authDomain: '', projectId: '', storageBucket: '', messagingSenderId: '', appId: '' }, documentPath: 'trips/amt-malaysia-2026/state/current', ...(current.sync || {}), firebaseConfig: { apiKey: '', authDomain: '', projectId: '', storageBucket: '', messagingSenderId: '', appId: '', ...(current.sync?.firebaseConfig || {}) } };
+      current.sync = { provider: 'local', enabled: false, status: 'disconnected', useAnonymousAuth: true, realtime: true, autoUpload: true, lastSyncAt: null, lastRemoteUpdateAt: null, lastError: '', documentPath: 'trips/amt-malaysia-2026/state/current', ...(current.sync || {}) };
+      current.sync.firebaseConfig = { apiKey: '', authDomain: '', projectId: '', storageBucket: '', messagingSenderId: '', appId: '', ...(current.sync.firebaseConfig || {}) };
       current.members = (current.members || []).map(m => ({...m, qrCode: m.qrCode || `AMT-MY26-${m.id}`, checkinStatus: m.checkinStatus || 'pending'}));
       const checked=validateAndRepairDatabase(current,seed).database; saveProDatabase(checked); return checked;
     }
@@ -146,7 +152,7 @@ export function saveProDatabase(database) {
   next.meta = next.meta || {};
   next.meta.updatedAt = nowIso();
   createRecoverySnapshot(next);
-  localStorage.setItem(PRO_KEY, JSON.stringify(next));
+  proStorage.setItem(PRO_KEY, JSON.stringify(next));
   window.dispatchEvent(new CustomEvent('amt:m4-datachange', { detail: next }));
   return next;
 }
@@ -173,7 +179,7 @@ export async function importProDatabase(file) {
 }
 
 export function resetProDatabase(seed) {
-  localStorage.removeItem(PRO_KEY);
+  proStorage.removeItem(PRO_KEY);
   return loadProDatabase(seed);
 }
 

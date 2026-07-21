@@ -5,8 +5,8 @@ const arr=v=>Array.isArray(v)?v:[];
 export function validateAndRepairDatabase(input,seed={}){
   const db=(input&&typeof input==='object')?clone(input):{};
   const repaired=[];
-  db.meta={schema:'amt-travel-pro',schemaVersion:2,milestone:'5-2',appVersion:'5.2.0',createdAt:iso(db.meta?.createdAt),updatedAt:iso(db.meta?.updatedAt),...(db.meta||{})};
-  db.meta.schema='amt-travel-pro';db.meta.schemaVersion=2;db.meta.milestone='5-2';db.meta.appVersion='5.2.0';
+  db.meta={schema:'amt-travel-pro',schemaVersion:2,milestone:'6-1',appVersion:'6.2.0',createdAt:iso(db.meta?.createdAt),updatedAt:iso(db.meta?.updatedAt),...(db.meta||{})};
+  db.meta.schema='amt-travel-pro';db.meta.schemaVersion=2;db.meta.milestone='6-1';db.meta.appVersion='6.2.0';
   REQUIRED_ARRAYS.forEach(k=>{if(!Array.isArray(db[k])){db[k]=arr(seed[k]);repaired.push(k)}});
   db.members=db.members.filter(Boolean).map((m,i)=>({...m,id:m.id??`M${String(i+1).padStart(3,'0')}`,active:m.active!==false,qrCode:m.qrCode||`AMT-MY26-${m.id??`M${String(i+1).padStart(3,'0')}`}`,checkinStatus:m.checkinStatus||'pending'}));
   db.rooms=db.rooms.filter(Boolean);db.announcements=db.announcements.filter(Boolean);

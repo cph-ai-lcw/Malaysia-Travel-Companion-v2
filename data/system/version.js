@@ -1,1 +1,1 @@
-export const VERSION = Object.freeze({version:'6.1.0',build:'20260719-V61-GITHUB-HOTFIX',milestone:'Milestone 6.1',stage:'Universal iOS Design Edition · GitHub Pages Hotfix',releaseDate:'2026-07-19',cacheVersion:'mtc-release-v610-github-hotfix-20260719'});
+export const VERSION = Object.freeze({version:'6.2.0',build:'20260721-V62-STABLE-CLEANUP',milestone:'Milestone 6-1',stage:'Stable Cleanup',releaseDate:'2026-07-21',cacheVersion:'mtc-v620-stable-20260721'});

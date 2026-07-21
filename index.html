@@ -4,17 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#2878ea">
+<meta name="description" content="2026 國能馬來西亞員工旅遊中越雙語行動手帳">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./icons/icon-192.png">
-<link rel="stylesheet" href="./css/app.css?v=6201">
-<title>馬來西亞手帳 2026｜v6.1.0 Universal iOS Design Edition · Phase 4</title>
+<link rel="stylesheet" href="./css/app.css?v=6200-stable">
+<title>國能馬來西亞旅遊手帳 2026｜v6.2 Stable</title>
 </head>
 <body>
 <div id="app"></div>
 <script>
 (function(){
-  var repairVersion='6201';
+  var repairVersion='6200-stable';
   var key='mtc-auto-repair-'+repairVersion;
   if(!sessionStorage.getItem(key)){
     sessionStorage.setItem(key,'1');
@@ -33,13 +34,13 @@
   }
 })();
 </script>
-<script src="./js/qrcode-browser.js?v=6201"></script>
-<script type="module" src="./js/app.js?v=6201"></script>
+<script src="./js/qrcode-browser.js?v=6200-stable"></script>
+<script type="module" src="./js/app.js?v=6200-stable"></script>
 <script>
 window.setTimeout(function(){
   var app=document.getElementById('app');
   if(app && !app.innerHTML.trim()){
-    app.innerHTML='<main style="max-width:720px;margin:80px auto;padding:24px;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif"><section style="background:#fff;border-radius:24px;padding:28px;box-shadow:0 12px 36px rgba(15,23,42,.12)"><h1 style="font-size:26px;margin:0 0 12px">正在重新載入旅遊手帳</h1><p style="font-size:18px;line-height:1.7">偵測到瀏覽器可能仍使用舊版快取。請按下方按鈕清除舊快取並重新載入。</p><button onclick="window.mtcRepair()" style="width:100%;min-height:58px;border:0;border-radius:18px;background:#2878ea;color:#fff;font-size:18px;font-weight:700">清除舊快取並重新開啟</button></section></main>';
+    app.innerHTML='<main style="max-width:720px;margin:80px auto;padding:24px;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif"><section style="background:#fff;border-radius:24px;padding:28px;box-shadow:0 12px 36px rgba(15,23,42,.12)"><h1 style="font-size:26px;margin:0 0 12px">旅遊手帳載入未完成</h1><p style="font-size:18px;line-height:1.7">請先確認網路，再按下方按鈕清除舊快取並重新開啟。個人清單與記帳資料不會因此刪除。</p><button onclick="window.mtcRepair()" style="width:100%;min-height:58px;border:0;border-radius:18px;background:#2878ea;color:#fff;font-size:18px;font-weight:700">修復並重新開啟</button><p style="margin-top:16px;color:#64748b">版本：v6.2 Stable</p></section></main>';
   }
 },4000);
 window.mtcRepair=async function(){
@@ -47,7 +48,7 @@ window.mtcRepair=async function(){
     if('serviceWorker' in navigator){var regs=await navigator.serviceWorker.getRegistrations();await Promise.all(regs.map(function(r){return r.unregister()}));}
     if('caches' in window){var keys=await caches.keys();await Promise.all(keys.map(function(k){return caches.delete(k)}));}
   }catch(e){}
-  location.replace('./?repair=6201#/home');
+  location.replace('./?repair=6200-stable#/home');
 };
 </script>
 </body>
