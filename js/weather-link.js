@@ -23,9 +23,10 @@ const malaysiaTomorrow=()=>{
 };
 
 const suggestedLocation=date=>{
-  if(date==='2026-09-20'||date==='2026-09-21')return 'portDickson';
-  if(date==='2026-09-23')return 'genting';
-  return 'kl';
+  if(date==='2026-09-20'||date==='2026-09-21')return ['portDickson'];
+  if(date==='2026-09-22')return ['portDickson','kl'];
+  if(date==='2026-09-23')return ['kl','genting'];
+  return ['kl'];
 };
 
 async function fetchTomorrow(locationId){
@@ -51,6 +52,15 @@ async function fetchTomorrow(locationId){
   return {date,location:location.label,text:`${low}～${high}°C・${condition}・降雨 ${rain}%`};
 }
 
+const WEATHER_OPTIONS={
+  auto:{label:'依隔日行程自動判斷',locations:null},
+  kl:{label:'吉隆坡',locations:['kl']},
+  portDickson:{label:'波德申',locations:['portDickson']},
+  genting:{label:'雲頂高原',locations:['genting']},
+  portDicksonKl:{label:'波德申＋吉隆坡',locations:['portDickson','kl']},
+  klGenting:{label:'吉隆坡＋雲頂高原',locations:['kl','genting']}
+};
+
 export function setupWeatherLink(){
   const input=document.querySelector('#announcementForm [name="weather"]');
   if(!input||document.querySelector('#weatherAutoControls'))return;
@@ -58,7 +68,7 @@ export function setupWeatherLink(){
   const controls=document.createElement('div');
   controls.id='weatherAutoControls';
   controls.className='weather-auto-controls';
-  controls.innerHTML=`<select id="weatherLocation" aria-label="明日天氣地點">${Object.entries(LOCATIONS).map(([id,item])=>`<option value="${id}" ${id===suggestedLocation(date)?'selected':''}>${item.label}</option>`).join('')}</select><button type="button" class="secondary-btn" id="refreshTomorrowWeather">↻ 自動帶入</button><small id="weatherAutoStatus">連線取得明日預報</small>`;
+  controls.innerHTML=`<select id="weatherLocation" aria-label="明日天氣地點">${Object.entries(WEATHER_OPTIONS).map(([id,item])=>`<option value="${id}">${item.label}</option>`).join('')}</select><button type="button" class="secondary-btn" id="refreshTomorrowWeather">↻ 自動帶入</button><small id="weatherAutoStatus">連線取得明日預報；跨地區會自動顯示兩地</small>`;
   input.insertAdjacentElement('afterend',controls);
   const status=controls.querySelector('#weatherAutoStatus');
   const update=async()=>{
@@ -66,11 +76,14 @@ export function setupWeatherLink(){
     button.disabled=true;
     status.textContent='天氣更新中…';
     try{
-      const result=await fetchTomorrow(controls.querySelector('#weatherLocation').value);
-      input.value=result.text;
+      const optionId=controls.querySelector('#weatherLocation').value;
+      const locationIds=WEATHER_OPTIONS[optionId]?.locations||suggestedLocation(date);
+      const results=await Promise.all(locationIds.map(fetchTomorrow));
+      input.value=results.map(result=>`${result.location} ${result.text}`).join('｜');
+      input.dataset.weather=JSON.stringify(results);
       input.dispatchEvent(new Event('input',{bubbles:true}));
-      localStorage.setItem('gnTomorrowWeather',JSON.stringify({...result,locationId:controls.querySelector('#weatherLocation').value,updatedAt:Date.now()}));
-      status.textContent=`${result.location}｜${result.date}｜已更新`;
+      localStorage.setItem('gnTomorrowWeather',JSON.stringify({results,optionId,updatedAt:Date.now()}));
+      status.textContent=`${results.map(result=>result.location).join('＋')}｜${results[0].date}｜已更新`;
     }catch{
       status.textContent='無法連線，已保留手動輸入值';
     }finally{button.disabled=false}

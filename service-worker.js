@@ -1,4 +1,4 @@
-const CACHE='gn-malaysia-v4.1.4-tomorrow-card-20260721';
+const CACHE='gn-malaysia-v4.1.5-original-poster-20260721';
 const CORE=[
   './',
   './index.html',
@@ -42,6 +42,7 @@ const CORE=[
   './data/trip/emergency.js',
   './data/trip/leader-config.js',
   './images/hero-malaysia-v61.svg',
+  './images/announcement-template-blank.png',
   './images/line-group-qr.jpg',
   './images/type-g-plug.jpg',
   './images/guide-boarding.webp',
