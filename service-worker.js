@@ -1,4 +1,4 @@
-const CACHE='gn-malaysia-v4.1.2-live-weather-20260721';
+const CACHE='gn-malaysia-v4.1.3-weather-layout-20260721';
 const CORE=[
   './',
   './index.html',
