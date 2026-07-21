@@ -1,4 +1,4 @@
-const CACHE='gn-malaysia-v4.1.1-nav-swipe-20260721';
+const CACHE='gn-malaysia-v4.1.2-live-weather-20260721';
 const CORE=[
   './',
   './index.html',
@@ -18,6 +18,7 @@ const CORE=[
   './js/data.js',
   './js/leader-store.js',
   './js/translation.js',
+  './js/weather-link.js',
   './js/components/hero.js',
   './js/components/nav.js',
   './js/components/travel-guide.js',
