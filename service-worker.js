@@ -1,4 +1,4 @@
-const CACHE='gn-malaysia-v4.1.10-poster-final-alignment-20260721';
+const CACHE='gn-malaysia-v4.2.0-room-number-admin-20260721';
 const CORE=[
   './',
   './index.html',

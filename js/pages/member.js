@@ -1,6 +1,7 @@
 import {MEMBERS,ROOMS} from '../data.js';
 import {storage} from '../storage.js';
 import {bi,text} from '../i18n.js';
+import {roomNumber} from '../leader-store.js';
 
 const roomMap=new Map(ROOMS.map(room=>[room.id,room]));
 const hotelGalleries=[
@@ -36,7 +37,8 @@ function roomInfo(member,key){
     .map(id=>MEMBERS.find(item=>item.id===id)?.nameZh)
     .filter(Boolean)
     .join('、')||text('單人房','Phòng đơn');
-  return {code:room.assignmentCode||'—',mates,type:text(room.roomTypeZh,room.roomTypeVi)};
+  const actual=roomNumber(room.id);
+  return {code:actual||bi(`分房代碼 ${room.assignmentCode}`,`Mã phân phòng ${room.assignmentCode}`),actual,mates,type:text(room.roomTypeZh,room.roomTypeVi)};
 }
 
 function transportText(value){
@@ -49,7 +51,7 @@ function renderMember(member){
   if(!member)return '';
   const lexis=roomInfo(member,'lexis');
   const sunway=roomInfo(member,'sunway');
-  return `<div class="member-summary"><div class="card member-name-card"><div class="icon-title"><span class="icon">👤</span><div><small>NO. ${member.number}</small><h2>${member.nameZh}</h2><small>${member.nameEn||''}</small></div></div></div><div class="seat-grid"><div class="card seat-card"><small>JX725 ${bi('去程','Chiều đi')}</small><b>${member.seatOutbound||'—'}</b></div><div class="card seat-card"><small>JX726 ${bi('回程','Chiều về')}</small><b>${member.seatReturn||'—'}</b></div></div><div class="hotel-grid"><div class="card hotel-card"><small>🏝 Lexis Hibiscus</small><b>${lexis.code}</b><p>${lexis.type}</p><small>${bi('同房者','Bạn cùng phòng')}：${lexis.mates}</small></div><div class="card hotel-card"><small>🏙 Sunway Velocity</small><b>${sunway.code}</b><p>${sunway.type}</p><small>${bi('同房者','Bạn cùng phòng')}：${sunway.mates}</small></div></div><div class="card transport-member-card"><b>🚌 ${bi('交通備註','Ghi chú di chuyển')}</b><p>${transportText(member.airportTransport)}</p></div></div>`;
+  return `<div class="member-summary"><div class="card member-name-card"><div class="icon-title"><span class="icon">👤</span><div><small>NO. ${member.number}</small><h2>${member.nameZh}</h2><small>${member.nameEn||''}</small></div></div></div><div class="seat-grid"><div class="card seat-card"><small>JX725 ${bi('去程','Chiều đi')}</small><b>${member.seatOutbound||'—'}</b></div><div class="card seat-card"><small>JX726 ${bi('回程','Chiều về')}</small><b>${member.seatReturn||'—'}</b></div></div><div class="hotel-grid"><div class="card hotel-card"><small>🏝 Lexis Hibiscus</small><b>${lexis.code}</b><p>${lexis.actual?bi('正式房號','Số phòng chính thức'):bi('入住當日公布','Công bố ngày nhận phòng')} · ${lexis.type}</p><small>${bi('同房者','Bạn cùng phòng')}：${lexis.mates}</small></div><div class="card hotel-card"><small>🏙 Sunway Velocity</small><b>${sunway.code}</b><p>${sunway.actual?bi('正式房號','Số phòng chính thức'):bi('入住當日公布','Công bố ngày nhận phòng')} · ${sunway.type}</p><small>${bi('同房者','Bạn cùng phòng')}：${sunway.mates}</small></div></div><div class="card transport-member-card"><b>🚌 ${bi('交通備註','Ghi chú di chuyển')}</b><p>${transportText(member.airportTransport)}</p></div></div>`;
 }
 
 function renderHotelGalleries(){
