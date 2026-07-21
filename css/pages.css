@@ -996,3 +996,9 @@
 .leader-room-row input{width:100%;min-height:52px;border:1px solid var(--line);border-radius:14px;padding:10px 13px;font-size:1.05rem;font-weight:900}
 .room-save-btn{position:sticky;bottom:82px;z-index:8;width:100%;min-height:62px;margin:8px 0 24px;box-shadow:0 12px 30px #173b3540}
 @media(max-width:680px){.leader-tabs{grid-template-columns:repeat(6,minmax(82px,1fr))}.leader-room-row{grid-template-columns:1fr}.leader-room-row input{font-size:1.15rem}}
+.room-share-studio{margin-top:22px;background:linear-gradient(145deg,#fffdf7,#edf7ff)}
+.room-share-options{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:end;margin:18px 0}
+.room-share-studio canvas{display:block;width:100%;height:auto;border-radius:22px;background:#f7f2e8;box-shadow:var(--shadow)}
+.room-share-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0 9px}
+.room-share-actions button{min-height:56px}
+@media(max-width:680px){.room-share-options{grid-template-columns:1fr}.room-share-actions{grid-template-columns:1fr}.room-share-studio{padding:14px}}
