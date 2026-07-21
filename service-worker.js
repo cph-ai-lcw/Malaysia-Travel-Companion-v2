@@ -1,11 +1,99 @@
-// v6.2 Stable Cleanup: retirement worker.
-// It removes every legacy PWA cache and unregisters itself. Offline support will
-// return only after the production cache test suite is complete.
-self.addEventListener('install',event=>event.waitUntil(self.skipWaiting()));
-self.addEventListener('activate',event=>event.waitUntil((async()=>{
-  const keys=await caches.keys();
-  await Promise.all(keys.map(key=>caches.delete(key)));
-  await self.registration.unregister();
-  const clients=await self.clients.matchAll({type:'window'});
-  clients.forEach(client=>client.navigate(client.url));
-})()));
+const CACHE='gn-malaysia-v4.0.0-milestone-6-3-20260721';
+const CORE=[
+  './',
+  './index.html',
+  './manifest.webmanifest',
+  './css/fonts.css',
+  './css/variables.css',
+  './css/base.css',
+  './css/layout.css',
+  './css/components.css',
+  './css/pages.css',
+  './css/responsive.css',
+  './js/app.js',
+  './js/router.js',
+  './js/storage.js',
+  './js/i18n.js',
+  './js/utils.js',
+  './js/data.js',
+  './js/leader-store.js',
+  './js/components/hero.js',
+  './js/components/nav.js',
+  './js/components/travel-guide.js',
+  './js/pages/home.js',
+  './js/pages/itinerary.js',
+  './js/pages/member.js',
+  './js/pages/checklist.js',
+  './js/pages/wallet.js',
+  './js/pages/guide.js',
+  './js/pages/info.js',
+  './js/pages/leader.js',
+  './data/trip/members.js',
+  './data/trip/rooms.js',
+  './data/trip/seats.js',
+  './data/trip/itinerary.js',
+  './data/trip/foods.js',
+  './data/trip/shopping.js',
+  './data/trip/activities.js',
+  './data/trip/notices.js',
+  './data/trip/sights.js',
+  './data/trip/emergency.js',
+  './data/trip/leader-config.js',
+  './images/hero-malaysia-v61.svg',
+  './images/line-group-qr.jpg',
+  './images/type-g-plug.jpg',
+  './images/guide-boarding.webp',
+  './images/guide-malaysia-entry.webp',
+  './images/guide-baggage-safety.webp',
+  './images/guide-sunway-mall.webp',
+  './images/guide-return-baggage.webp',
+  './images/hotel-lexis-aerial.jpg',
+  './images/hotel-lexis-beach.jpg',
+  './images/hotel-lexis-room.jpg',
+  './images/hotel-sunway-exterior.jpg',
+  './images/hotel-sunway-pool.jpg',
+  './images/hotel-sunway-room.jpg',
+  './images/sight-batu-caves.jpg?v=3.0.3',
+  './images/sight-petronas-towers.jpg?v=3.0.3',
+  './images/sight-saloma-link.jpg?v=3.0.3',
+  './images/sight-pavilion.jpg?v=3.0.6',
+  './images/sight-kafei-dian.jpg?v=3.0.6',
+  './images/sight-genting-cable-car.jpg?v=3.0.6',
+  './images/sight-putra-mosque.jpg?v=3.0.6',
+  './images/sight-skyline-luge.jpg?v=3.0.6',
+  './images/sight-mitsui-outlet.jpg?v=3.0.6',
+  './images/sight-jalan-alor.jpg?v=3.0.8',
+  './fonts/noto-sans-tc-400.woff2',
+  './fonts/noto-sans-tc-700.woff2',
+  './fonts/noto-sans-tc-900.woff2',
+  './fonts/noto-sans-latin-variable.woff2',
+  './fonts/noto-sans-vietnamese-variable.woff2',
+  './icons/apple-touch-icon.png',
+  './icons/icon-192.png',
+  './icons/icon-512.png',
+  './icons/icon-maskable-512.png',
+  './icons/fipper-slipper.svg?v=3.1.1',
+  './icons/nutmeg-balm.svg?v=3.1.1'
+];
+
+self.addEventListener('install',event=>event.waitUntil(
+  caches.open(CACHE).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting())
+));
+
+self.addEventListener('activate',event=>event.waitUntil(
+  caches.keys()
+    .then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key))))
+    .then(()=>self.clients.claim())
+));
+
+self.addEventListener('fetch',event=>{
+  if(event.request.method!=='GET')return;
+  event.respondWith(
+    caches.match(event.request).then(cached=>cached||fetch(event.request).then(response=>{
+      if(response.ok&&new URL(event.request.url).origin===self.location.origin){
+        caches.open(CACHE).then(cache=>cache.put(event.request,response.clone()));
+      }
+      return response;
+    }).catch(()=>event.request.mode==='navigate'?caches.match('./index.html'):undefined))
+  );
+});

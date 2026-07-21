@@ -1,55 +1,32 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#2878ea">
-<meta name="description" content="2026 國能馬來西亞員工旅遊中越雙語行動手帳">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<link rel="manifest" href="./manifest.webmanifest">
-<link rel="icon" href="./icons/icon-192.png">
-<link rel="stylesheet" href="./css/app.css?v=6300">
-<title>國能馬來西亞旅遊手帳 2026｜v6.3</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#236BB8">
+  <meta name="description" content="2026 國能馬來西亞員工旅遊中越雙語 PWA 手帳與領隊管理中心">
+  <meta name="color-scheme" content="light">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/icon-192.png">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="./css/fonts.css">
+  <link rel="stylesheet" href="./css/variables.css">
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/layout.css">
+  <link rel="stylesheet" href="./css/components.css">
+  <link rel="stylesheet" href="./css/pages.css">
+  <link rel="stylesheet" href="./css/responsive.css">
+  <title>國能馬來西亞員旅手帳 2026｜GN Core v4.0</title>
 </head>
 <body>
-<div id="app"></div>
-<script>
-(function(){
-  var repairVersion='6300';
-  var key='mtc-auto-repair-'+repairVersion;
-  if(!sessionStorage.getItem(key)){
-    sessionStorage.setItem(key,'1');
-    Promise.resolve().then(async function(){
-      try{
-        if('serviceWorker' in navigator){
-          var regs=await navigator.serviceWorker.getRegistrations();
-          await Promise.all(regs.map(function(reg){return reg.unregister()}));
-        }
-        if('caches' in window){
-          var names=await caches.keys();
-          await Promise.all(names.map(function(name){return caches.delete(name)}));
-        }
-      }catch(error){}
-    });
-  }
-})();
-</script>
-<script src="./js/qrcode-browser.js?v=6300"></script>
-<script type="module" src="./js/app.js?v=6300"></script>
-<script>
-window.setTimeout(function(){
-  var app=document.getElementById('app');
-  if(app && !app.innerHTML.trim()){
-    app.innerHTML='<main style="max-width:720px;margin:80px auto;padding:24px;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif"><section style="background:#fff;border-radius:24px;padding:28px;box-shadow:0 12px 36px rgba(15,23,42,.12)"><h1 style="font-size:26px;margin:0 0 12px">旅遊手帳載入未完成</h1><p style="font-size:18px;line-height:1.7">請先確認網路，再按下方按鈕清除舊快取並重新開啟。個人清單與記帳資料不會因此刪除。</p><button onclick="window.mtcRepair()" style="width:100%;min-height:58px;border:0;border-radius:18px;background:#2878ea;color:#fff;font-size:18px;font-weight:700">修復並重新開啟</button><p style="margin-top:16px;color:#64748b">版本：v6.3 Milestone 6-2</p></section></main>';
-  }
-},4000);
-window.mtcRepair=async function(){
-  try{
-    if('serviceWorker' in navigator){var regs=await navigator.serviceWorker.getRegistrations();await Promise.all(regs.map(function(r){return r.unregister()}));}
-    if('caches' in window){var keys=await caches.keys();await Promise.all(keys.map(function(k){return caches.delete(k)}));}
-  }catch(e){}
-  location.replace('./?repair=6300#/home');
-};
-</script>
+  <div id="app" class="app-shell">
+    <header id="hero"></header>
+    <main id="page" tabindex="-1"></main>
+    <nav id="bottomNav" aria-label="主要導覽"></nav>
+  </div>
+  <noscript>此旅遊手帳需要啟用 JavaScript。</noscript>
+  <script type="module" src="./js/app.js?v=400"></script>
 </body>
 </html>

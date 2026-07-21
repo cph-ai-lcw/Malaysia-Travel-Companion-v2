@@ -1,20 +1,23 @@
-import { APP_CONFIG, TRIP_CONFIG, ANNOUNCEMENTS, WEATHER_CONFIG } from "../../data/index.js";
-import { getLanguage } from "../core/i18n.js";
-import { getSelectedMember, getRoomById } from "../core/member-store.js";
-const tx=(a,b)=>getLanguage()==="zh-TW"?a:b;
-function countdown(){const d=Math.ceil((new Date(`${TRIP_CONFIG.startDate}T00:00:00`)-new Date())/86400000);return d>0?{v:d,l:tx("天後出發","ngày nữa")}:{v:"GO",l:tx("旅程進行中","đang đi")};}
-export function homePage(){const c=countdown(),m=getSelectedMember(),l=m?getRoomById(m.roomAssignments?.lexis):null,s=m?getRoomById(m.roomAssignments?.sunway):null,n=ANNOUNCEMENTS[0];return`
-<div class="m2-shell">
-<section class="m2-hero"><div class="m2-hero-top"><div><div class="m2-eyebrow">${APP_CONFIG.company}</div><h1>${tx("馬來西亞旅遊手帳","Sổ tay Malaysia")}</h1><p>2026/09/20 — 09/24 · 5 DAYS</p></div><div class="m2-countdown"><strong>${c.v}</strong><small>${c.l}</small></div></div><div class="m2-flight-strip"><div><strong>TPE</strong><small>JX725 · 11:15</small></div><div>✈</div><div class="right"><strong>KUL</strong><small>${tx("去程","Chiều đi")} · 16:10</small></div></div></section>
-${m?`<section class="m2-personal" data-navigate="profile"><div class="m2-personal-head"><div class="member-avatar">${m.nameZh.slice(0,1)}</div><div><strong>${m.nameZh}</strong><small>${m.nameEn}</small></div><span>›</span></div><div class="m2-personal-grid"><div class="m2-info-tile"><small>${tx("去程機位","Ghế đi")}</small><strong>${m.seatOutbound}</strong></div><div class="m2-info-tile"><small>${tx("回程機位","Ghế về")}</small><strong>${m.seatReturn}</strong></div><div class="m2-info-tile"><small>${tx("大紅花","Lexis")}</small><strong>${l?.assignmentCode||"—"}</strong></div><div class="m2-info-tile"><small>${tx("雙威","Sunway")}</small><strong>${s?.assignmentCode||"—"}</strong></div></div></section>`:`<button class="m2-personal" data-navigate="profile" type="button" style="width:100%;text-align:left;color:var(--text)"><div class="m2-personal-head"><div class="member-avatar">＋</div><div><strong>${tx("先選擇自己的姓名","Chọn tên của bạn")}</strong><small>${tx("查看房間、機位與餐食補助","Xem phòng, ghế và trợ cấp")}</small></div><span>›</span></div></button>`}
-<div class="m2-section-head"><div><h2>${tx("旅程服務","Dịch vụ chuyến đi")}</h2><p>${tx("常用功能集中在這裡","Các chức năng thường dùng")}</p></div></div>
-<section class="m2-main-grid">
-<button class="m2-feature-card" data-navigate="members"><div class="m2-feature-icon">👥</div><strong>${tx("團員查詢","Tìm thành viên")}</strong><small>${tx("姓名、機位、分房快速查詢","Tìm tên, ghế và phòng")}</small></button>
-<button class="m2-feature-card" data-navigate="rooms"><div class="m2-feature-icon">🛏</div><strong>${tx("房間分配","Phân phòng")}</strong><small>${tx("大紅花與雙威住宿名單","Danh sách hai khách sạn")}</small></button>
-<button class="m2-feature-card" data-navigate="seats"><div class="m2-feature-icon">✈</div><strong>${tx("機位分配","Phân ghế")}</strong><small>${tx("去回程依座位排序","Sắp theo ghế đi/về")}</small></button>
-<button class="m2-feature-card" data-navigate="itinerary"><div class="m2-feature-icon">🗓</div><strong>${tx("五日行程","Lịch trình 5 ngày")}</strong><small>${tx("每日景點與集合資訊","Điểm tham quan và tập trung")}</small></button>
-</section>
-<div class="m2-section-head"><div><h2>${tx("旅行提醒","Nhắc nhở")}</h2></div></div>
-<section class="grid-2"><article class="mini-card"><div class="emoji">🌦</div><strong>24–33°C</strong><small>${getLanguage()==="zh-TW"?WEATHER_CONFIG.reminderZh:WEATHER_CONFIG.reminderVi}</small></article><article class="mini-card"><div class="emoji">🍽</div><strong>RM 30 × 2</strong><small>${tx("9/21 午餐、9/22 晚餐自理","21/9 trưa, 22/9 tối tự túc")}</small></article></section>
-<section class="card"><span class="status-chip">📣 ${tx("最新公告","Thông báo")}</span><strong style="display:block;margin-top:12px">${getLanguage()==="zh-TW"?n.titleZh:n.titleVi}</strong><p style="margin:5px 0 0;color:var(--muted)">${getLanguage()==="zh-TW"?n.messageZh:n.messageVi}</p></section>
-</div>`;}
+import {ITINERARY,NOTICES,LEADER_CONFIG} from '../data.js';
+import {bi} from '../i18n.js';
+import {loadLeader} from '../leader-store.js';
+
+function allNotices(){const custom=loadLeader().announcements.map(item=>({icon:'📣',date:item.createdAt.slice(0,10),titleZh:item.titleZh,titleVi:item.titleVi||item.titleZh,bodyZh:item.bodyZh,bodyVi:item.bodyVi||item.bodyZh}));return [...custom,...NOTICES]}
+
+function localISODate(){
+  const now=new Date();
+  return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+}
+
+function itineraryCard(){
+  const today=localISODate();
+  const active=ITINERARY.find(day=>day.date===today);
+  const before=today<ITINERARY[0].date;
+  const selected=active||(before?ITINERARY[0]:ITINERARY[ITINERARY.length-1]);
+  const heading=active?bi('今日行程','Lịch trình hôm nay'):before?bi('出發日預覽','Xem trước ngày khởi hành'):bi('旅程回顧','Xem lại hành trình');
+  return `<div class="card today-card"><div class="section-head"><div><p class="eyebrow">DAY ${selected.day} · ${selected.date.slice(5).replace('-','/')}</p><h2>${heading}</h2></div><a class="text-link" href="#/itinerary">${bi('全部','Tất cả')} →</a></div><h3>${bi(selected.titleZh,selected.titleVi)}</h3><div class="mini-timeline">${selected.items.slice(0,4).map(item=>`<div><b>${item.time}</b><span>${bi(item.zh,item.vi)}</span></div>`).join('')}</div></div>`;
+}
+
+export function homePage(){
+  return `<section class="section">${itineraryCard()}</section><section class="section"><div class="section-head"><h2>${bi('快速入口','Truy cập nhanh')}</h2></div><div class="quick-grid"><a class="card quick-card" href="#/my-travel"><span class="emoji">👤</span><div><b>${bi('我的旅程','Chuyến đi của tôi')}</b><small>${bi('房間、機位、同房者','Phòng, ghế, bạn cùng phòng')}</small></div></a><a class="card quick-card" href="#/checklist"><span class="emoji">🧳</span><div><b>${bi('詳細打包清單','Hành lý chi tiết')}</b><small>${bi('熱帶天氣、Type G 插頭','Khí hậu nhiệt đới, phích Type G')}</small></div></a><a class="card quick-card" href="#/wallet"><span class="emoji">💰</span><div><b>${bi('旅遊記帳','Chi tiêu')}</b><small>${bi('RM 與台幣雙向換算','Đổi hai chiều RM và TWD')}</small></div></a><a class="card quick-card" href="#/guide"><span class="emoji">🌺</span><div><b>${bi('大紅花・美食購物','Lexis · Ăn uống mua sắm')}</b><small>${bi('自費活動、亞羅街、Sunway','Tự phí, Jalan Alor, Sunway')}</small></div></a></div></section><section class="section"><div class="card transport-card"><div class="icon-title"><span class="icon">🚌</span><div><p class="eyebrow">TRANSFER</p><h2>${bi('接送資訊','Xe đưa đón')}</h2></div></div><div class="transport-steps"><div><span>9/20</span><b>07:00</b><small>${bi('公司集合','Tập trung tại công ty')}</small></div><div><span>9/20</span><b>07:20</b><small>${bi('準時發車','Xe khởi hành')}</small></div><div><span>9/24</span><b>23:15</b><small>${bi('桃園機場集合','Tập trung tại sân bay')}</small></div><div><span>9/24</span><b>23:30</b><small>${bi('發車返回公司','Xe về công ty')}</small></div></div><p class="transport-note">${bi('自行前往機場者：9/20 08:00 於桃園機場第二航廈星宇航空 3 號櫃檯前集合。','Người tự đến sân bay: tập trung lúc 08:00 ngày 20/9 trước quầy số 3 STARLUX, Nhà ga 2.')}</p></div></section><section class="section"><div class="section-head"><h2>${bi('最新公告','Thông báo mới')}</h2></div><div class="notice-list">${allNotices().map(notice=>`<article class="card announcement"><span class="announcement-icon">${notice.icon}</span><div><small>${notice.date.replaceAll('-','.')}</small><h3>${bi(notice.titleZh,notice.titleVi)}</h3><p>${bi(notice.bodyZh,notice.bodyVi)}</p></div></article>`).join('')}</div></section><section class="section"><div class="card line-card"><img src="${LEADER_CONFIG.lineQr}" alt="LINE 群組 QR Code" loading="lazy"><div><span class="badge">LINE GROUP</span><h2>${bi('加入員工旅遊群組','Tham gia nhóm du lịch')}</h2><p>${bi('行程通知與緊急集合訊息請以群組公告為準。','Theo dõi thông báo lịch trình và tập trung khẩn cấp trong nhóm.')}</p><a class="primary-btn inline-btn" href="${LEADER_CONFIG.line}" target="_blank" rel="noopener">LINE ${bi('直接加入','Tham gia ngay')}</a></div></div></section>`;
+}

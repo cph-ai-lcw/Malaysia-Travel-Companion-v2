@@ -1,23 +1,8 @@
-import { APP_CONFIG } from "../data/system/index.js";
-
-const prefix = APP_CONFIG.storagePrefix || "mtc-v2";
-const key = (name) => `${prefix}:${name}`;
-
-export const storage = {
-  get(name, fallback = null) {
-    try {
-      const raw = localStorage.getItem(key(name));
-      return raw === null ? fallback : JSON.parse(raw);
-    } catch {
-      return fallback;
-    }
-  },
-
-  set(name, value) {
-    localStorage.setItem(key(name), JSON.stringify(value));
-  },
-
-  remove(name) {
-    localStorage.removeItem(key(name));
-  }
+const PREFIX='gn-malaysia-v4:';
+const memory=new Map();
+function nativeStorage(){try{return window.localStorage}catch{return null}}
+export const storage={
+  get(key,fallback=null){try{const raw=nativeStorage()?.getItem(PREFIX+key);if(raw!==null&&raw!==undefined)return JSON.parse(raw);return memory.has(key)?memory.get(key):fallback}catch{return memory.has(key)?memory.get(key):fallback}},
+  set(key,value){memory.set(key,value);try{nativeStorage()?.setItem(PREFIX+key,JSON.stringify(value))}catch{}return value},
+  remove(key){memory.delete(key);try{nativeStorage()?.removeItem(PREFIX+key)}catch{}}
 };
