@@ -107,6 +107,13 @@
 
 - 將 HTML、CSS、JavaScript 與旅遊資料拆分為模組。
 - 建立輕量 SPA、雙語切換與 PWA 離線快取。
+# v4.1.4 Tomorrow Reminder Card Redesign
+- Redesign leader announcement editor as a structured tomorrow-reminder studio.
+- Add Chinese-only and Chinese/Vietnamese poster modes.
+- Add dedicated luggage time, floor, Morning Call, meeting time, weather, clothing and blessing fields.
+- Preserve live Open-Meteo weather, Cloudflare translation, PNG download and mobile sharing.
+- Redesign the 1080 × 1350 LINE card with cream background, navy text and red time highlights.
+
 # v4.1.3 Weather Poster Layout Fix
 
 - 修正明日天氣長文字與下方說明重疊。
