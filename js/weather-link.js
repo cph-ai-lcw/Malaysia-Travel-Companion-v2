@@ -1,7 +1,8 @@
 const LOCATIONS={
   kl:{label:'吉隆坡',lat:3.1390,lon:101.6869},
   portDickson:{label:'波德申',lat:2.5225,lon:101.7963},
-  genting:{label:'雲頂高原',lat:3.4236,lon:101.7932}
+  genting:{label:'雲頂高原',lat:3.4236,lon:101.7932},
+  taipei:{label:'台北',lat:25.0330,lon:121.5654}
 };
 
 const weatherText=code=>{
@@ -23,9 +24,11 @@ const malaysiaTomorrow=()=>{
 };
 
 const suggestedLocation=date=>{
-  if(date==='2026-09-20'||date==='2026-09-21')return ['portDickson'];
+  if(date==='2026-09-20')return ['kl','portDickson'];
+  if(date==='2026-09-21')return ['portDickson'];
   if(date==='2026-09-22')return ['portDickson','kl'];
   if(date==='2026-09-23')return ['kl','genting'];
+  if(date==='2026-09-24')return ['kl','taipei'];
   return ['kl'];
 };
 
@@ -49,7 +52,7 @@ async function fetchTomorrow(locationId){
   const high=Math.round(data.daily.temperature_2m_max[index]);
   const rain=Math.round(data.daily.precipitation_probability_max[index]||0);
   const condition=weatherText(data.daily.weather_code[index]);
-  return {date,location:location.label,text:`${low}～${high}°C・${condition}・降雨 ${rain}%`};
+  return {date,location:location.label,text:`${low}～${high}°C`,condition,rain};
 }
 
 const WEATHER_OPTIONS={
@@ -57,8 +60,10 @@ const WEATHER_OPTIONS={
   kl:{label:'吉隆坡',locations:['kl']},
   portDickson:{label:'波德申',locations:['portDickson']},
   genting:{label:'雲頂高原',locations:['genting']},
+  klPortDickson:{label:'吉隆坡＋波德申',locations:['kl','portDickson']},
   portDicksonKl:{label:'波德申＋吉隆坡',locations:['portDickson','kl']},
-  klGenting:{label:'吉隆坡＋雲頂高原',locations:['kl','genting']}
+  klGenting:{label:'吉隆坡＋雲頂高原',locations:['kl','genting']},
+  klTaipei:{label:'吉隆坡＋台北',locations:['kl','taipei']}
 };
 
 export function setupWeatherLink(){

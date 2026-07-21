@@ -1,4 +1,4 @@
-const CACHE='gn-malaysia-v4.1.6-poster-layout-fix-20260721';
+const CACHE='gn-malaysia-v4.1.7-poster-grid-weather-20260721';
 const CORE=[
   './',
   './index.html',
