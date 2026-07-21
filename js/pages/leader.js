@@ -34,17 +34,22 @@ function posterMiddleLine(ctx,text,x,y,maxWidth,maxSize=53,minSize=25,color='#14
 }
 function drawPoster(){const canvas=document.querySelector('#announcementPoster'),v=posterValues();if(!canvas||!v)return;const ctx=canvas.getContext('2d'),bilingual=v.posterMode==='bilingual';ctx.clearRect(0,0,1086,1448);if(posterBackground.complete&&posterBackground.naturalWidth)ctx.drawImage(posterBackground,0,0,1086,1448);else{ctx.fillStyle='#fffaf0';ctx.fillRect(0,0,1086,1448);posterBackground.onload=drawPoster}ctx.textBaseline='top';ctx.fillStyle='#09255f';ctx.textAlign='center';posterLine(ctx,v.titleZh||'明日提醒事項',543,54,650,bilingual?54:68,38,'#09255f');if(bilingual)posterLine(ctx,v.titleVi||'Nhắc nhở cho ngày mai',543,119,650,23,16,'#42506a');
  ctx.textAlign='left';ctx.fillStyle='#0a285c';ctx.font='900 38px "Noto Sans TC App",sans-serif';ctx.fillText('行李相關',132,249);
- // The two luggage rows are aligned to the visual centres of the two red pins.
- posterMiddleLine(ctx,`明天 ${posterTime(v.luggageTime)} 前放置行李`,132,bilingual?349:365,555,bilingual?48:58,36,'#d32f2f');
+ // Centre both luggage rows in the copy area while locking their vertical
+ // centres to the two red location pins in the fixed artwork.
+ ctx.textAlign='center';
+ posterMiddleLine(ctx,`明天 ${posterTime(v.luggageTime)} 前放置行李`,405,bilingual?361:377,535,bilingual?46:56,34,'#d32f2f');
  ctx.strokeStyle='rgba(207,151,45,.42)';ctx.lineWidth=2;ctx.setLineDash([12,10]);ctx.beginPath();ctx.moveTo(132,417);ctx.lineTo(625,417);ctx.stroke();ctx.setLineDash([]);
- posterMiddleLine(ctx,`行李放置區：${v.luggageFloor||'—'}`,132,bilingual?475:487,555,bilingual?42:50,32,'#142d55');
- if(bilingual){posterMiddleLine(ctx,`Hành lý trước ${posterTime(v.luggageTime)}`,132,389,555,21,16,'#596274');posterMiddleLine(ctx,`Nơi đặt: ${v.luggageFloor||'—'}`,132,518,555,19,15,'#596274')}
+ posterMiddleLine(ctx,`行李放置區：${v.luggageFloor||'—'}`,405,bilingual?484:500,535,bilingual?41:49,31,'#142d55');
+ if(bilingual){posterMiddleLine(ctx,`Hành lý trước ${posterTime(v.luggageTime)}`,405,399,535,21,16,'#596274');posterMiddleLine(ctx,`Nơi đặt: ${v.luggageFloor||'—'}`,405,524,535,19,15,'#596274')}
  ctx.textAlign='center';posterLine(ctx,'Morning Call 起床號',520,656,520,58,42,'#123b32');ctx.strokeStyle='rgba(31,112,78,.48)';ctx.lineWidth=3;ctx.setLineDash([10,9]);ctx.beginPath();ctx.moveTo(430,723);ctx.lineTo(610,723);ctx.stroke();ctx.setLineDash([]);posterLine(ctx,posterTime(v.wakeTime),520,744,410,bilingual?78:94,56,'#08752b');if(bilingual)posterLine(ctx,`Giờ thức dậy ${posterTime(v.wakeTime)}`,520,835,470,22,16,'#4d645a');
  const weatherItems=Array.isArray(v.weatherItems)&&v.weatherItems.length?v.weatherItems.slice(0,2):[];ctx.textAlign='left';posterLine(ctx,'明日天氣',214,908,410,40,28,'#09255f');if(weatherItems.length===2){ctx.strokeStyle='rgba(32,116,179,.38)';ctx.lineWidth=2;ctx.setLineDash([8,8]);ctx.beginPath();ctx.moveTo(525,965);ctx.lineTo(525,1085);ctx.stroke();ctx.setLineDash([]);weatherItems.forEach((item,index)=>{const x=index?730:320;ctx.textAlign='center';posterLine(ctx,item.location,x,972,310,34,24,'#10589a');posterLine(ctx,item.text,x,1023,310,42,28,'#10459a')})}else{ctx.textAlign='center';const item=weatherItems[0];const text=item?`${item.location}  ${item.text}`:String(v.weather||'—').replace(/・.*$/,'');posterLine(ctx,text,525,1000,650,50,30,'#10459a')}
- ctx.textAlign='left';posterLine(ctx,'雨具、外套及穿著',290,1163,500,38,27,'#142d55');wrap(ctx,v.clothing||'請隨身攜帶雨具及薄外套，預防午後雷陣雨及室內冷氣較涼。',290,1212,470,bilingual?29:34,bilingual?3:3);if(bilingual){ctx.fillStyle='#5c5570';ctx.font='700 17px "Noto Sans TC App",sans-serif';wrap(ctx,'Mang theo ô, áo mưa và áo khoác mỏng để phòng mưa dông buổi chiều và máy lạnh trong nhà.',290,1300,470,22,2)}
+ ctx.textAlign='left';posterLine(ctx,'雨具、外套及穿著',290,1163,500,38,27,'#142d55');
+ ctx.fillStyle='#142d55';ctx.font=`900 ${bilingual?27:31}px "Noto Sans TC App",sans-serif`;
+ wrap(ctx,v.clothing||'請隨身攜帶雨具及薄外套，預防午後雷陣雨及室內冷氣較涼。',290,1213,470,bilingual?32:38,3);
+ if(bilingual){ctx.fillStyle='#5c5570';ctx.font='700 16px "Noto Sans TC App",sans-serif';wrap(ctx,'Mang theo ô, áo mưa và áo khoác mỏng để phòng mưa dông buổi chiều và máy lạnh trong nhà.',290,1311,470,20,2)}
  // Keep the footer centred between the two stars and inside the safe bottom area.
- ctx.textAlign='center';posterMiddleLine(ctx,`集合 ${posterTime(v.meetingTime)}｜${v.footer||'祝大家今晚好好休息，明天準時集合！'}`,543,bilingual?1389:1403,620,bilingual?22:26,18,'#a9322b');
- if(bilingual)posterMiddleLine(ctx,`Tập trung ${posterTime(v.meetingTime)} · Chúc mọi người ngủ ngon!`,543,1420,620,16,13,'#765f32');ctx.textAlign='left'}
+ ctx.textAlign='center';posterMiddleLine(ctx,`集合 ${posterTime(v.meetingTime)}｜${v.footer||'祝大家今晚好好休息，明天準時集合！'}`,543,bilingual?1394:1417,570,bilingual?21:24,17,'#a9322b');
+ if(bilingual)posterMiddleLine(ctx,`Tập trung ${posterTime(v.meetingTime)} · Chúc mọi người ngủ ngon!`,543,1422,570,15,12,'#765f32');ctx.textAlign='left'}
 async function posterBlob(){drawPoster();const canvas=document.querySelector('#announcementPoster');return new Promise(resolve=>canvas.toBlob(resolve,'image/png'))}
 export function leaderPage(route){if(!isLeaderSession())return login();const data=loadLeader();if(route==='leader-announcements')return announcements(data);if(route==='leader-attendance')return attendance(data);if(route==='leader-qr')return qr(data);if(route==='leader-backup')return backup(data);return dashboard(data)}
 export function bindLeader(route,render){
