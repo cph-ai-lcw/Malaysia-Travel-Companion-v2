@@ -58,7 +58,6 @@ export function infoPage() {
         <a class="card quick-card" href="#/checklist"><span class="emoji">🧳</span><b>${bi("打包清單", "Hành lý")}</b></a>
         <a class="card quick-card" href="#/wallet"><span class="emoji">💰</span><b>${bi("記帳", "Chi tiêu")}</b></a>
         <a class="card quick-card" href="#/guide"><span class="emoji">🌺</span><b>${bi("自費・美食購物", "Tự phí · Ăn mua")}</b></a>
-        <a class="card quick-card" href="#/itinerary"><span class="emoji">📅</span><b>${bi("完整行程", "Lịch trình")}</b></a>
       </div>
     </section>
     <section class="section" id="travel-process-guides">

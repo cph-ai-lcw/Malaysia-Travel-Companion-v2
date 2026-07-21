@@ -1,4 +1,4 @@
-const CACHE='gn-malaysia-v4.1.0-milestone-6-4-20260721';
+const CACHE='gn-malaysia-v4.1.1-nav-swipe-20260721';
 const CORE=[
   './',
   './index.html',
