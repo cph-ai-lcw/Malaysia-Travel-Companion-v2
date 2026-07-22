@@ -10,6 +10,7 @@ const hotelGalleries=[
     name:'Lexis Hibiscus Port Dickson',
     zh:'大紅花海上泳池別墅渡假村',
     vi:'Khu nghỉ dưỡng Lexis Hibiscus',
+    info:['./images/hotel-lexis-guide.png','大紅花渡假村住宿須知','Hướng dẫn lưu trú Lexis Hibiscus'],
     photos:[
       ['./images/hotel-lexis-aerial.jpg','大紅花渡假村空拍','Toàn cảnh Lexis Hibiscus từ trên cao'],
       ['./images/hotel-lexis-beach.jpg','Lexis Hibiscus 沙灘區','Khu bãi biển Lexis Hibiscus'],
@@ -21,6 +22,7 @@ const hotelGalleries=[
     name:'Sunway Velocity Hotel Kuala Lumpur',
     zh:'吉隆坡雙威偉樂酒店',
     vi:'Khách sạn Sunway Velocity Kuala Lumpur',
+    info:['./images/hotel-sunway-guide.png','吉隆坡雙威偉樂酒店住宿須知','Hướng dẫn lưu trú Sunway Velocity Hotel'],
     photos:[
       ['./images/hotel-sunway-exterior.jpg','Sunway Velocity 酒店外觀','Bên ngoài khách sạn Sunway Velocity'],
       ['./images/hotel-sunway-pool.jpg','Sunway Velocity 屋頂無邊際泳池','Hồ bơi vô cực trên tầng mái Sunway Velocity'],
@@ -55,7 +57,7 @@ function renderMember(member){
 }
 
 function renderHotelGalleries(){
-  return `<section class="section hotel-gallery-section"><div class="section-head"><div><p class="eyebrow">HOTEL PHOTOS</p><h2>${bi('住宿環境照片','Hình ảnh khách sạn')}</h2></div><small>${bi('左右滑動查看更多','Vuốt ngang để xem thêm')}</small></div><div class="hotel-gallery-list">${hotelGalleries.map(hotel=>`<article class="card hotel-gallery-card"><div class="hotel-gallery-heading"><span>${hotel.icon}</span><div><small>${hotel.name}</small><h3>${bi(hotel.zh,hotel.vi)}</h3></div></div><div class="hotel-photo-strip">${hotel.photos.map(([src,zh,vi])=>`<figure><img src="${src}" alt="${text(zh,vi)}" loading="lazy"><figcaption>${bi(zh,vi)}</figcaption></figure>`).join('')}</div></article>`).join('')}</div></section>`;
+  return `<section class="section hotel-gallery-section"><div class="section-head"><div><p class="eyebrow">HOTEL INFO</p><h2>${bi('飯店資料與住宿環境','Thông tin và hình ảnh khách sạn')}</h2></div><small>${bi('圖卡可點擊放大','Bấm hình để xem lớn')}</small></div><div class="hotel-gallery-list">${hotelGalleries.map(hotel=>{const [infoSrc,infoZh,infoVi]=hotel.info;const infoTitle=bi(infoZh,infoVi);return `<article class="card hotel-gallery-card"><div class="hotel-gallery-heading"><span>${hotel.icon}</span><div><small>${hotel.name}</small><h3>${bi(hotel.zh,hotel.vi)}</h3></div></div><button class="hotel-info-guide" type="button" data-guide-image="${infoSrc}" data-guide-title="${infoTitle}" data-guide-download="${bi('下載／儲存圖片','Tải／lưu ảnh')}" data-guide-close="${bi('關閉圖卡','Đóng hình')}" aria-label="${infoTitle}，${bi('點擊放大查看','Bấm để xem lớn')}"><img src="${infoSrc}" alt="${infoTitle}" loading="lazy"><span><strong>${infoTitle}</strong><small>${bi('點擊放大查看','Bấm để xem lớn')} ↗</small></span></button><div class="hotel-photo-strip">${hotel.photos.map(([src,zh,vi])=>{const title=bi(zh,vi);return `<figure><button type="button" class="hotel-photo-button" data-guide-image="${src}" data-guide-title="${title}" data-guide-download="${bi('下載／儲存圖片','Tải／lưu ảnh')}" data-guide-close="${bi('關閉圖卡','Đóng hình')}" aria-label="${title}，${bi('點擊放大查看','Bấm để xem lớn')}"><img src="${src}" alt="${title}" loading="lazy"></button><figcaption>${title}</figcaption></figure>`}).join('')}</div></article>`}).join('')}</div></section>`;
 }
 
 export function memberPage(){

@@ -1,4 +1,4 @@
-const CACHE='gn-malaysia-v4.2.5-numeric-room-keyboard-20260722';
+const CACHE='gn-malaysia-v4.2.6-hotel-info-guides-20260722';
 const CORE=[
   './',
   './index.html',
@@ -56,6 +56,8 @@ const CORE=[
   './images/hotel-sunway-exterior.jpg',
   './images/hotel-sunway-pool.jpg',
   './images/hotel-sunway-room.jpg',
+  './images/hotel-lexis-guide.png',
+  './images/hotel-sunway-guide.png',
   './images/sight-batu-caves.jpg?v=3.0.3',
   './images/sight-petronas-towers.jpg?v=3.0.3',
   './images/sight-saloma-link.jpg?v=3.0.3',
