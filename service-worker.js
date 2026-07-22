@@ -1,4 +1,4 @@
-const CACHE='gn-malaysia-v4.2.4-secure-leader-mdac-20260721';
+const CACHE='gn-malaysia-v4.2.5-numeric-room-keyboard-20260722';
 const CORE=[
   './',
   './index.html',
