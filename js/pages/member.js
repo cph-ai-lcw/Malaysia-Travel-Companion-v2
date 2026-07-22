@@ -1,8 +1,9 @@
-import {MEMBERS,ROOMS} from '../data.js';
+import {MEMBERS as ALL_MEMBERS,ROOMS} from '../data.js';
 import {storage} from '../storage.js';
 import {bi,text} from '../i18n.js';
 import {roomNumber} from '../leader-store.js';
 
+const MEMBERS=ALL_MEMBERS.filter(member=>member.number!==32);
 const roomMap=new Map(ROOMS.map(room=>[room.id,room]));
 const hotelGalleries=[
   {

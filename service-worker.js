@@ -1,4 +1,4 @@
-const CACHE='gn-malaysia-v4.2.9-full-hotel-guide-20260722';
+const CACHE='gn-malaysia-v4.3.1-31-travelers-20260722';
 const CORE=[
   './',
   './index.html',

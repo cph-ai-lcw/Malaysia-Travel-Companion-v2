@@ -11,8 +11,8 @@ const SESSION_TIMEOUT=30*60*1000;
 const LOCK_TIME=15*60*1000;
 const MAX_FAILURES=5;
 const blankSessions=()=>[1,2,3,4,5].map(day=>({id:`day-${day}`,day,titleZh:`Day ${day} 每日集合`,titleVi:`Tập trung ngày ${day}`,date:`2026-09-${19+day}`,time:'08:00',locationZh:'飯店大廳',locationVi:'Sảnh khách sạn'}));
-const seed=()=>({version:4,settings:{pinConfigured:true,failedAttempts:0,lockedUntil:0},announcements:[],sessions:blankSessions(),attendance:{},mdac:{},roomNumbers:{},updatedAt:new Date().toISOString()});
-export function loadLeader(){const data=storage.get(KEY,null);if(!data||typeof data!=='object')return seed();const settings={pinConfigured:true,failedAttempts:Number(data.settings?.failedAttempts||0),lockedUntil:Number(data.settings?.lockedUntil||0)};return {...seed(),...data,version:4,settings,mdac:{...(data.mdac||{})},roomNumbers:{...(data.roomNumbers||{})}}}
+const seed=()=>({version:5,settings:{pinConfigured:true,failedAttempts:0,lockedUntil:0},announcements:[],sessions:blankSessions(),attendance:{},mdac:{},mealAllowances:{},roomNumbers:{},updatedAt:new Date().toISOString()});
+export function loadLeader(){const data=storage.get(KEY,null);if(!data||typeof data!=='object')return seed();const settings={pinConfigured:true,failedAttempts:Number(data.settings?.failedAttempts||0),lockedUntil:Number(data.settings?.lockedUntil||0)};return {...seed(),...data,version:5,settings,mdac:{...(data.mdac||{})},mealAllowances:{...(data.mealAllowances||{})},roomNumbers:{...(data.roomNumbers||{})}}}
 export function saveLeader(data){data.updatedAt=new Date().toISOString();return storage.set(KEY,data)}
 export function resetLeader(){storage.remove(KEY);return seed()}
 export async function pinHash(pin){const bytes=new TextEncoder().encode(String(pin));const digest=await crypto.subtle.digest('SHA-256',bytes);return [...new Uint8Array(digest)].map(x=>x.toString(16).padStart(2,'0')).join('')}
@@ -31,3 +31,6 @@ export function roomNumber(roomId){return String(loadLeader().roomNumbers?.[room
 export function setRoomNumbers(values){const data=loadLeader();data.roomNumbers=Object.fromEntries(Object.entries(values||{}).map(([id,value])=>[id,String(value||'').trim()]).filter(([,value])=>value));return saveLeader(data)}
 export function mdacStatus(data,memberId){return data.mdac?.[memberId]?.status||'not-started'}
 export function setMdac(memberId,status,note=''){const data=loadLeader();data.mdac??={};data.mdac[memberId]={status,note:String(note||'').trim(),updatedAt:new Date().toISOString()};return saveLeader(data)}
+export function mealAllowanceReceived(data,mealId,memberId){return Boolean(data.mealAllowances?.[mealId]?.[memberId]?.received)}
+export function setMealAllowance(mealId,memberId,received){const data=loadLeader();data.mealAllowances??={};data.mealAllowances[mealId]??={};data.mealAllowances[mealId][memberId]={received:Boolean(received),updatedAt:new Date().toISOString()};return saveLeader(data)}
+export function setAllMealAllowances(mealId,received){const data=loadLeader(),now=new Date().toISOString();data.mealAllowances??={};data.mealAllowances[mealId]={};MEMBERS.filter(member=>member.number!==32).forEach(member=>{data.mealAllowances[mealId][member.id]={received:Boolean(received),updatedAt:now}});return saveLeader(data)}
