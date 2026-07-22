@@ -176,7 +176,7 @@
 }
 .hotel-info-guide {
   display: grid;
-  grid-template-columns: minmax(108px, 30%) 1fr;
+  grid-template-columns: minmax(124px, 42%) 1fr;
   align-items: center;
   gap: 14px;
   width: 100%;
@@ -192,9 +192,9 @@
 }
 .hotel-info-guide img {
   width: 100%;
-  aspect-ratio: 3 / 4;
-  object-fit: cover;
-  object-position: top;
+  height: auto;
+  aspect-ratio: 2 / 3;
+  object-fit: contain;
   border-radius: 12px;
   background: #fff;
 }
