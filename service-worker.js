@@ -1,4 +1,4 @@
-const CACHE='gn-malaysia-v4.2.7-new-app-icon-20260722';
+const CACHE='gn-malaysia-v4.2.8-guoneng-text-icon-20260722';
 const CORE=[
   './',
   './index.html',
