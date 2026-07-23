@@ -1,4 +1,4 @@
-const CACHE='gn-malaysia-v4.4.0-genting-full-poster-20260723';
+const CACHE='gn-malaysia-v4.4.1-genting-shopping-food-20260723';
 const CORE=[
   './',
   './index.html',

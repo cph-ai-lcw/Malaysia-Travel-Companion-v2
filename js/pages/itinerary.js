@@ -25,7 +25,7 @@ function dayTravelGuides(day){
         ?bi('雲頂備案、Outlet、老城與亞羅街圖卡','Hình phương án Genting, Outlet, phố cổ và Jalan Alor')
       :bi('回台前圖卡','Hình hướng dẫn trước khi về Đài Loan');
   const cards=day===4
-    ?`${travelGuideGrid(['gentingBackup'],{compact:true})}<div class="featured-guide"><div class="section-head"><h3>🛍️ ${bi('雲頂 Outlet 完整逛街指南','Hướng dẫn đầy đủ Genting Outlet')}</h3><small>${bi('完整圖卡直接顯示，點擊可放大','Hiển thị toàn bộ hình, bấm để phóng to')}</small></div>${travelGuideCard('gentingOutlet',{poster:true})}</div>${travelGuideGrid(['oldTownFood','oldTownRoute','jalanAlorFood','jalanAlorRoute'],{compact:true})}`
+    ?`${travelGuideGrid(['gentingBackup'],{compact:true})}<div class="featured-guide"><div class="section-head"><h3>🛍️ ${bi('雲頂 Outlet 購物美食推薦','Gợi ý mua sắm và ẩm thực Genting Outlet')}</h3><small>${bi('完整中越圖卡直接顯示，點擊可放大','Hiển thị toàn bộ hình song ngữ, bấm để phóng to')}</small></div>${travelGuideCard('gentingOutlet',{poster:true})}</div>${travelGuideGrid(['oldTownFood','oldTownRoute','jalanAlorFood','jalanAlorRoute'],{compact:true})}`
     :travelGuideGrid(guides,{compact:true});
   return `<div class="day-travel-guides"><div class="section-head"><h3>🖼️ ${title}</h3><small>${bi('點擊圖片可放大','Bấm hình để xem lớn')}</small></div>${cards}</div>`;
 }

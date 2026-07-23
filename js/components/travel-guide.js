@@ -49,9 +49,9 @@ const GUIDE_CARDS=Object.freeze({
   gentingOutlet:{
     image:'./images/guide-day4-genting-outlet.png',
     eyebrowZh:'Day 4 備案購物',eyebrowVi:'Mua sắm dự phòng Day 4',
-    titleZh:'雲頂名牌折扣購物中心逛街指南',titleVi:'Hướng dẫn mua sắm Genting Highlands Premium Outlets',
-    descZh:'比照 Pavilion 圖卡呈現，整理購物分類、自由購物時間、集合方式與山區穿著提醒。',
-    descVi:'Trình bày như thẻ Pavilion, gồm nhóm mua sắm, thời gian tự do, cách tập trung và lưu ý trang phục vùng núi.'
+    titleZh:'雲頂 Premium Outlets 購物美食推薦',titleVi:'Gợi ý mua sắm và ẩm thực tại Genting Premium Outlets',
+    descZh:'中越雙語整理美食、衣鞋、名牌包款、行李用品、伴手禮、建議動線與集合提醒。',
+    descVi:'Hướng dẫn song ngữ về ẩm thực, giày dép, túi hàng hiệu, hành lý, quà tặng, lộ trình và điểm tập trung.'
   },
   jalanAlorFood:{
     image:'./images/guide-jalan-alor-food.png',
