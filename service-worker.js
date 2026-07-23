@@ -1,4 +1,4 @@
-const CACHE='gn-malaysia-v4.3.5-day4-alor-image-fix-20260723';
+const CACHE='gn-malaysia-v4.3.7-full-itinerary-20260723';
 const CORE=[
   './',
   './index.html',
@@ -54,6 +54,8 @@ const CORE=[
   './images/guide-jalan-alor-route.png',
   './images/guide-day4-old-town-food.png',
   './images/guide-day4-old-town-route.png',
+  './images/guide-day4-genting-backup.png',
+  './images/guide-day4-genting-outlet.png',
   './images/guide-return-baggage.webp',
   './images/hotel-lexis-aerial.jpg',
   './images/hotel-lexis-beach.jpg',

@@ -15,14 +15,14 @@ function dayGuides(day){
 }
 
 function dayTravelGuides(day){
-  const guides={1:['boarding','entry'],3:['pavilion','mall'],4:['oldTownFood','oldTownRoute','jalanAlorFood','jalanAlorRoute'],5:['return']}[day]||[];
+  const guides={1:['boarding','entry'],3:['pavilion','mall'],4:['gentingBackup','gentingOutlet','oldTownFood','oldTownRoute','jalanAlorFood','jalanAlorRoute'],5:['return']}[day]||[];
   if(!guides.length)return '';
   const title=day===1
     ?bi('出發與入境圖卡','Hình hướng dẫn khởi hành và nhập cảnh')
     :day===3
       ?bi('Pavilion 與住宿周邊圖卡','Hình Pavilion và khu vực gần khách sạn')
       :day===4
-        ?bi('老城巡禮與亞羅街夜市圖卡','Hình phố cổ và chợ đêm Jalan Alor')
+        ?bi('雲頂備案、Outlet、老城與亞羅街圖卡','Hình phương án Genting, Outlet, phố cổ và Jalan Alor')
       :bi('回台前圖卡','Hình hướng dẫn trước khi về Đài Loan');
   return `<div class="day-travel-guides"><div class="section-head"><h3>🖼️ ${title}</h3><small>${bi('點擊圖片可放大','Bấm hình để xem lớn')}</small></div>${travelGuideGrid(guides,{compact:true})}</div>`;
 }

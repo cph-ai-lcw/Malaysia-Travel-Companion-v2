@@ -1,47 +1,92 @@
 export const ITINERARY = Object.freeze([
- {day:1,date:'2026-09-20',titleZh:'桃園出發・入住大紅花渡假村',titleVi:'Khởi hành từ Đào Viên・Nhận phòng Lexis Hibiscus',hotel:'Lexis Hibiscus Port Dickson',items:[
-  {time:'07:00',zh:'鶯歌大湖路324號集合（送機）',vi:'Tập trung tại số 324 đường Dahu, Yingge'},
-  {time:'07:20',zh:'準時發車前往桃園機場第二航廈',vi:'Khởi hành đến Nhà ga 2 sân bay Đào Viên'},
-  {time:'08:00',zh:'桃園機場星宇航空3號櫃台前集合，辦理登機與行李託運',vi:'Tập trung trước quầy số 3 STARLUX, làm thủ tục và ký gửi hành lý'},
-  {time:'11:15',zh:'搭乘 JX725 桃園飛往吉隆坡（16:10 抵達）',vi:'Chuyến JX725 từ Đào Viên đến Kuala Lumpur, đến lúc 16:10'},
-  {time:'抵達後',zh:'前往波德申，享用奶油螃蟹晚餐',vi:'Đến Port Dickson, dùng bữa tối cua sốt bơ'},
-  {time:'晚間',zh:'入住大紅花 Premium Pool Villa',vi:'Nhận phòng Premium Pool Villa'},
-  {time:'晚間',zh:'大紅花 SKY BAR：每人一杯無酒精飲料',vi:'SKY BAR: mỗi người một ly nước không cồn',included:true}
+ {day:1,date:'2026-09-20',titleZh:'台灣出發・入住大紅花渡假村',titleVi:'Khởi hành từ Đài Loan・Nhận phòng Lexis Hibiscus',hotel:'Lexis Hibiscus Port Dickson',items:[
+  {time:'07:00',zh:'公司集合、點名、行李確認',vi:'Tập trung tại công ty, điểm danh và kiểm tra hành lý'},
+  {time:'07:20',zh:'遊覽車準時發車',vi:'Xe du lịch khởi hành đúng giờ'},
+  {time:'08:20–08:30',zh:'抵達桃園國際機場第二航廈',vi:'Đến Nhà ga 2 sân bay quốc tế Đào Viên'},
+  {time:'08:30–10:15',zh:'團體報到、行李托運、出境審查',vi:'Làm thủ tục đoàn, ký gửi hành lý và xuất cảnh'},
+  {time:'10:15',zh:'登機門集合',vi:'Tập trung tại cửa lên máy bay'},
+  {time:'11:15',zh:'星宇航空 JX725 起飛',vi:'Chuyến STARLUX JX725 cất cánh'},
+  {time:'16:10',zh:'抵達吉隆坡國際機場',vi:'Đến sân bay quốc tế Kuala Lumpur'},
+  {time:'16:10–17:45',zh:'入境審查、領取行李、集合上車',vi:'Nhập cảnh, nhận hành lý và tập trung lên xe'},
+  {time:'17:45–19:00',zh:'前往波德申晚餐餐廳',vi:'Đi đến nhà hàng tại Port Dickson'},
+  {time:'19:00–20:10',zh:'奶油螃蟹晚餐',vi:'Bữa tối cua sốt bơ',included:true},
+  {time:'20:10–20:40',zh:'前往 Lexis Hibiscus',vi:'Đi đến Lexis Hibiscus'},
+  {time:'20:40–21:20',zh:'辦理入住、領取房卡及行李',vi:'Nhận phòng, thẻ phòng và hành lý'},
+  {time:'21:20後',zh:'返回房間休息、自由活動；本日不安排 Sky Bar',vi:'Về phòng nghỉ ngơi, tự do; hôm nay không sắp xếp Sky Bar'}
  ],meals:[
   {zh:'機上餐食',vi:'Suất ăn trên máy bay'},
   {zh:'奶油螃蟹晚餐',vi:'Bữa tối cua sốt bơ'}
  ]},
- {day:2,date:'2026-09-21',titleZh:'大紅花渡假村自由活動',titleVi:'Tự do tại Lexis Hibiscus',hotel:'Lexis Hibiscus Port Dickson',items:[
-  {time:'上午',zh:'渡假村自由活動、私人泳池、海景拍照',vi:'Tự do nghỉ dưỡng, hồ bơi riêng và chụp ảnh'},
-  {time:'中午',zh:'餐費代金 RM30',vi:'Phiếu ăn trưa RM30',included:true},
-  {time:'下午',zh:'自由參加水上／陸上自費活動',vi:'Tự chọn hoạt động trên biển / trên đất liền',optional:true},
-  {time:'晚間',zh:'渡假村自助晚餐 RM100',vi:'Tiệc buffet tối tại resort RM100',included:true}
+ {day:2,date:'2026-09-21',titleZh:'大紅花渡假村自由活動・Sky Bar',titleVi:'Tự do tại Lexis Hibiscus・Sky Bar',hotel:'Lexis Hibiscus Port Dickson',items:[
+  {time:'07:00–10:30',zh:'飯店早餐，自由前往',vi:'Tự do dùng bữa sáng tại khách sạn'},
+  {time:'上午',zh:'渡假村拍照、游泳、水上活動或自由休息',vi:'Chụp ảnh, bơi lội, hoạt động dưới nước hoặc nghỉ ngơi'},
+  {time:'中午',zh:'發放 RM30 餐券，自由用餐',vi:'Phát phiếu ăn RM30, tự do dùng bữa',included:true},
+  {time:'下午',zh:'SPA、自費活動、飯店設施或返回房間休息',vi:'SPA, hoạt động tự phí, tiện ích khách sạn hoặc nghỉ tại phòng',optional:true},
+  {time:'17:15前',zh:'參加水上活動者建議結束活動',vi:'Người tham gia hoạt động dưới nước nên kết thúc trước giờ này'},
+  {time:'17:50',zh:'晚餐指定地點集合、點名',vi:'Tập trung và điểm danh tại địa điểm ăn tối'},
+  {time:'18:00–19:30',zh:'飯店自助晚餐 RM100',vi:'Tiệc buffet tối RM100 tại khách sạn',included:true},
+  {time:'19:30–19:55',zh:'返回房間整理，準備前往 Sky Bar',vi:'Về phòng chuẩn bị đi Sky Bar'},
+  {time:'20:00',zh:'Sky Bar 指定地點集合',vi:'Tập trung tại địa điểm quy định để đi Sky Bar'},
+  {time:'20:00–20:50',zh:'Sky Bar 無酒精飲料、欣賞夜景及拍照',vi:'Thưởng thức nước không cồn, ngắm cảnh đêm và chụp ảnh tại Sky Bar',included:true},
+  {time:'20:50後',zh:'返回房間，自由活動；若遇雨或場地調整，以領隊及飯店通知為準',vi:'Về phòng và tự do; nếu mưa hoặc địa điểm thay đổi, theo thông báo của trưởng đoàn và khách sạn'}
  ],meals:[
   {zh:'飯店早餐',vi:'Bữa sáng tại khách sạn'},
   {zh:'中餐代金 RM30',vi:'Phiếu ăn trưa RM30'},
   {zh:'渡假村自助晚餐 RM100',vi:'Tiệc buffet tối tại resort RM100'}
  ]},
- {day:3,date:'2026-09-22',titleZh:'波德申・吉隆坡城市探索',titleVi:'Port Dickson・Khám phá Kuala Lumpur',hotel:'Sunway Velocity Hotel Kuala Lumpur',items:[
-  {time:'上午',zh:'波德申退房，前往吉隆坡',vi:'Trả phòng Port Dickson, đi Kuala Lumpur'},
-  {time:'中午',zh:'肉骨茶風味餐',vi:'Bữa trưa Bak Kut Teh',included:true},
-  {time:'下午',zh:'天際線斜坡滑車 Skyline Luge（1 次）',vi:'Trải nghiệm Skyline Luge (1 lượt)'},
-  {time:'下午',zh:'巧克力專賣店',vi:'Cửa hàng sô-cô-la'},
-  {time:'下午',zh:'雙子星塔、全冷氣空橋、Pavilion',vi:'Tháp đôi, cầu đi bộ có máy lạnh, Pavilion'},
-  {time:'晚間',zh:'Pavilion（巴比倫）購物中心自由逛街、晚餐自理（餐費 RM30）',vi:'Tự do mua sắm và dùng bữa tối tại Pavilion (phụ cấp RM30)',included:true},
-  {time:'夜間',zh:'莎羅馬天橋 Saloma Link',vi:'Cầu Saloma Link về đêm'}
+ {day:3,date:'2026-09-22',titleZh:'斜坡滑車・吉隆坡城市探索',titleVi:'Skyline Luge・Khám phá Kuala Lumpur',hotel:'Sunway Velocity Hotel Kuala Lumpur',items:[
+  {time:'06:30–07:20',zh:'飯店早餐',vi:'Bữa sáng tại khách sạn'},
+  {time:'07:30',zh:'大廳集合、退房、房卡回收、行李上車',vi:'Tập trung tại sảnh, trả phòng, thu thẻ phòng và đưa hành lý lên xe'},
+  {time:'07:50',zh:'準時出發',vi:'Khởi hành đúng giờ'},
+  {time:'07:50–10:00',zh:'前往 Skyline Luge，包含塞車緩衝',vi:'Đi Skyline Luge, đã dự phòng thời gian kẹt xe'},
+  {time:'10:00–11:30',zh:'天際線斜坡滑車，團體搭乘 1 次',vi:'Trải nghiệm Skyline Luge 1 lượt theo đoàn'},
+  {time:'11:30–12:20',zh:'前往午餐餐廳',vi:'Đi đến nhà hàng ăn trưa'},
+  {time:'12:20–13:30',zh:'肉骨茶＋麵包雞午餐',vi:'Bữa trưa Bak Kut Teh và gà bánh mì',included:true},
+  {time:'13:30–14:00',zh:'前往巧克力專賣店',vi:'Đi đến cửa hàng sô-cô-la'},
+  {time:'14:00–14:30',zh:'巧克力特產巡禮',vi:'Tham quan và mua đặc sản sô-cô-la'},
+  {time:'14:30–15:00',zh:'前往雙子星塔',vi:'Đi đến Tháp đôi Petronas'},
+  {time:'15:00–15:40',zh:'雙子星塔外觀、團體合照',vi:'Chụp ảnh bên ngoài Tháp đôi và ảnh đoàn'},
+  {time:'15:40–16:10',zh:'經 KLCC 全冷氣空橋前往 Pavilion',vi:'Đi qua cầu có máy lạnh KLCC đến Pavilion'},
+  {time:'16:10–18:20',zh:'Pavilion 自由購物＋晚餐自理，發放 RM30',vi:'Tự do mua sắm và dùng bữa tối tại Pavilion, phát RM30',included:true},
+  {time:'18:20',zh:'Pavilion 指定地點集合',vi:'Tập trung tại địa điểm quy định ở Pavilion'},
+  {time:'18:20–18:50',zh:'前往莎羅馬行人天橋',vi:'Đi đến cầu đi bộ Saloma Link'},
+  {time:'18:50–19:30',zh:'莎羅馬行人天橋夜景、拍照',vi:'Ngắm cảnh đêm và chụp ảnh tại Saloma Link'},
+  {time:'19:30–20:10',zh:'前往 Sunway Velocity Hotel',vi:'Đi đến Sunway Velocity Hotel'},
+  {time:'20:10–20:35',zh:'飯店入住、領取行李及房卡',vi:'Nhận phòng, hành lý và thẻ phòng'},
+  {time:'20:35–22:00',zh:'自由前往飯店旁 Sunway Velocity Mall',vi:'Tự do đi Sunway Velocity Mall cạnh khách sạn'},
+  {time:'22:00前',zh:'建議返回飯店休息',vi:'Nên trở về khách sạn nghỉ ngơi trước 22:00'}
  ],meals:[
   {zh:'飯店早餐',vi:'Bữa sáng tại khách sạn'},
-  {zh:'肉骨茶風味餐',vi:'Bữa trưa Bak Kut Teh'},
-  {zh:'Pavilion 晚餐自理（餐費 RM30）',vi:'Tự túc bữa tối tại Pavilion (phụ cấp RM30)'}
+  {zh:'肉骨茶＋麵包雞午餐',vi:'Bữa trưa Bak Kut Teh và gà bánh mì'},
+  {zh:'Pavilion 晚餐自理（發放 RM30）',vi:'Tự túc bữa tối tại Pavilion (phát RM30)'}
  ]},
- {day:4,date:'2026-09-23',titleZh:'黑風洞・雲頂・老城・亞羅街',titleVi:'Động Batu・Genting・Phố cổ・Jalan Alor',hotel:'Sunway Velocity Hotel Kuala Lumpur',items:[
-  {time:'上午',zh:'南洋土產店',vi:'Cửa hàng đặc sản Malaysia'},
-  {time:'上午',zh:'黑風洞與彩虹階梯',vi:'Động Batu và cầu thang cầu vồng'},
-  {time:'中午',zh:'虹姊鐵板海鮮',vi:'Hải sản bàn sắt Chị Hồng',included:true},
-  {time:'下午',zh:'雲頂纜車',vi:'Cáp treo Genting'},
-  {time:'下午茶',zh:'源昌隆咖啡店：海南茶＋咖椰吐司＋生熟蛋',vi:'Kafei Dian: trà Hải Nam, bánh mì kaya và trứng lòng đào',included:true},
-  {time:'下午',zh:'吉隆坡老城漫步',vi:'Dạo phố cổ Kuala Lumpur'},
-  {time:'晚間',zh:'亞羅街夜市・黃亞華小吃',vi:'Chợ đêm Jalan Alor・Wong Ah Wah',included:true}
+ {day:4,date:'2026-09-23',titleZh:'雲頂・黑風洞・老城・亞羅街',titleVi:'Genting・Động Batu・Phố cổ・Jalan Alor',hotel:'Sunway Velocity Hotel Kuala Lumpur',items:[
+  {time:'06:15–06:55',zh:'飯店早餐',vi:'Bữa sáng tại khách sạn'},
+  {time:'07:00',zh:'飯店大廳集合',vi:'Tập trung tại sảnh khách sạn'},
+  {time:'07:15',zh:'準時出發',vi:'Khởi hành đúng giờ'},
+  {time:'07:15–08:35',zh:'前往 Awana SkyCentral',vi:'Đi đến Awana SkyCentral'},
+  {time:'08:35–09:00',zh:'洗手間、整隊、纜車票整理',vi:'Đi vệ sinh, tập hợp đoàn và chuẩn bị vé cáp treo'},
+  {time:'09:00–09:20',zh:'搭乘 Awana SkyWay 上山',vi:'Đi cáp treo Awana SkyWay lên núi'},
+  {time:'09:20–10:25',zh:'雲頂高原自由拍照、簡單逛街',vi:'Tự do chụp ảnh và tham quan ngắn tại Genting'},
+  {time:'10:25',zh:'纜車站集合',vi:'Tập trung tại ga cáp treo'},
+  {time:'10:35–10:55',zh:'搭乘纜車下山',vi:'Đi cáp treo xuống núi'},
+  {time:'11:05–12:05',zh:'前往黑風洞',vi:'Đi đến Động Batu'},
+  {time:'12:05–12:50',zh:'黑風洞外觀、彩虹階梯拍照',vi:'Chụp ảnh bên ngoài Động Batu và cầu thang cầu vồng'},
+  {time:'12:50–13:20',zh:'前往午餐餐廳',vi:'Đi đến nhà hàng ăn trưa'},
+  {time:'13:20–14:20',zh:'虹姊鐵板海鮮午餐',vi:'Bữa trưa hải sản bàn sắt Chị Hồng',included:true},
+  {time:'14:20–14:45',zh:'前往土產店',vi:'Đi đến cửa hàng đặc sản'},
+  {time:'14:45–15:15',zh:'土產巡禮',vi:'Tham quan và mua đặc sản'},
+  {time:'15:15–15:35',zh:'前往源昌隆咖啡店',vi:'Đi đến quán cà phê Kafei Dian'},
+  {time:'15:35–16:20',zh:'大馬下午茶',vi:'Thưởng thức trà chiều Malaysia',included:true},
+  {time:'16:20–18:00',zh:'老城巡禮：鬼仔巷、茨廠街、中央藝術坊',vi:'Dạo phố cổ: Kwai Chai Hong, Petaling Street và Central Market'},
+  {time:'18:00',zh:'中央藝術坊集合、點名',vi:'Tập trung và điểm danh tại Central Market'},
+  {time:'18:00–18:30',zh:'前往亞羅街',vi:'Đi đến Jalan Alor'},
+  {time:'18:30–19:40',zh:'黃亞華小吃店晚餐',vi:'Bữa tối tại Wong Ah Wah',included:true},
+  {time:'19:40–21:00',zh:'亞羅街自由逛街、甜點、水果及小吃',vi:'Tự do tham quan Jalan Alor, thưởng thức trái cây, món ngọt và đồ ăn vặt'},
+  {time:'21:00',zh:'指定集合點集合、點名',vi:'Tập trung và điểm danh tại địa điểm quy định'},
+  {time:'21:00–21:30',zh:'返回飯店',vi:'Trở về khách sạn'},
+  {time:'約 21:30',zh:'抵達 Sunway Velocity Hotel',vi:'Đến Sunway Velocity Hotel'},
+  {time:'停駛備案',zh:'纜車若因維修、強風或臨時停駛，不等待復駛；10:00–11:30 改至 Genting Highlands Premium Outlets，11:30 集合後前往黑風洞',vi:'Nếu cáp treo bảo trì, gió mạnh hoặc tạm ngừng, không chờ hoạt động lại; 10:00–11:30 chuyển sang Genting Highlands Premium Outlets, 11:30 tập trung đi Động Batu'}
  ],meals:[
   {zh:'飯店早餐',vi:'Bữa sáng tại khách sạn'},
   {zh:'虹姊鐵板海鮮',vi:'Hải sản bàn sắt Chị Hồng'},
@@ -49,15 +94,29 @@ export const ITINERARY = Object.freeze([
   {zh:'黃亞華晚餐',vi:'Bữa tối Wong Ah Wah'}
  ]},
  {day:5,date:'2026-09-24',titleZh:'布城・三井 Outlet・返回台灣',titleVi:'Putrajaya・Mitsui Outlet・Trở về Đài Loan',hotel:'溫暖的家',items:[
-  {time:'上午',zh:'布城、粉紅清真寺、布城湖、首相署與首相府',vi:'Putrajaya, thánh đường Hồng, hồ Putrajaya và Phủ Thủ tướng'},
-  {time:'中午',zh:'中式合菜',vi:'Bữa trưa món Hoa',included:true},
-  {time:'下午',zh:'三井 Outlet 自由購物',vi:'Tự do mua sắm tại Mitsui Outlet'},
-  {time:'17:20',zh:'搭乘 JX726 吉隆坡返回桃園（22:15 抵達）',vi:'Chuyến JX726 từ Kuala Lumpur về Đào Viên, đến lúc 22:15'},
-  {time:'23:15',zh:'桃園機場接機集合',vi:'Tập trung lên xe đón tại sân bay Đào Viên'},
-  {time:'23:30',zh:'發車返回鶯歌區中湖里大湖路324號',vi:'Khởi hành về số 324 đường Dahu, khu Zhonghu, Yingge'}
+  {time:'06:30–07:20',zh:'飯店早餐',vi:'Bữa sáng tại khách sạn'},
+  {time:'07:30',zh:'大廳集合、退房、行李上車',vi:'Tập trung tại sảnh, trả phòng và đưa hành lý lên xe'},
+  {time:'07:50',zh:'準時出發',vi:'Khởi hành đúng giờ'},
+  {time:'07:50–08:40',zh:'前往布城',vi:'Đi đến Putrajaya'},
+  {time:'08:40–09:10',zh:'首相署、首相府廣場外觀拍照',vi:'Chụp ảnh bên ngoài Phủ Thủ tướng và quảng trường'},
+  {time:'09:10–09:45',zh:'粉紅清真寺外觀、布城湖及團體合照；不強制入內',vi:'Chụp ảnh bên ngoài Thánh đường Hồng, hồ Putrajaya và ảnh đoàn; không bắt buộc vào bên trong'},
+  {time:'09:45–10:15',zh:'布城市區車覽',vi:'Tham quan Putrajaya bằng xe'},
+  {time:'10:15–10:35',zh:'前往午餐餐廳',vi:'Đi đến nhà hàng ăn trưa'},
+  {time:'10:35–11:35',zh:'隆盛中式合菜',vi:'Bữa trưa món Hoa tại Long Sheng',included:true},
+  {time:'11:35–12:00',zh:'前往三井 Outlet',vi:'Đi đến Mitsui Outlet'},
+  {time:'12:00–13:45',zh:'三井 Outlet 自由購物',vi:'Tự do mua sắm tại Mitsui Outlet'},
+  {time:'13:45',zh:'指定地點集合、點名',vi:'Tập trung và điểm danh tại địa điểm quy định'},
+  {time:'14:00',zh:'準時離開三井 Outlet',vi:'Rời Mitsui Outlet đúng giờ'},
+  {time:'14:10–14:20',zh:'抵達吉隆坡國際機場',vi:'Đến sân bay quốc tế Kuala Lumpur'},
+  {time:'14:20–16:20',zh:'團體報到、行李托運、退稅、出境審查',vi:'Làm thủ tục đoàn, ký gửi hành lý, hoàn thuế và xuất cảnh'},
+  {time:'16:20',zh:'登機門前最後集合',vi:'Tập trung lần cuối trước cửa lên máy bay'},
+  {time:'17:20',zh:'星宇航空 JX726 起飛',vi:'Chuyến STARLUX JX726 cất cánh'},
+  {time:'22:15',zh:'抵達桃園國際機場',vi:'Đến sân bay quốc tế Đào Viên'},
+  {time:'23:15',zh:'接送集合點集合',vi:'Tập trung tại điểm đón xe'},
+  {time:'23:30',zh:'遊覽車發車返回公司',vi:'Xe du lịch khởi hành về công ty'}
  ],meals:[
   {zh:'飯店早餐',vi:'Bữa sáng tại khách sạn'},
-  {zh:'中式合菜',vi:'Bữa trưa món Hoa'},
+  {zh:'隆盛中式合菜',vi:'Bữa trưa món Hoa tại Long Sheng'},
   {zh:'機上餐食',vi:'Suất ăn trên máy bay'}
  ]}
 ]);
