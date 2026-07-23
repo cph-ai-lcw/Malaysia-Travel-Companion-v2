@@ -1,4 +1,4 @@
-const CACHE='gn-malaysia-v4.3.7-full-itinerary-20260723';
+const CACHE='gn-malaysia-v4.3.8-breakfast-airport-20260723';
 const CORE=[
   './',
   './index.html',

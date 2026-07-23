@@ -1,5 +1,13 @@
 export const NOTICES = Object.freeze([
   {
+    date: '2026-07-23',
+    icon: '🍳',
+    titleZh: '雙威早餐改至商場 5 樓',
+    titleVi: 'Bữa sáng Sunway chuyển lên tầng 5 trung tâm thương mại',
+    bodyZh: '原早餐餐廳維修延長至 9/30。9/23、9/24 團體早餐自 06:30 起，改至商場 5 樓 V-Office Function Room 享用自助早餐，現場會有指示告知。',
+    bodyVi: 'Nhà hàng ăn sáng cũ sửa chữa đến 30/9. Ngày 23–24/9, bữa sáng buffet của đoàn bắt đầu lúc 06:30 tại phòng V-Office Function, tầng 5 của trung tâm thương mại; tại chỗ sẽ có biển chỉ dẫn.'
+  },
+  {
     date: '2026-07-20',
     icon: '💵',
     titleZh: '入境備用財力至少 NTD 15,000',

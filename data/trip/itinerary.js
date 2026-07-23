@@ -2,8 +2,8 @@ export const ITINERARY = Object.freeze([
  {day:1,date:'2026-09-20',titleZh:'台灣出發・入住大紅花渡假村',titleVi:'Khởi hành từ Đài Loan・Nhận phòng Lexis Hibiscus',hotel:'Lexis Hibiscus Port Dickson',items:[
   {time:'07:00',zh:'公司集合、點名、行李確認',vi:'Tập trung tại công ty, điểm danh và kiểm tra hành lý'},
   {time:'07:20',zh:'遊覽車準時發車',vi:'Xe du lịch khởi hành đúng giờ'},
-  {time:'08:20–08:30',zh:'抵達桃園國際機場第二航廈',vi:'Đến Nhà ga 2 sân bay quốc tế Đào Viên'},
-  {time:'08:30–10:15',zh:'團體報到、行李托運、出境審查',vi:'Làm thủ tục đoàn, ký gửi hành lý và xuất cảnh'},
+  {time:'08:00',zh:'抵達桃園國際機場第二航廈，星宇航空 3 號櫃檯前集合',vi:'Đến Nhà ga 2 sân bay Đào Viên, tập trung trước quầy số 3 STARLUX'},
+  {time:'08:00–10:15',zh:'領隊交接、團體報到、行李托運及出境審查',vi:'Bàn giao với trưởng đoàn, làm thủ tục đoàn, ký gửi hành lý và xuất cảnh'},
   {time:'10:15',zh:'登機門集合',vi:'Tập trung tại cửa lên máy bay'},
   {time:'11:15',zh:'星宇航空 JX725 起飛',vi:'Chuyến STARLUX JX725 cất cánh'},
   {time:'16:10',zh:'抵達吉隆坡國際機場',vi:'Đến sân bay quốc tế Kuala Lumpur'},
@@ -35,8 +35,8 @@ export const ITINERARY = Object.freeze([
   {zh:'渡假村自助晚餐 RM100',vi:'Tiệc buffet tối tại resort RM100'}
  ]},
  {day:3,date:'2026-09-22',titleZh:'斜坡滑車・吉隆坡城市探索',titleVi:'Skyline Luge・Khám phá Kuala Lumpur',hotel:'Sunway Velocity Hotel Kuala Lumpur',items:[
-  {time:'06:30–07:20',zh:'飯店早餐',vi:'Bữa sáng tại khách sạn'},
-  {time:'07:30',zh:'大廳集合、退房、房卡回收、行李上車',vi:'Tập trung tại sảnh, trả phòng, thu thẻ phòng và đưa hành lý lên xe'},
+  {time:'07:00–07:30',zh:'大紅花渡假村早餐',vi:'Bữa sáng tại Lexis Hibiscus'},
+  {time:'07:40',zh:'大廳集合、退房、房卡回收、行李上車',vi:'Tập trung tại sảnh, trả phòng, thu thẻ phòng và đưa hành lý lên xe'},
   {time:'07:50',zh:'準時出發',vi:'Khởi hành đúng giờ'},
   {time:'07:50–10:00',zh:'前往 Skyline Luge，包含塞車緩衝',vi:'Đi Skyline Luge, đã dự phòng thời gian kẹt xe'},
   {time:'10:00–11:30',zh:'天際線斜坡滑車，團體搭乘 1 次',vi:'Trải nghiệm Skyline Luge 1 lượt theo đoàn'},
@@ -61,7 +61,7 @@ export const ITINERARY = Object.freeze([
   {zh:'Pavilion 晚餐自理（發放 RM30）',vi:'Tự túc bữa tối tại Pavilion (phát RM30)'}
  ]},
  {day:4,date:'2026-09-23',titleZh:'雲頂・黑風洞・老城・亞羅街',titleVi:'Genting・Động Batu・Phố cổ・Jalan Alor',hotel:'Sunway Velocity Hotel Kuala Lumpur',items:[
-  {time:'06:15–06:55',zh:'飯店早餐',vi:'Bữa sáng tại khách sạn'},
+  {time:'06:30–06:55',zh:'雙威早餐：前往商場 5 樓 V-Office Function Room 享用自助餐；現場會有指示（原餐廳維修至 9/30）',vi:'Bữa sáng buffet Sunway tại phòng V-Office Function, tầng 5 của trung tâm thương mại; sẽ có biển chỉ dẫn (nhà hàng cũ sửa chữa đến 30/9)'},
   {time:'07:00',zh:'飯店大廳集合',vi:'Tập trung tại sảnh khách sạn'},
   {time:'07:15',zh:'準時出發',vi:'Khởi hành đúng giờ'},
   {time:'07:15–08:35',zh:'前往 Awana SkyCentral',vi:'Đi đến Awana SkyCentral'},
@@ -94,7 +94,7 @@ export const ITINERARY = Object.freeze([
   {zh:'黃亞華晚餐',vi:'Bữa tối Wong Ah Wah'}
  ]},
  {day:5,date:'2026-09-24',titleZh:'布城・三井 Outlet・返回台灣',titleVi:'Putrajaya・Mitsui Outlet・Trở về Đài Loan',hotel:'溫暖的家',items:[
-  {time:'06:30–07:20',zh:'飯店早餐',vi:'Bữa sáng tại khách sạn'},
+  {time:'06:30–07:20',zh:'雙威早餐：前往商場 5 樓 V-Office Function Room 享用自助餐；現場會有指示（原餐廳維修至 9/30）',vi:'Bữa sáng buffet Sunway tại phòng V-Office Function, tầng 5 của trung tâm thương mại; sẽ có biển chỉ dẫn (nhà hàng cũ sửa chữa đến 30/9)'},
   {time:'07:30',zh:'大廳集合、退房、行李上車',vi:'Tập trung tại sảnh, trả phòng và đưa hành lý lên xe'},
   {time:'07:50',zh:'準時出發',vi:'Khởi hành đúng giờ'},
   {time:'07:50–08:40',zh:'前往布城',vi:'Đi đến Putrajaya'},
