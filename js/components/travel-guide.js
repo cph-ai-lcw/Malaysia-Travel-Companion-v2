@@ -31,6 +31,27 @@ const GUIDE_CARDS=Object.freeze({
     descZh:'美食、服飾、Fipper、Padini、HOOGA、Beryl’s 與伴手禮樓層整理。',
     descVi:'Gợi ý ẩm thực, quần áo, Fipper, Padini, HOOGA, Beryl’s và quà lưu niệm.'
   },
+  pavilion:{
+    image:'./images/guide-pavilion-shopping.png',
+    eyebrowZh:'Day 3 自由逛街',eyebrowVi:'Tự do mua sắm Day 3',
+    titleZh:'Pavilion 必買指南',titleVi:'Cẩm nang mua sắm Pavilion',
+    descZh:'中越文對照整理伴手禮、Fipper、錫器、鞋包服飾與建議購物順序。',
+    descVi:'Hướng dẫn song ngữ về quà lưu niệm, Fipper, đồ thiếc, giày dép, thời trang và thứ tự mua sắm.'
+  },
+  oldTownFood:{
+    image:'./images/guide-day4-old-town-food.png',
+    eyebrowZh:'Day 4 老城散步',eyebrowVi:'Dạo phố cổ Day 4',
+    titleZh:'老城美食購物指南',titleVi:'Cẩm nang ẩm thực và mua sắm phố cổ',
+    descZh:'從源昌隆下午茶出發，整理鬼仔巷、茨廠街與中央藝術坊沿途美食及伴手禮。',
+    descVi:'Xuất phát sau trà chiều tại Kafei Dian, khám phá món ăn và quà lưu niệm dọc Kwai Chai Hong, Petaling Street và Central Market.'
+  },
+  oldTownRoute:{
+    image:'./images/guide-day4-old-town-route.png',
+    eyebrowZh:'Day 4 步行指示',eyebrowVi:'Chỉ dẫn đi bộ Day 4',
+    titleZh:'源昌隆至中央藝術坊路線圖',titleVi:'Bản đồ từ Kafei Dian đến Central Market',
+    descZh:'源昌隆 → 鬼仔巷 → 茨廠街 → 中央藝術坊，附街道方向、步行時間與集合提醒。',
+    descVi:'Kafei Dian → Kwai Chai Hong → Petaling Street → Central Market, kèm hướng đi, thời gian và điểm tập trung.'
+  },
   return:{
     image:'./images/guide-return-baggage.webp',
     eyebrowZh:'回台前',eyebrowVi:'Trước khi về Đài Loan',

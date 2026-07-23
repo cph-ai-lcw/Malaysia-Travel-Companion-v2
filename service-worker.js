@@ -1,4 +1,4 @@
-const CACHE='gn-malaysia-v4.3.2-checklist-text-20260723';
+const CACHE='gn-malaysia-v4.3.3-day3-day4-guides-20260723';
 const CORE=[
   './',
   './index.html',
@@ -49,6 +49,9 @@ const CORE=[
   './images/guide-malaysia-entry.webp',
   './images/guide-baggage-safety.webp',
   './images/guide-sunway-mall.webp',
+  './images/guide-pavilion-shopping.png',
+  './images/guide-day4-old-town-food.png',
+  './images/guide-day4-old-town-route.png',
   './images/guide-return-baggage.webp',
   './images/hotel-lexis-aerial.jpg',
   './images/hotel-lexis-beach.jpg',
