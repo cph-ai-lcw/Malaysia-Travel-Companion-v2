@@ -1091,3 +1091,41 @@
 .room-share-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0 9px}
 .room-share-actions button{min-height:56px}
 @media(max-width:680px){.room-share-options{grid-template-columns:1fr}.room-share-actions{grid-template-columns:1fr}.room-share-studio{padding:14px}}
+.guide-app-tabs{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  margin-top:18px;
+  padding:8px;
+  border:1px solid rgba(255,255,255,.75);
+  border-radius:22px;
+  background:rgba(255,255,255,.7);
+  box-shadow:0 12px 30px rgba(35,107,184,.12);
+  backdrop-filter:blur(16px);
+  position:sticky;
+  top:8px;
+  z-index:20;
+}
+.guide-app-tabs button{
+  min-height:64px;
+  padding:9px 6px;
+  border:0;
+  border-radius:16px;
+  background:transparent;
+  color:var(--text);
+  font:inherit;
+  font-size:22px;
+  font-weight:800;
+  cursor:pointer;
+}
+.guide-app-tabs button span{
+  display:block;
+  margin-top:3px;
+  font-size:13px;
+  line-height:1.25;
+}
+.guide-app-tabs button.active{
+  color:#fff;
+  background:linear-gradient(135deg,#236bb8,#2f91cf);
+  box-shadow:0 8px 18px rgba(35,107,184,.28);
+}
