@@ -34,7 +34,7 @@ const groups=[
       ['sunglasses','太陽眼鏡','Kính râm'],
       ['repellent','防蚊液／防蚊貼','Thuốc／miếng dán chống muỗi'],
       ['towel','小毛巾／手帕與濕紙巾','Khăn nhỏ và khăn giấy ướt'],
-      ['bottle','可重複使用水瓶','Bình nước có thể tái sử dụng']
+      ['bottle','水瓶','Bình nước']
     ]
   },
   {
@@ -43,7 +43,7 @@ const groups=[
       ['wash','洗面乳、卸妝與保養品（旅行分裝）','Sữa rửa mặt, tẩy trang và chăm sóc da (chai nhỏ)'],
       ['bath','個人毛巾、沐浴、洗髮用品','Khăn cá nhân, sữa tắm và dầu gội'],
       ['medicine','個人慢性處方藥（原包裝隨身攜帶）','Thuốc kê đơn cá nhân (mang theo bao bì gốc)'],
-      ['travelmed','暈車藥、腫胃藥、止痛藥與退燒藥','Thuốc say xe, đau bụng, giảm đau và hạ sốt'],
+      ['travelmed','暈車藥、腸胃藥、止痛藥與退燒藥','Thuốc say xe, thuốc đường ruột và dạ dày, giảm đau và hạ sốt'],
       ['firstaid','OK 繃、防水貼布、酸痛藥膏','Băng cá nhân, băng chống nước, cao giảm đau'],
       ['sanitizer','乾洗手、口罩與衛生紙','Gel rửa tay, khẩu trang và khăn giấy']
     ]
@@ -63,7 +63,7 @@ const groups=[
       ['tag','行李吊牌與聯絡方式','Thẻ hành lý và thông tin liên lạc'],
       ['lock','TSA 鎖／行李束帶','Khóa TSA／dây đai va li'],
       ['cubes','收納袋／壓縮袋','Túi phân loại／túi nén'],
-      ['bags','大容量購物袋、黑色垃圾袋','Túi mua sắm lớn và túi rác đen'],
+      ['bags','大容量購物袋','Túi mua sắm lớn'],
       ['zipbags','密封袋／氣泡紙（液體與易碎物）','Túi zip／xốp hơi (chất lỏng và đồ dễ vỡ)'],
       ['space','預留至少 1/4 空間放伴手禮','Chừa ít nhất 1/4 chỗ cho quà mang về']
     ]

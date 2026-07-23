@@ -1,4 +1,4 @@
-const CACHE='gn-malaysia-v4.3.1-31-travelers-20260722';
+const CACHE='gn-malaysia-v4.3.2-checklist-text-20260723';
 const CORE=[
   './',
   './index.html',
