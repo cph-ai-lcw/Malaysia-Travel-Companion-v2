@@ -6,6 +6,7 @@ export const LEXIS_ACTIVITIES = Object.freeze([
     titleVi: 'Hoạt động trên nước (khu vui chơi biển)',
     items: [
       {
+        icon: '🍌',
         nameZh: '香蕉船',
         nameVi: 'Thuyền chuối',
         en: 'Banana Boat',
@@ -15,6 +16,7 @@ export const LEXIS_ACTIVITIES = Object.freeze([
         noteVi: 'Cần đủ số người mới khởi hành.'
       },
       {
+        icon: '🏍️',
         nameZh: '水上摩托車',
         nameVi: 'Mô tô nước',
         en: 'Jet Ski',
@@ -24,6 +26,7 @@ export const LEXIS_ACTIVITIES = Object.freeze([
         noteVi: 'Trải nghiệm mạnh, có huấn luyện viên đi cùng.'
       },
       {
+        icon: '🦆',
         nameZh: '大腳鴨雙人水上腳踏車',
         nameVi: 'Thuyền đạp nước hai người',
         en: 'Water Paddle Boat',
@@ -33,6 +36,7 @@ export const LEXIS_ACTIVITIES = Object.freeze([
         noteVi: 'Phù hợp vui chơi nhẹ nhàng trên mặt nước.'
       },
       {
+        icon: '🍩',
         nameZh: '極速飛艇／甜甜圈船',
         nameVi: 'Thuyền phao Donut tốc độ',
         en: 'Bandwagon / Donut Ride',
@@ -42,6 +46,7 @@ export const LEXIS_ACTIVITIES = Object.freeze([
         noteVi: 'Tùy số người và điều kiện biển tại chỗ.'
       },
       {
+        icon: '🛥️',
         nameZh: '海峽觀光遊艇',
         nameVi: 'Du thuyền tham quan eo biển',
         en: 'Boat Cruise',
@@ -59,6 +64,7 @@ export const LEXIS_ACTIVITIES = Object.freeze([
     titleVi: 'Hoạt động giải trí trên bờ',
     items: [
       {
+        icon: '🛴',
         nameZh: '九號平衡車／電動代步車',
         nameVi: 'Xe cân bằng／xe điện Yohoo',
         en: 'Segway / Yohoo Motor',
@@ -68,6 +74,7 @@ export const LEXIS_ACTIVITIES = Object.freeze([
         noteVi: 'Tiện di chuyển quanh khuôn viên rộng và khu cánh hoa.'
       },
       {
+        icon: '🚲',
         nameZh: '雙人／四人協力腳踏車',
         nameVi: 'Xe đạp đôi／bốn người',
         en: 'Bicycle Rental',
@@ -77,6 +84,7 @@ export const LEXIS_ACTIVITIES = Object.freeze([
         noteVi: 'Rất phù hợp chụp ảnh check-in.'
       },
       {
+        icon: '🏹',
         nameZh: '射箭體驗',
         nameVi: 'Trải nghiệm bắn cung',
         en: 'Archery',
@@ -94,6 +102,7 @@ export const LEXIS_ACTIVITIES = Object.freeze([
     titleVi: 'Giải trí trong khách sạn và buổi tối',
     items: [
       {
+        icon: '🍜',
         nameZh: 'Hibiscus Walk 美食街',
         nameVi: 'Phố ẩm thực Hibiscus Walk',
         en: 'Hibiscus Walk',
@@ -103,6 +112,7 @@ export const LEXIS_ACTIVITIES = Object.freeze([
         noteVi: 'Trưa ngày 2 có thể chọn satay, trà kéo, nước dừa và các món Malaysia.'
       },
       {
+        icon: '💆',
         nameZh: 'Lexis Wellness SPA 按摩',
         nameVi: 'Massage Lexis Wellness SPA',
         en: 'Lexis Wellness SPA',

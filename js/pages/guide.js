@@ -3,7 +3,7 @@ import {bi} from '../i18n.js';
 import {travelGuideCard} from '../components/travel-guide.js';
 
 function itemIcon(item){return item.icon||'✨'}
-function activityCard(item){return `<article class="activity-item"><span class="emoji">${item.icon}</span><div><h3>${bi(item.nameZh,item.nameVi)}</h3><p>${bi(item.noteZh,item.noteVi)}</p></div><b>${item.price}</b></article>`}
+function activityCard(item){return `<article class="activity-item"><span class="emoji" aria-hidden="true">${itemIcon(item)}</span><div><h3>${bi(item.nameZh,item.nameVi)}</h3><p>${bi(item.noteZh,item.noteVi)}</p></div><b>${bi(item.price,item.priceVi||item.price)}</b></article>`}
 
 export function guidePage(){
   return `<section class="section"><p class="eyebrow">EAT · SHOP · PLAY</p><h1>${bi('美食・購物・自費活動','Ăn uống · Mua sắm · Vui chơi')}</h1><div class="guide-app-tabs" role="tablist" aria-label="${bi('旅遊攻略分頁','Tab hướng dẫn du lịch')}"><button class="active" type="button" role="tab" aria-selected="true" data-guide-tab="lexis">🌺 <span>${bi('大紅花自費','Tự phí Lexis')}</span></button><button type="button" role="tab" aria-selected="false" data-guide-tab="food">🍜 <span>${bi('必吃美食','Món ngon')}</span></button><button type="button" role="tab" aria-selected="false" data-guide-tab="shopping">🛍️ <span>${bi('購物伴手禮','Mua sắm')}</span></button></div></section>
