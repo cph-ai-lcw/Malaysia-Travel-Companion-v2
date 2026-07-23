@@ -1,4 +1,4 @@
-const CACHE='gn-malaysia-v4.3.3-day3-day4-guides-20260723';
+const CACHE='gn-malaysia-v4.3.4-itinerary-guides-20260723';
 const CORE=[
   './',
   './index.html',
@@ -50,6 +50,8 @@ const CORE=[
   './images/guide-baggage-safety.webp',
   './images/guide-sunway-mall.webp',
   './images/guide-pavilion-shopping.png',
+  './images/guide-jalan-alor-food.png',
+  './images/guide-jalan-alor-route.png',
   './images/guide-day4-old-town-food.png',
   './images/guide-day4-old-town-route.png',
   './images/guide-return-baggage.webp',
