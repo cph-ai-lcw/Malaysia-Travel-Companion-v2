@@ -40,14 +40,14 @@ const GUIDE_CARDS=Object.freeze({
   },
   jalanAlorFood:{
     image:'./images/guide-jalan-alor-food.png',
-    eyebrowZh:'Day 3 晚餐後',eyebrowVi:'Sau bữa tối Day 3',
+    eyebrowZh:'Day 4 晚餐後',eyebrowVi:'Sau bữa tối Day 4',
     titleZh:'亞羅街夜市美食指南',titleVi:'Cẩm nang ẩm thực chợ đêm Jalan Alor',
     descZh:'黃亞華晚餐、飯後夜市小吃、甜點飲品與熱帶水果選擇。',
     descVi:'Bữa tối tại Wong Ah Wah, món ăn đêm, món ngọt, đồ uống và trái cây nhiệt đới.'
   },
   jalanAlorRoute:{
     image:'./images/guide-jalan-alor-route.png',
-    eyebrowZh:'Day 3 散步路線',eyebrowVi:'Lộ trình đi bộ Day 3',
+    eyebrowZh:'Day 4 散步路線',eyebrowVi:'Lộ trình đi bộ Day 4',
     titleZh:'亞羅街晚餐後散步路線',titleVi:'Lộ trình dạo Jalan Alor sau bữa tối',
     descZh:'遊覽車集合點 → 黃亞華晚餐 → 沿亞羅街散步 → 街尾折返 → 原路返回集合點。',
     descVi:'Điểm tập trung → ăn tối Wong Ah Wah → dạo Jalan Alor → quay lại cuối phố → trở về điểm tập trung.'

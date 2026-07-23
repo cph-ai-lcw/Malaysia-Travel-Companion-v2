@@ -1,4 +1,4 @@
-const CACHE='gn-malaysia-v4.3.4-itinerary-guides-20260723';
+const CACHE='gn-malaysia-v4.3.5-day4-alor-image-fix-20260723';
 const CORE=[
   './',
   './index.html',
