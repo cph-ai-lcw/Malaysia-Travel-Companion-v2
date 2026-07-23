@@ -851,6 +851,36 @@
   color: var(--primary);
   font-size: .82rem;
 }
+.featured-guide {
+  margin: 16px 0;
+}
+.featured-guide > .section-head {
+  margin-bottom: 10px;
+}
+.travel-guide-card.poster {
+  display: block;
+  min-height: 0;
+  background: #fff;
+}
+.travel-guide-card.poster .travel-guide-thumb {
+  min-height: 0;
+  background: #fff;
+}
+.travel-guide-card.poster .travel-guide-thumb img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+.travel-guide-card.poster .travel-guide-copy {
+  padding: 14px 17px 16px;
+}
+.travel-guide-card.poster .travel-guide-copy > span {
+  display: none;
+}
+.travel-guide-card.poster .travel-guide-copy b {
+  margin-top: 2px;
+}
 .day-travel-guides {
   margin-top: 18px;
   padding-top: 16px;

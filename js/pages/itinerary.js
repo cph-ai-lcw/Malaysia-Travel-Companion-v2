@@ -1,6 +1,6 @@
 import {ITINERARY,SIGHTS} from '../data.js';
 import {bi,getLang,text} from '../i18n.js';
-import {travelGuideGrid} from '../components/travel-guide.js';
+import {travelGuideCard,travelGuideGrid} from '../components/travel-guide.js';
 
 function timelineText(item){
   const lang=getLang();
@@ -24,7 +24,10 @@ function dayTravelGuides(day){
       :day===4
         ?bi('雲頂備案、Outlet、老城與亞羅街圖卡','Hình phương án Genting, Outlet, phố cổ và Jalan Alor')
       :bi('回台前圖卡','Hình hướng dẫn trước khi về Đài Loan');
-  return `<div class="day-travel-guides"><div class="section-head"><h3>🖼️ ${title}</h3><small>${bi('點擊圖片可放大','Bấm hình để xem lớn')}</small></div>${travelGuideGrid(guides,{compact:true})}</div>`;
+  const cards=day===4
+    ?`${travelGuideGrid(['gentingBackup'],{compact:true})}<div class="featured-guide"><div class="section-head"><h3>🛍️ ${bi('雲頂 Outlet 完整逛街指南','Hướng dẫn đầy đủ Genting Outlet')}</h3><small>${bi('完整圖卡直接顯示，點擊可放大','Hiển thị toàn bộ hình, bấm để phóng to')}</small></div>${travelGuideCard('gentingOutlet',{poster:true})}</div>${travelGuideGrid(['oldTownFood','oldTownRoute','jalanAlorFood','jalanAlorRoute'],{compact:true})}`
+    :travelGuideGrid(guides,{compact:true});
+  return `<div class="day-travel-guides"><div class="section-head"><h3>🖼️ ${title}</h3><small>${bi('點擊圖片可放大','Bấm hình để xem lớn')}</small></div>${cards}</div>`;
 }
 
 export function itineraryPage(){

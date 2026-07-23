@@ -90,12 +90,12 @@ const GUIDE_CARDS=Object.freeze({
   }
 });
 
-export function travelGuideCard(id,{compact=false}={}){
+export function travelGuideCard(id,{compact=false,poster=false}={}){
   const card=GUIDE_CARDS[id];
   if(!card)return '';
   const title=bi(card.titleZh,card.titleVi);
   const viewLabel=bi('點擊放大查看','Bấm để xem lớn');
-  return `<button class="card travel-guide-card${compact?' compact':''}${card.notice?' important':''}" type="button" data-guide-image="${card.image}" data-guide-title="${escapeHTML(title)}" data-guide-download="${escapeHTML(bi('下載／儲存圖片','Tải／lưu ảnh'))}" data-guide-close="${escapeHTML(bi('關閉圖卡','Đóng hình'))}" aria-label="${escapeHTML(`${title}，${viewLabel}`)}"><span class="travel-guide-thumb"><img src="${card.image}" alt="${escapeHTML(title)}" loading="lazy"><i aria-hidden="true">↗</i></span><span class="travel-guide-copy"><small>${bi(card.eyebrowZh,card.eyebrowVi)}</small><strong>${title}</strong><span>${bi(card.descZh,card.descVi)}</span><b>${viewLabel}</b></span></button>`;
+  return `<button class="card travel-guide-card${compact?' compact':''}${poster?' poster':''}${card.notice?' important':''}" type="button" data-guide-image="${card.image}" data-guide-title="${escapeHTML(title)}" data-guide-download="${escapeHTML(bi('下載／儲存圖片','Tải／lưu ảnh'))}" data-guide-close="${escapeHTML(bi('關閉圖卡','Đóng hình'))}" aria-label="${escapeHTML(`${title}，${viewLabel}`)}"><span class="travel-guide-thumb"><img src="${card.image}" alt="${escapeHTML(title)}" loading="lazy"><i aria-hidden="true">↗</i></span><span class="travel-guide-copy"><small>${bi(card.eyebrowZh,card.eyebrowVi)}</small><strong>${title}</strong><span>${bi(card.descZh,card.descVi)}</span><b>${viewLabel}</b></span></button>`;
 }
 
 export function travelGuideGrid(ids,{compact=false}={}){
