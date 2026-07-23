@@ -1,4 +1,4 @@
-const CACHE='gn-malaysia-v4.3.8-breakfast-airport-20260723';
+const CACHE='gn-malaysia-v4.3.9-genting-outlet-guide-20260723';
 const CORE=[
   './',
   './index.html',
