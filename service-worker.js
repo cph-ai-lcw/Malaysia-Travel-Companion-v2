@@ -1,4 +1,4 @@
-const CACHE='gn-malaysia-v4.5.1-day4-sunway-20260915';
+const CACHE='gn-malaysia-v4.5.2-day3-souvenir-20260915';
 const CORE=[
   './',
   './index.html',
