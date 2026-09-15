@@ -1,1 +1,1 @@
-export const VERSION = Object.freeze({version:'6.4.2',build:'20260915-DESKTOP-CACHE-REPAIR',milestone:'GitHub Pages Repair',stage:'Desktop Wallet Cache Recovery',releaseDate:'2026-09-15',cacheVersion:'mtc-v642-desktop-cache-repair-20260915'});
+export const VERSION = Object.freeze({version:'6.4.3',build:'20260915-RAINBOW-SISTER-ONLY',milestone:'Itinerary Update',stage:'Remove Dong Yang and Reorder Day 4',releaseDate:'2026-09-15',cacheVersion:'mtc-v643-rainbow-sister-only-20260915'});

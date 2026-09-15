@@ -1,4 +1,4 @@
-const CACHE='gn-malaysia-v4.6.2-desktop-cache-repair-20260915';
+const CACHE='gn-malaysia-v4.6.3-rainbow-sister-only-20260915';
 const CORE=[
   './',
   './index.html',
@@ -11,7 +11,7 @@ const CORE=[
   './css/pages.css',
   './css/responsive.css',
   './js/app.js',
-  './js/app-v642.js',
+  './js/app-v643.js',
   './js/router.js',
   './js/storage.js',
   './js/i18n.js',
