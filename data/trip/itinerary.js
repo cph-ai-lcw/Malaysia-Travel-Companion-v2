@@ -57,7 +57,7 @@ export const ITINERARY = Object.freeze([
   {zh:'肉骨茶＋麵包雞午餐',vi:'Bữa trưa Bak Kut Teh và gà bánh mì'},
   {zh:'Pavilion 晚餐自理（發放 RM30）',vi:'Tự túc bữa tối tại Pavilion (phát RM30)'}
  ]},
- {day:4,date:'2026-09-23',titleZh:'雲頂・黑風洞・老城・亞羅街',titleVi:'Genting・Động Batu・Phố cổ・Jalan Alor',hotel:'Sunway Velocity Hotel Kuala Lumpur',items:[
+ {day:4,date:'2026-09-23',titleZh:'雲頂・黑風洞・老城・亞羅街・雙威偉樂',titleVi:'Genting・Động Batu・Phố cổ・Jalan Alor・Sunway Velocity',hotel:'Sunway Velocity Hotel Kuala Lumpur',items:[
   {time:'06:30–07:30',zh:'雙威早餐（完整 1 小時）：前往商場 5 樓 V-Office Function Room 享用自助餐；現場會有指示（原餐廳維修至 9/30）',vi:'Bữa sáng buffet Sunway (đủ 1 giờ) tại phòng V-Office Function, tầng 5 của trung tâm thương mại; sẽ có biển chỉ dẫn (nhà hàng cũ sửa chữa đến 30/9)'},
   {time:'07:40',zh:'飯店大廳集合',vi:'Tập trung tại sảnh khách sạn'},
   {time:'07:50',zh:'準時出發',vi:'Khởi hành đúng giờ'},
@@ -75,11 +75,14 @@ export const ITINERARY = Object.freeze([
   {time:'15:50–18:00',zh:'老城巡禮：鬼仔巷、茨廠街、中央藝術坊',vi:'Dạo phố cổ: Kwai Chai Hong, Petaling Street và Central Market'},
   {time:'18:00',zh:'中央藝術坊集合、點名',vi:'Tập trung và điểm danh tại Central Market'},
   {time:'18:00–18:30',zh:'前往亞羅街',vi:'Đi đến Jalan Alor'},
-  {time:'18:30–19:40',zh:'黃亞華小吃店晚餐',vi:'Bữa tối tại Wong Ah Wah',included:true},
-  {time:'19:40–21:00',zh:'亞羅街自由逛街、甜點、水果及小吃',vi:'Tự do tham quan Jalan Alor, thưởng thức trái cây, món ngọt và đồ ăn vặt'},
-  {time:'21:00',zh:'指定集合點集合、點名',vi:'Tập trung và điểm danh tại địa điểm quy định'},
-  {time:'21:00–21:30',zh:'返回飯店',vi:'Trở về khách sạn'},
-  {time:'約 21:30',zh:'抵達 Sunway Velocity Hotel',vi:'Đến Sunway Velocity Hotel'},
+  {time:'18:30–19:30',zh:'黃亞華小吃店晚餐',vi:'Bữa tối tại Wong Ah Wah',included:true},
+  {time:'19:30–20:00',zh:'亞羅街自由逛街、甜點、水果及小吃',vi:'Tự do tham quan Jalan Alor, thưởng thức trái cây, món ngọt và đồ ăn vặt'},
+  {time:'20:00',zh:'亞羅街指定集合點集合、點名',vi:'Tập trung và điểm danh tại địa điểm quy định ở Jalan Alor'},
+  {time:'20:00–20:30',zh:'前往雙威偉樂購物中心',vi:'Đi đến Sunway Velocity Mall'},
+  {time:'20:30–21:50',zh:'雙威偉樂購物中心自由逛街、購物',vi:'Tự do tham quan và mua sắm tại Sunway Velocity Mall'},
+  {time:'21:50',zh:'雙威偉樂指定地點集合、點名',vi:'Tập trung và điểm danh tại địa điểm quy định ở Sunway Velocity Mall'},
+  {time:'21:50–22:00',zh:'步行返回旁邊的 Sunway Velocity Hotel',vi:'Đi bộ về Sunway Velocity Hotel ở bên cạnh'},
+  {time:'約 22:00',zh:'抵達飯店、返回房間休息',vi:'Đến khách sạn và về phòng nghỉ ngơi'},
   {time:'停駛備案',zh:'纜車若因維修、強風或臨時停駛，不等待復駛；改至 Genting Highlands Premium Outlets，午餐仍由領隊依 11:30 所在位置決定紅姐或東陽餐廳',vi:'Nếu cáp treo bảo trì, gió mạnh hoặc tạm ngừng, không chờ hoạt động lại; chuyển sang Genting Highlands Premium Outlets, nhà hàng ăn trưa Chị Hồng hoặc Dong Yang vẫn do trưởng đoàn quyết định theo vị trí lúc 11:30'}
  ],meals:[
   {zh:'飯店早餐',vi:'Bữa sáng tại khách sạn'},

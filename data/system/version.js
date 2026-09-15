@@ -1,1 +1,1 @@
-export const VERSION = Object.freeze({version:'6.3.7',build:'20260915-FINAL-ITINERARY',milestone:'Itinerary Update',stage:'Confirmed Day 2-5 Schedule',releaseDate:'2026-09-15',cacheVersion:'mtc-v637-final-itinerary-20260915'});
+export const VERSION = Object.freeze({version:'6.3.8',build:'20260915-DAY4-SUNWAY',milestone:'Itinerary Update',stage:'Day 4 Sunway Velocity Shopping',releaseDate:'2026-09-15',cacheVersion:'mtc-v638-day4-sunway-20260915'});
