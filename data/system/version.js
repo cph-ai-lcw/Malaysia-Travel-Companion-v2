@@ -1,1 +1,1 @@
-export const VERSION = Object.freeze({version:'6.3.9',build:'20260915-DAY3-SOUVENIR',milestone:'Itinerary Update',stage:'Move Souvenir Stop to Day 3',releaseDate:'2026-09-15',cacheVersion:'mtc-v639-day3-souvenir-20260915'});
+export const VERSION = Object.freeze({version:'6.4.0',build:'20260915-LIVE-UPDATE-FIX',milestone:'Deployment Fix',stage:'Network-first Update and Confirmed Itinerary',releaseDate:'2026-09-15',cacheVersion:'mtc-v640-live-update-fix-20260915'});

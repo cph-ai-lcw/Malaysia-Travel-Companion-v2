@@ -1,4 +1,4 @@
-const CACHE='gn-malaysia-v4.5.2-day3-souvenir-20260915';
+const CACHE='gn-malaysia-v4.5.3-network-first-20260915';
 const CORE=[
   './',
   './index.html',
@@ -100,12 +100,22 @@ self.addEventListener('activate',event=>event.waitUntil(
 
 self.addEventListener('fetch',event=>{
   if(event.request.method!=='GET')return;
+  const url=new URL(event.request.url);
+  if(url.origin!==self.location.origin)return;
+  const latestFirst=event.request.mode==='navigate'||/\.(?:js|css|json|webmanifest)$/i.test(url.pathname);
+  if(latestFirst){
+    event.respondWith(
+      fetch(event.request,{cache:'no-store'}).then(response=>{
+        if(response.ok)caches.open(CACHE).then(cache=>cache.put(event.request,response.clone()));
+        return response;
+      }).catch(()=>caches.match(event.request).then(cached=>cached||(event.request.mode==='navigate'?caches.match('./index.html'):undefined)))
+    );
+    return;
+  }
   event.respondWith(
     caches.match(event.request).then(cached=>cached||fetch(event.request).then(response=>{
-      if(response.ok&&new URL(event.request.url).origin===self.location.origin){
-        caches.open(CACHE).then(cache=>cache.put(event.request,response.clone()));
-      }
+      if(response.ok)caches.open(CACHE).then(cache=>cache.put(event.request,response.clone()));
       return response;
-    }).catch(()=>event.request.mode==='navigate'?caches.match('./index.html'):undefined))
+    }))
   );
 });
