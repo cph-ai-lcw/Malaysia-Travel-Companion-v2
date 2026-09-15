@@ -1,4 +1,4 @@
-const CACHE='gn-malaysia-v4.4.9-original-day3-20260915';
+const CACHE='gn-malaysia-v4.5.0-final-itinerary-20260915';
 const CORE=[
   './',
   './index.html',
