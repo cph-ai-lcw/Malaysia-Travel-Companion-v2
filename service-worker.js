@@ -1,4 +1,4 @@
-const CACHE='gn-malaysia-v4.4.3-activity-icons-hotfix-20260723';
+const CACHE='gn-malaysia-v4.4.9-original-day3-20260915';
 const CORE=[
   './',
   './index.html',
