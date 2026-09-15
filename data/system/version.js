@@ -1,1 +1,1 @@
-export const VERSION = Object.freeze({version:'6.4.1',build:'20260915-ROUTE-REPAIR',milestone:'GitHub Pages Repair',stage:'Info and Wallet Route Recovery',releaseDate:'2026-09-15',cacheVersion:'mtc-v641-route-repair-20260915'});
+export const VERSION = Object.freeze({version:'6.4.2',build:'20260915-DESKTOP-CACHE-REPAIR',milestone:'GitHub Pages Repair',stage:'Desktop Wallet Cache Recovery',releaseDate:'2026-09-15',cacheVersion:'mtc-v642-desktop-cache-repair-20260915'});

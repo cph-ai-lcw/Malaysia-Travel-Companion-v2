@@ -1,4 +1,4 @@
-const CACHE='gn-malaysia-v4.6.1-route-repair-20260915';
+const CACHE='gn-malaysia-v4.6.2-desktop-cache-repair-20260915';
 const CORE=[
   './',
   './index.html',
@@ -11,6 +11,7 @@ const CORE=[
   './css/pages.css',
   './css/responsive.css',
   './js/app.js',
+  './js/app-v642.js',
   './js/router.js',
   './js/storage.js',
   './js/i18n.js',
@@ -100,12 +101,18 @@ self.addEventListener('activate',event=>event.waitUntil(
 
 self.addEventListener('fetch',event=>{
   if(event.request.method!=='GET')return;
-  event.respondWith(
-    caches.match(event.request).then(cached=>cached||fetch(event.request).then(response=>{
-      if(response.ok&&new URL(event.request.url).origin===self.location.origin){
-        caches.open(CACHE).then(cache=>cache.put(event.request,response.clone()));
-      }
+  const request=event.request;
+  const destination=request.destination;
+  const preferNetwork=request.mode==='navigate'||destination==='script'||destination==='style'||destination==='worker';
+  if(preferNetwork){
+    event.respondWith(fetch(request,{cache:'no-store'}).then(response=>{
+      if(response.ok&&new URL(request.url).origin===self.location.origin)caches.open(CACHE).then(cache=>cache.put(request,response.clone()));
       return response;
-    }).catch(()=>event.request.mode==='navigate'?caches.match('./index.html'):undefined))
-  );
+    }).catch(()=>caches.match(request).then(cached=>cached||(request.mode==='navigate'?caches.match('./index.html'):undefined))));
+    return;
+  }
+  event.respondWith(caches.match(request).then(cached=>cached||fetch(request).then(response=>{
+    if(response.ok&&new URL(request.url).origin===self.location.origin)caches.open(CACHE).then(cache=>cache.put(request,response.clone()));
+    return response;
+  })));
 });
