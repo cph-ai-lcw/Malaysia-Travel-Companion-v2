@@ -1,1 +1,1 @@
-export const VERSION = Object.freeze({version:'6.4.0',build:'20260915-GUIDE-EXCHANGE-RATE',milestone:'Wallet Update',stage:'Confirmed Guide Exchange Rate',releaseDate:'2026-09-15',cacheVersion:'mtc-v640-guide-rate-20260915'});
+export const VERSION = Object.freeze({version:'6.4.1',build:'20260915-ROUTE-REPAIR',milestone:'GitHub Pages Repair',stage:'Info and Wallet Route Recovery',releaseDate:'2026-09-15',cacheVersion:'mtc-v641-route-repair-20260915'});

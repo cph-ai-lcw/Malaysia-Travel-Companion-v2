@@ -1,4 +1,4 @@
-const CACHE='gn-malaysia-v4.6.0-guide-rate-20260915';
+const CACHE='gn-malaysia-v4.6.1-route-repair-20260915';
 const CORE=[
   './',
   './index.html',

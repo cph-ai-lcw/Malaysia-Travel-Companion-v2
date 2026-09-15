@@ -13,6 +13,9 @@ const categories=[
 
 const GUIDE_RATE=1000/120;
 const RATE_MAX_AGE=Infinity;
+const RATE_API='';
+const RATE_SOURCE_URL='#/wallet';
+const CUSTOMS_RATE_URL='#/wallet';
 
 function formatRate(value){
   return Number(value).toFixed(4).replace(/0+$/,'').replace(/\.$/,'');
