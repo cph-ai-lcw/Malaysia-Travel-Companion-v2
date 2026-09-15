@@ -233,21 +233,12 @@ function weatherPage(){
 }
 
 
-function exchangeCacheKey(){return 'mtc-exchange-MYR-TWD-v1'}
+function exchangeCacheKey(){return 'mtc-exchange-MYR-TWD-guide-v2'}
 function readExchangeCache(){try{const x=JSON.parse(localStorage.getItem(exchangeCacheKey())||'null');return x&&x.rate?x:null}catch{return null}}
 function saveExchangeCache(x){try{localStorage.setItem(exchangeCacheKey(),JSON.stringify(x))}catch{}}
 async function loadExchange(force=false){
-  const cached=readExchangeCache();
-  if(!force&&cached&&Date.now()-cached.savedAt<EXCHANGE_CONFIG.cacheMs){state.exchangeRate=cached;state.exchangeError='';render();return}
-  state.exchangeLoading=true;state.exchangeError='';render();
-  try{
-    const res=await fetch(EXCHANGE_CONFIG.apiUrl,{cache:'no-store'});if(!res.ok)throw new Error('HTTP '+res.status);
-    const data=await res.json();const rate=Number(data?.rates?.TWD);if(!Number.isFinite(rate)||rate<=0)throw new Error('Invalid rate');
-    const x={rate,base:'MYR',quote:'TWD',updatedAt:data.time_last_update_utc||new Date().toISOString(),nextUpdate:data.time_next_update_utc||'',savedAt:Date.now(),source:'ExchangeRate-API'};
-    state.exchangeRate=x;saveExchangeCache(x);
-  }catch(e){
-    if(cached?.rate){state.exchangeRate=cached;state.exchangeError=t('無法更新，即顯示上次儲存匯率。','Không thể cập nhật; đang hiển thị tỷ giá đã lưu gần nhất.')}else{state.exchangeRate=null;state.exchangeError=t('無法取得即時匯率，請確認網路後重試。','Không thể tải tỷ giá trực tiếp. Vui lòng kiểm tra mạng và thử lại.')}
-  }finally{state.exchangeLoading=false;render()}
+  const x={rate:EXCHANGE_CONFIG.fixedRateTWDPerMYR,base:'MYR',quote:'TWD',updatedAt:EXCHANGE_CONFIG.confirmedDate,savedAt:Date.now(),source:'Guide-confirmed'};
+  state.exchangeRate=x;state.exchangeError='';state.exchangeLoading=false;saveExchangeCache(x);render()
 }
 function exchangeNumber(n,digits=2){return Number(n||0).toLocaleString(state.lang==='zh'?'zh-TW':'vi-VN',{minimumFractionDigits:digits,maximumFractionDigits:digits})}
 function exchangeCalculation(){const amount=Math.max(0,Number(state.exchangeAmount)||0),rate=Number(state.exchangeRate?.rate)||0;if(state.exchangeDirection==='MYR_TWD')return {from:'MYR',to:'TWD',result:amount*rate,unit:rate};return {from:'TWD',to:'MYR',result:rate?amount/rate:0,unit:rate?1/rate:0}}
@@ -256,7 +247,7 @@ function exchangePage(){
   const apiTime=x?.updatedAt?new Date(x.updatedAt).toLocaleString(state.lang==='zh'?'zh-TW':'vi-VN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}):'';
   let rateBox='';
   if(state.exchangeLoading)rateBox=`<div class="card exchange-loading"><div class="weather-spinner"></div><b>${t('正在更新匯率…','Đang cập nhật tỷ giá…')}</b></div>`;
-  else if(x?.rate)rateBox=`<section class="card exchange-rate-card"><div><small>${t('目前參考匯率','Tỷ giá tham khảo hiện tại')}</small><h2>RM 1 <span>=</span> NT$ ${exchangeNumber(x.rate,3)}</h2><p>NT$ 1 = RM ${exchangeNumber(1/x.rate,4)}</p></div><button id="exchangeRefresh">↻ ${t('更新','Cập nhật')}</button><div class="exchange-meta"><span>${t('資料時間','Thời gian dữ liệu')}：${apiTime||cached}</span><span>${t('裝置快取','Bộ nhớ thiết bị')}：${cached}</span></div></section>`;
+  else if(x?.rate)rateBox=`<section class="card exchange-rate-card"><div><small>${t('導遊確認匯率','Tỷ giá đã được hướng dẫn viên xác nhận')}</small><h2>NT$ 1,000 <span>=</span> RM 120</h2><p>RM 1 = NT$ ${exchangeNumber(x.rate,4)} · NT$ 1 = RM ${exchangeNumber(1/x.rate,2)}</p></div><div class="exchange-meta"><span>${t('確認日期','Ngày xác nhận')}：2026/09/15</span><span>${t('本頁換算皆使用此固定匯率','Mọi phép quy đổi trên trang này đều dùng tỷ giá cố định này')}</span></div></section>`;
   else rateBox=`<div class="card weather-error"><div>💱</div><b>${state.exchangeError||t('尚未載入匯率','Chưa tải tỷ giá')}</b><button id="exchangeRetry">${t('重新整理','Thử lại')}</button></div>`;
   const quick=state.exchangeDirection==='MYR_TWD'?EXCHANGE_CONFIG.quickMYR:EXCHANGE_CONFIG.quickTWD;
   return shell(`<section class="exchange-hero"><span class="pill">Milestone 3-7 · Live Exchange Rate</span><h1>${t('馬幣／台幣匯率換算','Chuyển đổi MYR / TWD')}</h1><p>${t('旅途中快速換算馬來西亞令吉與新台幣，並保留最近一次成功取得的匯率。','Chuyển đổi nhanh Ringgit Malaysia và Đài tệ, đồng thời lưu tỷ giá cập nhật gần nhất.')}</p></section>${state.exchangeError?`<div class="exchange-warning">⚠️ ${state.exchangeError}</div>`:''}${rateBox}<section class="card exchange-converter"><div class="exchange-direction"><button class="${state.exchangeDirection==='MYR_TWD'?'active':''}" data-exchange-direction="MYR_TWD">RM → NT$</button><button id="exchangeSwap" aria-label="swap">⇄</button><button class="${state.exchangeDirection==='TWD_MYR'?'active':''}" data-exchange-direction="TWD_MYR">NT$ → RM</button></div><label>${t('輸入金額','Nhập số tiền')}<div class="exchange-input"><span>${calc.from==='MYR'?'RM':'NT$'}</span><input id="exchangeAmount" type="number" min="0" step="0.01" inputmode="decimal" value="${esc(state.exchangeAmount)}"></div></label><div class="exchange-quick">${quick.map(n=>`<button data-exchange-amount="${n}">${calc.from==='MYR'?'RM':'NT$'} ${n.toLocaleString()}</button>`).join('')}</div><div class="exchange-result"><small>${t('換算結果','Kết quả quy đổi')}</small><strong>${calc.to==='MYR'?'RM':'NT$'} ${exchangeNumber(calc.result,calc.to==='MYR'?2:0)}</strong><p>1 ${calc.from} ≈ ${exchangeNumber(calc.unit,calc.to==='MYR'?4:3)} ${calc.to}</p></div></section><div class="section-head"><h2>${t('旅行換算參考','Tham khảo chi tiêu')}</h2><span>Quick Guide</span></div><div class="exchange-examples">${EXCHANGE_CONFIG.examples.map(e=>`<article class="card"><span>${e.icon}</span><div><b>${t(e.zh,e.vi)}</b><small>RM ${e.myr}</small></div><strong>≈ NT$ ${x?.rate?exchangeNumber(e.myr*x.rate,0):'--'}</strong></article>`).join('')}</div><div class="notice-limit">${t('此為國際市場參考匯率，不等同銀行、信用卡或換匯所實際成交價；刷卡可能另計海外手續費。資料由 ExchangeRate-API 提供並每日更新。','Đây là tỷ giá thị trường tham khảo, không phải tỷ giá giao dịch thực tế của ngân hàng, thẻ hoặc quầy đổi tiền. Thanh toán thẻ có thể phát sinh phí nước ngoài. Dữ liệu từ ExchangeRate-API, cập nhật hằng ngày.')}</div>`,'exchange')

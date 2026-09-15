@@ -11,10 +11,8 @@ const categories=[
   ['other','📌','其他','Khác']
 ];
 
-const RATE_API='https://open.er-api.com/v6/latest/MYR';
-const RATE_SOURCE_URL='https://www.exchangerate-api.com/';
-const CUSTOMS_RATE_URL='https://portal.sw.nat.gov.tw/APGQO/GC331';
-const RATE_MAX_AGE=12*60*60*1000;
+const GUIDE_RATE=1000/120;
+const RATE_MAX_AGE=Infinity;
 
 function formatRate(value){
   return Number(value).toFixed(4).replace(/0+$/,'').replace(/\.$/,'');
@@ -39,12 +37,10 @@ function breakdownMarkup(items){
 
 export function walletPage(){
   const items=storage.get('wallet',[]);
-  const rate=Number(storage.get('rate',7.5))||7.5;
-  const rateMeta=storage.get('rateMeta',{});
-  const rateTime=formatUpdatedAt(rateMeta.updatedAt);
-  const rateStatus=rateTime
-    ?`${bi('上次更新','Cập nhật lần cuối')}：${rateTime}`
-    :bi('尚未連線更新，現在使用本機匯率。','Chưa cập nhật trực tuyến; đang dùng tỷ giá trên thiết bị.');
+  const rate=GUIDE_RATE;
+  storage.set('rate',rate);
+  storage.set('rateMeta',{source:'guide-confirmed',updatedAt:'2026-09-15T00:00:00+08:00'});
+  const rateStatus=bi('導遊確認：NT$ 1,000＝RM 120','Hướng dẫn viên xác nhận: 1.000 TWD = 120 MYR');
   const total=items.reduce((sum,item)=>sum+Number(item.myr||0),0);
   return `<section class="section"><p class="eyebrow">WALLET</p><h1>${bi('旅遊記帳','Chi tiêu du lịch')}</h1><div class="grid wallet-kpis"><div class="card kpi"><small>${bi('累計支出','Tổng chi')}</small><b>RM ${total.toFixed(2)}</b></div><div class="card kpi"><small>${bi('約合台幣','Ước tính TWD')}</small><b id="walletTwdTotal">NT$ ${(total*rate).toFixed(0)}</b></div><div class="card kpi"><small>${bi('記錄筆數','Số giao dịch')}</small><b>${items.length}</b></div></div></section><section class="card section converter-card"><div class="section-head"><div><p class="eyebrow">CURRENCY</p><h2>${bi('RM ↔ NTD 雙向換算','Đổi hai chiều RM ↔ NTD')}</h2></div></div><div class="converter-grid" id="converterGrid"><div class="field currency-field myr-field"><label>MYR (RM)</label><input id="convertMyr" inputmode="decimal" type="number" min="0" step="0.01" value="100"></div><button class="swap-icon" id="swapCurrency" type="button" aria-label="${text('切換換算方向','Đổi hướng quy đổi')}" title="${text('切換換算方向','Đổi hướng quy đổi')}">⇄</button><div class="field currency-field twd-field"><label>TWD (NT$)</label><input id="convertTwd" inputmode="decimal" type="number" min="0" step="1" value="${(100*rate).toFixed(0)}"></div></div><small class="converter-hint">${bi('兩邊都能直接輸入；點擊箭頭可切換左右顯示。','Có thể nhập ở cả hai bên; bấm mũi tên để đổi vị trí hiển thị.')}</small><div class="rate-row"><label for="rateInput">${bi('匯率：1 MYR =','Tỷ giá: 1 MYR =')}</label><input id="rateInput" type="number" min="0.01" step="0.0001" value="${formatRate(rate)}"><span>TWD</span></div><div class="rate-actions"><button class="secondary-btn inline-btn" id="refreshRate" type="button">↻ ${bi('線上更新匯率','Cập nhật tỷ giá')}</button><a class="rate-source-link" href="${RATE_SOURCE_URL}" target="_blank" rel="noopener">${bi('市場匯率來源 ↗','Nguồn tỷ giá ↗')}</a><a class="rate-source-link" href="${CUSTOMS_RATE_URL}" target="_blank" rel="noopener">${bi('關務署每旬匯率 ↗','Tỷ giá Hải quan ↗')}</a></div><small class="rate-status" id="rateStatus">${rateStatus}</small><small class="rate-disclaimer">${bi('線上數值為市場參考匯率；實際現金換匯、刷卡與關務署報關匯率可能不同。可手動修改，並保留上次成功數值供離線使用。','Tỷ giá trực tuyến chỉ để tham khảo; tỷ giá tiền mặt, thẻ và Hải quan có thể khác. Có thể chỉnh tay và giữ giá trị cập nhật gần nhất để dùng ngoại tuyến.')}</small></section><section class="card section"><h2>${bi('新增支出','Thêm chi tiêu')}</h2><form id="expenseForm"><div class="field"><label>${bi('項目','Mục')}</label><input name="title" maxlength="60" required placeholder="${text('例：Fipper 拖鞋','VD: Dép Fipper')}"></div><div class="grid two"><div class="field"><label>${bi('分類','Phân loại')}</label><select name="category">${categories.map(category=>`<option value="${category[0]}">${category[1]} ${text(category[2],category[3])}</option>`).join('')}</select></div><div class="field"><label>${bi('金額','Số tiền')} MYR</label><input name="myr" type="number" inputmode="decimal" min="0.01" step="0.01" required></div></div><button class="primary-btn">${bi('加入記帳','Thêm giao dịch')}</button></form></section><section class="card section"><h2>${bi('分類統計','Thống kê theo loại')}</h2>${breakdownMarkup(items)}</section><section class="card section"><h2>${bi('支出紀錄','Lịch sử chi tiêu')}</h2><div id="expenseList">${items.map((item,index)=>{const category=categoryInfo(item.category);return `<div class="expense"><span class="expense-icon">${category[1]}</span><div><b>${escapeHTML(item.title)}</b><small>${bi(category[2],category[3])} · ${escapeHTML(item.date||'')}</small></div><div><b>RM ${Number(item.myr).toFixed(2)}</b><button class="danger-link" data-delete-expense="${index}">${bi('刪除','Xóa')}</button></div></div>`}).join('')||`<div class="empty">${text('尚無記錄','Chưa có dữ liệu')}</div>`}</div></section>`;
 }
@@ -58,6 +54,8 @@ export function bindWallet(render){
   const refreshButton=document.querySelector('#refreshRate');
   const rateStatus=document.querySelector('#rateStatus');
   const walletTwdTotal=document.querySelector('#walletTwdTotal');
+  rateInput?.setAttribute('readonly','');
+  if(refreshButton)refreshButton.textContent=`✓ ${bi('導遊確認匯率','Tỷ giá hướng dẫn viên xác nhận')}`;
   const walletTotalMyr=storage.get('wallet',[]).reduce((sum,item)=>sum+Number(item.myr||0),0);
   let lastEdited='myr';
   const currentRate=()=>Number(rateInput?.value)||7.5;
@@ -93,6 +91,13 @@ export function bindWallet(render){
     setRateStatus(bi('已使用手動匯率並儲存在本機。','Đã dùng tỷ giá chỉnh tay và lưu trên thiết bị.'),'success');
   });
   const refreshRate=async()=>{
+    rateInput.value=formatRate(GUIDE_RATE);
+    storage.set('rate',GUIDE_RATE);
+    storage.set('rateMeta',{source:'guide-confirmed',updatedAt:'2026-09-15T00:00:00+08:00'});
+    if(lastEdited==='twd')updateMyr();else updateTwd();
+    updateWalletTotal();
+    setRateStatus(bi('導遊確認：NT$ 1,000＝RM 120','Hướng dẫn viên xác nhận: 1.000 TWD = 120 MYR'),'success');
+    return;
     if(!navigator.onLine){
       setRateStatus(bi('目前離線，保留上次匯率；仍可手動修改。','Đang ngoại tuyến; giữ tỷ giá gần nhất và vẫn có thể chỉnh tay.'),'error');
       return;

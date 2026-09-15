@@ -1,6 +1,8 @@
 export const EXCHANGE_CONFIG = Object.freeze({
-  apiUrl: 'https://open.er-api.com/v6/latest/MYR',
-  cacheMs: 12 * 60 * 60 * 1000,
+  fixedRateTWDPerMYR: 1000 / 120,
+  confirmedTWD: 1000,
+  confirmedMYR: 120,
+  confirmedDate: '2026-09-15',
   quickMYR: [10, 20, 50, 100, 200, 500],
   quickTWD: [100, 500, 1000, 2000, 5000, 10000],
   examples: [

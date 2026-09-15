@@ -2,18 +2,4 @@ import {route,initRouter} from './router.js';import {setLang,getLang} from './i1
 const pages={home:homePage,itinerary:itineraryPage,'my-travel':memberPage,checklist:checklistPage,wallet:walletPage,guide:guidePage,info:infoPage};
 function bind(active){document.querySelectorAll('[data-lang]').forEach(b=>b.onclick=()=>{setLang(b.dataset.lang);render()});bindTravelGuides();if(active==='my-travel')bindMemberPage();if(active==='checklist')bindChecklist(render);if(active==='wallet')bindWallet(render);if(active==='guide')bindGuidePage();if(active.startsWith('leader'))bindLeader(active,render)}
 export function render(){const active=route(),isLeader=active.startsWith('leader');document.querySelector('#hero').innerHTML=isLeader?'':hero();document.querySelector('#page').innerHTML=isLeader?leaderPage(active):pages[active]();document.querySelector('#bottomNav').innerHTML=nav(isLeader?'info':active);document.documentElement.lang=getLang()==='vi'?'vi':'zh-Hant';bind(active);document.querySelector('#page').focus({preventScroll:true})}
-initRouter(render);render();
-if('serviceWorker'in navigator){
-  addEventListener('load',async()=>{
-    try{
-      let refreshing=false;
-      navigator.serviceWorker.addEventListener('controllerchange',()=>{
-        if(refreshing)return;
-        refreshing=true;
-        location.reload();
-      });
-      const registration=await navigator.serviceWorker.register('./service-worker.js?v=453',{updateViaCache:'none'});
-      await registration.update();
-    }catch(error){console.warn(error)}
-  });
-}
+initRouter(render);render();if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(console.warn));

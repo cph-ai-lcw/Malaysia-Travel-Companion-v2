@@ -3,6 +3,6 @@ export const CURRENCY_CONFIG = Object.freeze({
   baseSymbol: "RM",
   targetCurrency: "TWD",
   targetSymbol: "NT$",
-  defaultRate: 7.30,
-  editable: true
+  defaultRate: 8.333333333333334,
+  editable: false
 });

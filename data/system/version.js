@@ -1,1 +1,1 @@
-export const VERSION = Object.freeze({version:'6.4.0',build:'20260915-LIVE-UPDATE-FIX',milestone:'Deployment Fix',stage:'Network-first Update and Confirmed Itinerary',releaseDate:'2026-09-15',cacheVersion:'mtc-v640-live-update-fix-20260915'});
+export const VERSION = Object.freeze({version:'6.4.0',build:'20260915-GUIDE-EXCHANGE-RATE',milestone:'Wallet Update',stage:'Confirmed Guide Exchange Rate',releaseDate:'2026-09-15',cacheVersion:'mtc-v640-guide-rate-20260915'});
